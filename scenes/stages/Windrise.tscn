@@ -1,0 +1,170 @@
+[gd_scene load_steps=15 format=3 uid="uid://windrise_scene_p4"]
+
+[ext_resource type="Texture2D" uid="uid://be65otnv6f6nf" path="res://assets/stages/windrise/background/windrise-background.png" id="1_bg"]
+[ext_resource type="Texture2D" uid="uid://bnc5kkj086836" path="res://assets/stages/windrise/background/mountains.png" id="2_mountains"]
+[ext_resource type="Texture2D" uid="uid://bwbm5ptugphfm" path="res://assets/stages/windrise/background/hills.png" id="3_hills"]
+[ext_resource type="Texture2D" uid="uid://drpes67pjxcdi" path="res://assets/stages/windrise/platforms/floating_platforms.png" id="4_platforms"]
+[ext_resource type="Texture2D" uid="uid://bta6eyxhg5o78" path="res://assets/stages/windrise/foreground/decors.png" id="5_decors"]
+[ext_resource type="Script" uid="uid://windrise_gd_p4" path="res://scripts/stages/Windrise.gd" id="6_script"]
+
+[sub_resource type="RectangleShape2D" id="Shape_main"]
+size = Vector2(900.0, 30.0)
+
+[sub_resource type="RectangleShape2D" id="Shape_left"]
+size = Vector2(240.0, 24.0)
+
+[sub_resource type="RectangleShape2D" id="Shape_right"]
+size = Vector2(240.0, 24.0)
+
+[sub_resource type="RectangleShape2D" id="Shape_top"]
+size = Vector2(180.0, 24.0)
+
+[sub_resource type="RectangleShape2D" id="Shape_kill_bottom"]
+size = Vector2(2400.0, 200.0)
+
+[sub_resource type="RectangleShape2D" id="Shape_kill_left"]
+size = Vector2(300.0, 1440.0)
+
+[sub_resource type="RectangleShape2D" id="Shape_kill_right"]
+size = Vector2(300.0, 1440.0)
+
+[sub_resource type="RectangleShape2D" id="Shape_kill_top"]
+size = Vector2(2400.0, 200.0)
+
+[node name="Windrise" type="Node2D"]
+script = ExtResource("6_script")
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+z_index = -2
+
+[node name="BackgroundLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.2, 0.2)
+
+[node name="BackgroundSprite" type="Sprite2D" parent="ParallaxBackground/BackgroundLayer"]
+texture = ExtResource("1_bg")
+position = Vector2(640.0, 360.0)
+scale = Vector2(0.9375, 0.9375)
+
+[node name="MountainsLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.4, 0.4)
+
+[node name="MountainsSprite" type="Sprite2D" parent="ParallaxBackground/MountainsLayer"]
+texture = ExtResource("2_mountains")
+position = Vector2(640.0, 500.0)
+scale = Vector2(4.0, 4.0)
+
+[node name="HillsLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.7, 0.7)
+
+[node name="HillsSprite" type="Sprite2D" parent="ParallaxBackground/HillsLayer"]
+texture = ExtResource("3_hills")
+position = Vector2(640.0, 550.0)
+scale = Vector2(4.0, 4.0)
+
+[node name="DecorsLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(1.2, 1.2)
+
+[node name="DecorsSprite" type="Sprite2D" parent="ParallaxBackground/DecorsLayer"]
+texture = ExtResource("5_decors")
+position = Vector2(640.0, 630.0)
+scale = Vector2(3.5, 3.5)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="MainPlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(640.0, 590.0)
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/MainPlatform"]
+shape = SubResource("Shape_main")
+
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/MainPlatform"]
+texture = ExtResource("4_platforms")
+scale = Vector2(0.85, 0.10)
+
+[node name="LeftPlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(240.0, 410.0)
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/LeftPlatform"]
+shape = SubResource("Shape_left")
+
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/LeftPlatform"]
+texture = ExtResource("4_platforms")
+scale = Vector2(0.228, 0.10)
+
+[node name="RightPlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(1040.0, 410.0)
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/RightPlatform"]
+shape = SubResource("Shape_right")
+
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/RightPlatform"]
+texture = ExtResource("4_platforms")
+scale = Vector2(0.228, 0.10)
+
+[node name="TopPlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(640.0, 260.0)
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/TopPlatform"]
+shape = SubResource("Shape_top")
+
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/TopPlatform"]
+texture = ExtResource("4_platforms")
+scale = Vector2(0.170, 0.10)
+
+[node name="KillZones" type="Node2D" parent="."]
+
+[node name="KillBottom" type="Area2D" parent="KillZones"]
+position = Vector2(640.0, 870.0)
+collision_layer = 8
+collision_mask = 1
+monitoring = true
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZones/KillBottom"]
+shape = SubResource("Shape_kill_bottom")
+
+[node name="KillLeft" type="Area2D" parent="KillZones"]
+position = Vector2(-350.0, 360.0)
+collision_layer = 8
+collision_mask = 1
+monitoring = true
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZones/KillLeft"]
+shape = SubResource("Shape_kill_left")
+
+[node name="KillRight" type="Area2D" parent="KillZones"]
+position = Vector2(1630.0, 360.0)
+collision_layer = 8
+collision_mask = 1
+monitoring = true
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZones/KillRight"]
+shape = SubResource("Shape_kill_right")
+
+[node name="KillTop" type="Area2D" parent="KillZones"]
+position = Vector2(640.0, -400.0)
+collision_layer = 8
+collision_mask = 1
+monitoring = true
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZones/KillTop"]
+shape = SubResource("Shape_kill_top")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="SpawnP1" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(450.0, 300.0)
+
+[node name="SpawnP2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(830.0, 300.0)

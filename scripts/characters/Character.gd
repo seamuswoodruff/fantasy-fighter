@@ -20,6 +20,7 @@ var is_blocking: bool = false
 var is_attacking: bool = false
 var facing_right: bool = true
 var is_invincible: bool = false
+var respawn_position: Vector2 = Vector2(640.0, 300.0)
 
 # ── Physics constants ─────────────────────────────────────────────────────────
 const GRAVITY: float = 800.0
@@ -336,26 +337,25 @@ func die() -> void:
 	hitbox_heavy.monitoring = false
 	is_attacking = false
 	is_blocking = false
+	velocity = Vector2.ZERO
 	stocks -= 1
 	print("[Character] P%d died — %d stocks remaining" % [player_id, stocks])
 	change_state(State.DEAD)
 	is_invincible = true
+	GameManager.on_player_death(player_id)
 
 	if stocks > 0:
 		get_tree().create_timer(1.5).timeout.connect(respawn)
-	# stocks == 0 → Phase 5 GameManager handles elimination
 
 func respawn() -> void:
 	if stocks <= 0:
 		return
-	# Placeholder spawn positions — will be replaced in Phase 4 with Marker2D
-	var spawn_x := 380.0 if player_id == 1 else 900.0
-	global_position = Vector2(spawn_x, 300.0)
+	global_position = respawn_position
 	current_hp = max_hp
 	velocity = Vector2.ZERO
 	_invincibility_timer = 2.0
 	is_invincible = true
 	change_state(State.IDLE)
-	print("[Character] P%d respawned at (%.0f, 300) — %.0f HP, 2s invincibility" % [
-		player_id, spawn_x, max_hp
+	print("[Character] P%d respawned at %v — %.0f HP, 2s invincibility" % [
+		player_id, respawn_position, max_hp
 	])
