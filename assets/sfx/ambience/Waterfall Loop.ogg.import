@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://bx2gaisjsn7vx"
+path="res://.godot/imported/Waterfall Loop.ogg-e2fb82474af23aa5839c59d1a0159a5d.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sfx/ambience/Waterfall Loop.ogg"
+dest_files=["res://.godot/imported/Waterfall Loop.ogg-e2fb82474af23aa5839c59d1a0159a5d.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

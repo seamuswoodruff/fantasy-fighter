@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bbdou534tu6ds"
+path="res://.godot/imported/Dirt Chain Run 1.wav-caeb7e0fb38e1d3400d9fa9cf04f2cd9.sample"
+
+[deps]
+
+source_file="res://assets/sfx/footsteps/Dirt Chain Run 1.wav"
+dest_files=["res://.godot/imported/Dirt Chain Run 1.wav-caeb7e0fb38e1d3400d9fa9cf04f2cd9.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

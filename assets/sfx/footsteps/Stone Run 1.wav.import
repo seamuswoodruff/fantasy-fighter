@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://3glnn5o5xc74"
+path="res://.godot/imported/Stone Run 1.wav-612ba989f73e2619c28d0b3f3a3b8a2e.sample"
+
+[deps]
+
+source_file="res://assets/sfx/footsteps/Stone Run 1.wav"
+dest_files=["res://.godot/imported/Stone Run 1.wav-612ba989f73e2619c28d0b3f3a3b8a2e.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

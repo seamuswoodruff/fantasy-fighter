@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://ckilqt3a8noun"
+path="res://.godot/imported/Forest Day.ogg-866bc95d3e5b6a70f165dbbbf86eb10d.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sfx/ambience/Forest Day.ogg"
+dest_files=["res://.godot/imported/Forest Day.ogg-866bc95d3e5b6a70f165dbbbf86eb10d.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

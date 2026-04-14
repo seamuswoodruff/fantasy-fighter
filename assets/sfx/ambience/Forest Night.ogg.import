@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cwgq6t47iwryb"
+path="res://.godot/imported/Forest Night.ogg-f8c78368e217f6400a44eac898fe2e8b.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sfx/ambience/Forest Night.ogg"
+dest_files=["res://.godot/imported/Forest Night.ogg-f8c78368e217f6400a44eac898fe2e8b.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

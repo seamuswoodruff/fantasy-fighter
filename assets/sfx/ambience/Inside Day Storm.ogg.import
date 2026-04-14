@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://fycb4gi3mgbf"
+path="res://.godot/imported/Inside Day Storm.ogg-e3f234f67dd61340e3b7e996abd27b43.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sfx/ambience/Inside Day Storm.ogg"
+dest_files=["res://.godot/imported/Inside Day Storm.ogg-e3f234f67dd61340e3b7e996abd27b43.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
