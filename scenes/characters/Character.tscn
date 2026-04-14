@@ -1,0 +1,59 @@
+[gd_scene load_steps=6 format=3 uid="uid://charbase_p2"]
+
+[ext_resource type="Script" path="res://scripts/characters/Character.gd" id="1_script"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
+radius = 16.0
+height = 64.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hurt"]
+radius = 18.0
+height = 68.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hitL"]
+size = Vector2(50.0, 24.0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hitH"]
+size = Vector2(62.0, 30.0)
+
+[node name="Character" type="CharacterBody2D"]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_body")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+
+[node name="Placeholder" type="ColorRect" parent="."]
+offset_left = -16.0
+offset_top = -48.0
+offset_right = 16.0
+offset_bottom = 48.0
+color = Color(0.2, 0.5, 1.0, 0.85)
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CapsuleShape2D_hurt")
+
+[node name="HitboxLight" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 2
+monitoring = false
+
+[node name="HitboxLightShape" type="CollisionShape2D" parent="HitboxLight"]
+position = Vector2(42.0, -16.0)
+shape = SubResource("RectangleShape2D_hitL")
+
+[node name="HitboxHeavy" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 2
+monitoring = false
+
+[node name="HitboxHeavyShape" type="CollisionShape2D" parent="HitboxHeavy"]
+position = Vector2(48.0, -16.0)
+shape = SubResource("RectangleShape2D_hitH")

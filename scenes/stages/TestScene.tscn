@@ -1,0 +1,48 @@
+[gd_scene load_steps=4 format=3 uid="uid://testscene_p2"]
+
+[ext_resource type="PackedScene" path="res://scenes/characters/Character.tscn" id="1_char"]
+[ext_resource type="Script" path="res://scripts/stages/TestScene.gd" id="2_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(1280.0, 40.0)
+
+[node name="TestScene" type="Node2D"]
+script = ExtResource("2_script")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.08, 0.08, 0.15, 1.0)
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(640.0, 660.0)
+collision_layer = 1
+collision_mask = 1
+
+[node name="GroundShape" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="GroundVisual" type="ColorRect" parent="Ground"]
+offset_left = -640.0
+offset_top = -20.0
+offset_right = 640.0
+offset_bottom = 20.0
+color = Color(0.35, 0.25, 0.15, 1.0)
+
+[node name="Player1" parent="." instance=ExtResource("1_char")]
+position = Vector2(380.0, 400.0)
+player_id = 1
+
+[node name="Player2" parent="." instance=ExtResource("1_char")]
+position = Vector2(900.0, 400.0)
+player_id = 2
+
+[node name="DebugLabel" type="Label" parent="."]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 700.0
+offset_bottom = 36.0
+text = "Phase 2 — P1: WASD+Space | P2: Arrows+Num0 | double jump + coyote time"
