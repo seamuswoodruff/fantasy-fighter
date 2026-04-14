@@ -25,6 +25,7 @@ script = ExtResource("1_script")
 shape = SubResource("CapsuleShape2D_body")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0.0, -32.0)
 
 [node name="Placeholder" type="ColorRect" parent="."]
 offset_left = -16.0
