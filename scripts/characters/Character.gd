@@ -183,11 +183,21 @@ func _update_facing() -> void:
 	if _is_locked():
 		return
 	if velocity.x > 10.0:
-		facing_right = true
-		scale.x = absf(scale.x)
+		_set_facing(true)
 	elif velocity.x < -10.0:
-		facing_right = false
-		scale.x = -absf(scale.x)
+		_set_facing(false)
+
+func _set_facing(right: bool) -> void:
+	if facing_right == right:
+		return
+	facing_right = right
+	sprite.flip_h = not facing_right
+	# Mirror hitbox x-positions so attacks always land in front of the character
+	var sign_x := 1.0 if facing_right else -1.0
+	var hl := $HitboxLight/HitboxLightShape as CollisionShape2D
+	var hh := $HitboxHeavy/HitboxHeavyShape as CollisionShape2D
+	hl.position.x = absf(hl.position.x) * sign_x
+	hh.position.x = absf(hh.position.x) * sign_x
 
 # ── State machine ─────────────────────────────────────────────────────────────
 func _update_state() -> void:
