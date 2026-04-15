@@ -286,11 +286,11 @@ func _apply_hit(area: Area2D, damage: float, is_heavy: bool) -> void:
 		return
 	var dir := Vector2(1.0 if facing_right else -1.0, -0.5 if is_heavy else -0.25).normalized()
 	target.take_damage(damage, dir, is_heavy)
-	# Disable hitbox after landing a hit to prevent multi-hit on same swing
+	# Disable hitbox after landing a hit — use set_deferred because we're inside a signal callback
 	if is_heavy:
-		hitbox_heavy.monitoring = false
+		hitbox_heavy.set_deferred("monitoring", false)
 	else:
-		hitbox_light.monitoring = false
+		hitbox_light.set_deferred("monitoring", false)
 
 # ── Combat ────────────────────────────────────────────────────────────────────
 func attack_light() -> void:
