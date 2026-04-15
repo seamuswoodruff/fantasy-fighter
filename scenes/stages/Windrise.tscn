@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://windrise_scene_p4"]
+[gd_scene load_steps=12 format=3 uid="uid://windrise_scene_p4"]
 
 [ext_resource type="Texture2D" uid="uid://be65otnv6f6nf" path="res://assets/stages/windrise/background/windrise-background.png" id="1_bg"]
 [ext_resource type="Texture2D" uid="uid://bnc5kkj086836" path="res://assets/stages/windrise/background/mountains.png" id="2_mountains"]
@@ -7,14 +7,11 @@
 [ext_resource type="Texture2D" uid="uid://bta6eyxhg5o78" path="res://assets/stages/windrise/foreground/decors.png" id="5_decors"]
 [ext_resource type="Script" uid="uid://windrise_gd_p4" path="res://scripts/stages/Windrise.gd" id="6_script"]
 
-[sub_resource type="RectangleShape2D" id="Shape_ground"]
-size = Vector2(450.0, 280.0)
+[sub_resource type="RectangleShape2D" id="Shape_left_ground"]
+size = Vector2(528.0, 32.0)
 
 [sub_resource type="RectangleShape2D" id="Shape_float"]
-size = Vector2(220.0, 24.0)
-
-[sub_resource type="RectangleShape2D" id="Shape_top"]
-size = Vector2(220.0, 24.0)
+size = Vector2(260.0, 24.0)
 
 [sub_resource type="RectangleShape2D" id="Shape_kill_bottom"]
 size = Vector2(2400.0, 200.0)
@@ -69,37 +66,47 @@ scale = Vector2(3.5, 3.5)
 [node name="Platforms" type="Node2D" parent="."]
 
 [node name="LeftGround" type="StaticBody2D" parent="Platforms"]
-position = Vector2(225.0, 560.0)
+position = Vector2(264.0, 476.0)
 collision_layer = 1
 collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/LeftGround"]
-shape = SubResource("Shape_ground")
+shape = SubResource("Shape_left_ground")
 
-[node name="Sprite2D" type="Sprite2D" parent="Platforms/LeftGround"]
+[node name="IslandA" type="Sprite2D" parent="Platforms/LeftGround"]
 texture = ExtResource("4_platforms")
 region_enabled = true
 region_rect = Rect2(0, 0, 264, 290)
-position = Vector2(0.0, 5.0)
-scale = Vector2(1.705, 1.0)
+position = Vector2(-132.0, 129.0)
+
+[node name="IslandB" type="Sprite2D" parent="Platforms/LeftGround"]
+texture = ExtResource("4_platforms")
+region_enabled = true
+region_rect = Rect2(0, 0, 264, 290)
+position = Vector2(132.0, 129.0)
 
 [node name="RightGround" type="StaticBody2D" parent="Platforms"]
-position = Vector2(1055.0, 560.0)
+position = Vector2(1016.0, 476.0)
 collision_layer = 1
 collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/RightGround"]
-shape = SubResource("Shape_ground")
+shape = SubResource("Shape_left_ground")
 
-[node name="Sprite2D" type="Sprite2D" parent="Platforms/RightGround"]
+[node name="IslandA" type="Sprite2D" parent="Platforms/RightGround"]
 texture = ExtResource("4_platforms")
 region_enabled = true
 region_rect = Rect2(0, 0, 264, 290)
-position = Vector2(0.0, 5.0)
-scale = Vector2(1.705, 1.0)
+position = Vector2(-132.0, 129.0)
+
+[node name="IslandB" type="Sprite2D" parent="Platforms/RightGround"]
+texture = ExtResource("4_platforms")
+region_enabled = true
+region_rect = Rect2(0, 0, 264, 290)
+position = Vector2(132.0, 129.0)
 
 [node name="LeftFloat" type="StaticBody2D" parent="Platforms"]
-position = Vector2(390.0, 330.0)
+position = Vector2(395.0, 322.0)
 collision_layer = 1
 collision_mask = 1
 
@@ -110,11 +117,10 @@ shape = SubResource("Shape_float")
 texture = ExtResource("4_platforms")
 region_enabled = true
 region_rect = Rect2(266, 58, 260, 114)
-position = Vector2(0.0, 37.0)
-scale = Vector2(0.833, 0.833)
+position = Vector2(0.0, 46.0)
 
 [node name="RightFloat" type="StaticBody2D" parent="Platforms"]
-position = Vector2(890.0, 330.0)
+position = Vector2(885.0, 322.0)
 collision_layer = 1
 collision_mask = 1
 
@@ -125,23 +131,21 @@ shape = SubResource("Shape_float")
 texture = ExtResource("4_platforms")
 region_enabled = true
 region_rect = Rect2(266, 58, 260, 114)
-position = Vector2(0.0, 37.0)
-scale = Vector2(0.833, 0.833)
+position = Vector2(0.0, 46.0)
 
 [node name="TopCenter" type="StaticBody2D" parent="Platforms"]
-position = Vector2(640.0, 185.0)
+position = Vector2(640.0, 170.0)
 collision_layer = 1
 collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/TopCenter"]
-shape = SubResource("Shape_top")
+shape = SubResource("Shape_float")
 
 [node name="Sprite2D" type="Sprite2D" parent="Platforms/TopCenter"]
 texture = ExtResource("4_platforms")
 region_enabled = true
 region_rect = Rect2(266, 58, 260, 114)
-position = Vector2(0.0, 37.0)
-scale = Vector2(0.833, 0.833)
+position = Vector2(0.0, 46.0)
 
 [node name="KillZones" type="Node2D" parent="."]
 
@@ -188,7 +192,7 @@ shape = SubResource("Shape_kill_top")
 [node name="SpawnPoints" type="Node2D" parent="."]
 
 [node name="SpawnP1" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(225.0, 370.0)
+position = Vector2(264.0, 410.0)
 
 [node name="SpawnP2" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(1055.0, 370.0)
+position = Vector2(1016.0, 410.0)
