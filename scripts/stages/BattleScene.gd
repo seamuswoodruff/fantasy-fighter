@@ -1,9 +1,10 @@
-# BattleScene.gd — Phase 4 battle scene controller
+# BattleScene.gd — Phase 6 battle scene controller (adds HUD wiring)
 extends Node2D
 
 @onready var stage = $Stage
 @onready var player1: Character = $Players/Player1
 @onready var player2: Character = $Players/Player2
+@onready var hud = $HUD
 
 func _ready() -> void:
 	var sp1: Marker2D = stage.get_node("SpawnPoints/SpawnP1")
@@ -18,7 +19,10 @@ func _ready() -> void:
 	GameManager.selected_stage = "Windrise"
 	GameManager.start_match()
 
-	print("[BattleScene] Phase 4 — Windrise | P1@%v  P2@%v" % [player1.global_position, player2.global_position])
+	# Wire HUD to both player characters so it can poll HP
+	hud.set_characters(player1, player2)
+
+	print("[BattleScene] Phase 6 — Windrise | P1@%v  P2@%v | HUD wired" % [player1.global_position, player2.global_position])
 
 func _on_kill_zone_entered(body: Node) -> void:
 	if not (body is Character):
