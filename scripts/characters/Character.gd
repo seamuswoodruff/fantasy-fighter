@@ -94,6 +94,8 @@ func _physics_process(delta: float) -> void:
 func _tick_timers(delta: float) -> void:
 	if _hitstun_timer > 0.0:
 		_hitstun_timer -= delta
+		if _hitstun_timer <= 0.0 and state == State.HURT:
+			change_state(State.IDLE)
 
 	if _invincibility_timer > 0.0:
 		_invincibility_timer -= delta
@@ -192,8 +194,10 @@ func _set_facing(right: bool) -> void:
 		return
 	facing_right = right
 	sprite.flip_h = not facing_right
-	# Mirror hitbox x-positions so attacks always land in front of the character
+	# Mirror sprite x offset so it stays centred regardless of direction
 	var sign_x := 1.0 if facing_right else -1.0
+	sprite.position.x = absf(sprite.position.x) * sign_x
+	# Mirror hitbox x-positions so attacks always land in front of the character
 	var hl := $HitboxLight/HitboxLightShape as CollisionShape2D
 	var hh := $HitboxHeavy/HitboxHeavyShape as CollisionShape2D
 	hl.position.x = absf(hl.position.x) * sign_x
@@ -284,11 +288,11 @@ func _apply_hit(area: Area2D, damage: float, is_heavy: bool) -> void:
 	var target = area.get_parent()
 	if not (target is Character) or target == self:
 		return
-	var dir := Vector2(1.0 if facing_right else -1.0, -0.5 if is_heavy else -0.25).normalized()
-	target.take_damage(damage, dir, is_heavy)
+	target.take_damage(damage, global_position, is_heavy)
 	# Disable hitbox after landing a hit — use set_deferred because we're inside a signal callback
 	if is_heavy:
 		hitbox_heavy.set_deferred("monitoring", false)
+		_trigger_screen_freeze(0.1)
 	else:
 		hitbox_light.set_deferred("monitoring", false)
 
@@ -310,7 +314,7 @@ func attack_heavy() -> void:
 func special_attack() -> void:
 	pass  # Override in Warrior / Wizard / Samurai
 
-func take_damage(amount: float, knockback_dir: Vector2, is_heavy: bool) -> void:
+func take_damage(amount: float, attacker_pos: Vector2, is_heavy: bool) -> void:
 	if is_invincible or state == State.DEAD:
 		return
 
@@ -319,9 +323,13 @@ func take_damage(amount: float, knockback_dir: Vector2, is_heavy: bool) -> void:
 	current_hp -= actual_damage
 	current_hp = maxf(current_hp, 0.0)
 
-	# Apply knockback impulse
-	var kb_base := 700.0 if is_heavy else 400.0
-	velocity = knockback_dir * kb_base * knockback_multiplier
+	# Apply knockback impulse — fixed values per spec (not Smash-style scaling)
+	var direction: float = signf(global_position.x - attacker_pos.x)
+	if direction == 0.0:
+		direction = 1.0  # default push right if perfectly aligned
+	var kb_velocity := Vector2(direction * 350.0, -200.0) if is_heavy \
+		else Vector2(direction * 200.0, -120.0)
+	velocity = kb_velocity * knockback_multiplier
 
 	print("[Character] P%d took %.0f dmg (%.0f HP left)%s" % [
 		player_id, actual_damage, current_hp,
@@ -331,8 +339,8 @@ func take_damage(amount: float, knockback_dir: Vector2, is_heavy: bool) -> void:
 	if current_hp <= 0.0:
 		die()
 	else:
-		# Enter hitstun
-		var hitstun := 0.18 if is_heavy else 0.09
+		# Enter hitstun — timer-driven exit (not animation_finished) to avoid freeze bug
+		var hitstun := 1.2 if is_heavy else 0.5
 		_hitstun_timer = hitstun
 		hitbox_light.monitoring = false
 		hitbox_heavy.monitoring = false
@@ -355,17 +363,31 @@ func die() -> void:
 	GameManager.on_player_death(player_id)
 
 	if stocks > 0:
-		get_tree().create_timer(1.5).timeout.connect(respawn)
+		# Disable physics + hide while waiting to respawn
+		process_mode = Node.PROCESS_MODE_DISABLED
+		hide()
+		get_tree().create_timer(1.5, true).timeout.connect(respawn)
 
 func respawn() -> void:
 	if stocks <= 0:
 		return
+	# Re-enable before moving so the character appears at the correct spawn point
+	process_mode = Node.PROCESS_MODE_INHERIT
+	show()
 	global_position = respawn_position
 	current_hp = max_hp
 	velocity = Vector2.ZERO
 	_invincibility_timer = 2.0
 	is_invincible = true
 	change_state(State.IDLE)
-	print("[Character] P%d respawned at %v — %.0f HP, 2s invincibility" % [
+	print("[Character] P%d respawned at %v — %.0f HP, 2s i-frames" % [
 		player_id, respawn_position, max_hp
 	])
+
+# ── Screen freeze ─────────────────────────────────────────────────────────────
+func _trigger_screen_freeze(duration: float) -> void:
+	Engine.time_scale = 0.0
+	# ignore_time_scale=true so the timer fires even while time is frozen
+	get_tree().create_timer(duration, true, false, true).timeout.connect(
+		func() -> void: Engine.time_scale = 1.0
+	)
