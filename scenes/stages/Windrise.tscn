@@ -61,10 +61,10 @@ texture = ExtResource("6_atlas")
 sources/0 = SubResource("TileSetAtlasSource_1")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lg"]
-size = Vector2(704, 32)
+size = Vector2(645, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rg"]
-size = Vector2(448, 32)
+size = Vector2(303, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cf"]
 size = Vector2(384, 32)
@@ -127,23 +127,22 @@ layer_0/tile_data = PackedInt32Array(720896, 0, 1, 720897, 65536, 1, 720898, 131
 
 [node name="LeftGround" type="StaticBody2D" parent="Platforms" unique_id=100000001]
 position = Vector2(352, 656)
-collision_layer = 1
 collision_mask = 0
 
 [node name="LeftGroundShape" type="CollisionShape2D" parent="Platforms/LeftGround" unique_id=100000002]
+position = Vector2(-29.5, 0)
 shape = SubResource("RectangleShape2D_lg")
 
 [node name="RightGround" type="StaticBody2D" parent="Platforms" unique_id=100000003]
 position = Vector2(1120, 656)
-collision_layer = 1
 collision_mask = 0
 
 [node name="RightGroundShape" type="CollisionShape2D" parent="Platforms/RightGround" unique_id=100000004]
+position = Vector2(-51.5, 0)
 shape = SubResource("RectangleShape2D_rg")
 
 [node name="CenterFloat" type="StaticBody2D" parent="Platforms" unique_id=100000005]
 position = Vector2(768, 272)
-collision_layer = 1
 collision_mask = 0
 
 [node name="CenterFloatShape" type="CollisionShape2D" parent="Platforms/CenterFloat" unique_id=100000006]
@@ -151,7 +150,6 @@ shape = SubResource("RectangleShape2D_cf")
 
 [node name="LeftFloat" type="StaticBody2D" parent="Platforms" unique_id=100000007]
 position = Vector2(384, 464)
-collision_layer = 1
 collision_mask = 0
 
 [node name="LeftFloatShape" type="CollisionShape2D" parent="Platforms/LeftFloat" unique_id=100000008]
@@ -162,8 +160,6 @@ shape = SubResource("RectangleShape2D_lf")
 [node name="KillBottom" type="Area2D" parent="KillZones" unique_id=100000009]
 position = Vector2(640, 850)
 collision_layer = 8
-collision_mask = 1
-monitoring = true
 monitorable = false
 
 [node name="KillBottomShape" type="CollisionShape2D" parent="KillZones/KillBottom" unique_id=100000010]
@@ -172,8 +168,6 @@ shape = SubResource("RectangleShape2D_kb")
 [node name="KillLeft" type="Area2D" parent="KillZones" unique_id=100000011]
 position = Vector2(-250, 360)
 collision_layer = 8
-collision_mask = 1
-monitoring = true
 monitorable = false
 
 [node name="KillLeftShape" type="CollisionShape2D" parent="KillZones/KillLeft" unique_id=100000012]
@@ -182,8 +176,6 @@ shape = SubResource("RectangleShape2D_kl")
 [node name="KillRight" type="Area2D" parent="KillZones" unique_id=100000013]
 position = Vector2(1530, 360)
 collision_layer = 8
-collision_mask = 1
-monitoring = true
 monitorable = false
 
 [node name="KillRightShape" type="CollisionShape2D" parent="KillZones/KillRight" unique_id=100000014]
@@ -192,11 +184,10 @@ shape = SubResource("RectangleShape2D_kr")
 [node name="KillTop" type="Area2D" parent="KillZones" unique_id=100000015]
 position = Vector2(640, -300)
 collision_layer = 8
-collision_mask = 1
-monitoring = true
 monitorable = false
 
 [node name="KillTopShape" type="CollisionShape2D" parent="KillZones/KillTop" unique_id=100000016]
+position = Vector2(-10, -160)
 shape = SubResource("RectangleShape2D_kt")
 
 [node name="SpawnPoints" type="Node2D" parent="." unique_id=2132843366]

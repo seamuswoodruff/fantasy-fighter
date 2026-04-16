@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://testbattlescene_v1"]
+
+[ext_resource type="Script" path="res://scripts/stages/TestBattleScene.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/stages/TestStage.tscn" id="2_teststage"]
+[ext_resource type="PackedScene" path="res://scenes/characters/Knight1.tscn" id="3_knight"]
+
+[node name="TestBattleScene" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="TestStage" parent="." instance=ExtResource("2_teststage")]
+
+[node name="Players" type="Node2D" parent="."]
+
+[node name="Player1" parent="Players" instance=ExtResource("3_knight")]
+player_id = 1
+
+[node name="Player2" parent="Players" instance=ExtResource("3_knight")]
+player_id = 2

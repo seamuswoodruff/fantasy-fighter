@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://teststage_v1"]
+
+[ext_resource type="Script" path="res://scripts/stages/TestStage.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="GroundShape"]
+size = Vector2(1200, 30)
+
+[sub_resource type="RectangleShape2D" id="FloatShape"]
+size = Vector2(320, 20)
+
+[sub_resource type="RectangleShape2D" id="KillShapeBottom"]
+size = Vector2(3000, 40)
+
+[sub_resource type="RectangleShape2D" id="KillShapeLeft"]
+size = Vector2(40, 3000)
+
+[sub_resource type="RectangleShape2D" id="KillShapeRight"]
+size = Vector2(40, 3000)
+
+[node name="TestStage" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.12, 0.14, 0.2, 1)
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(640, 560)
+
+[node name="GroundCollision" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("GroundShape")
+
+[node name="GroundViz" type="ColorRect" parent="Ground"]
+offset_left = -600.0
+offset_top = -15.0
+offset_right = 600.0
+offset_bottom = 15.0
+color = Color(0.25, 0.6, 0.2, 1)
+
+[node name="FloatPlatform" type="StaticBody2D" parent="."]
+position = Vector2(640, 370)
+
+[node name="FloatCollision" type="CollisionShape2D" parent="FloatPlatform"]
+shape = SubResource("FloatShape")
+
+[node name="FloatViz" type="ColorRect" parent="FloatPlatform"]
+offset_left = -160.0
+offset_top = -10.0
+offset_right = 160.0
+offset_bottom = 10.0
+color = Color(0.25, 0.6, 0.2, 1)
+
+[node name="KillZoneBottom" type="Area2D" parent="."]
+position = Vector2(640, 800)
+collision_mask = 1
+monitorable = false
+
+[node name="KillShapeBottom" type="CollisionShape2D" parent="KillZoneBottom"]
+shape = SubResource("KillShapeBottom")
+
+[node name="KillZoneLeft" type="Area2D" parent="."]
+position = Vector2(-100, 360)
+collision_mask = 1
+monitorable = false
+
+[node name="KillShapeLeft" type="CollisionShape2D" parent="KillZoneLeft"]
+shape = SubResource("KillShapeLeft")
+
+[node name="KillZoneRight" type="Area2D" parent="."]
+position = Vector2(1380, 360)
+collision_mask = 1
+monitorable = false
+
+[node name="KillShapeRight" type="CollisionShape2D" parent="KillZoneRight"]
+shape = SubResource("KillShapeRight")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="SpawnP1" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(300, 420)
+
+[node name="SpawnP2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(980, 420)
