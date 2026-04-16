@@ -321,7 +321,9 @@ func take_damage(amount: float, attacker_pos: Vector2, is_heavy: bool) -> void:
 	# Blocking reduces damage by 60%
 	var actual_damage := amount * 0.4 if is_blocking else amount
 	current_hp -= actual_damage
-	current_hp = maxf(current_hp, 0.0)
+	# Snap sub-1 HP to exactly 0 so the bar fully empties on the killing hit
+	if current_hp < 1.0:
+		current_hp = 0.0
 
 	# Apply knockback impulse — fixed values per spec (not Smash-style scaling)
 	var direction: float = signf(global_position.x - attacker_pos.x)
@@ -351,6 +353,9 @@ func take_damage(amount: float, attacker_pos: Vector2, is_heavy: bool) -> void:
 func die() -> void:
 	if state == State.DEAD:
 		return
+	# Set DEAD immediately — prevents a second kill-zone body_entered (fired in the
+	# same physics frame before either callback runs) from also calling die().
+	change_state(State.DEAD)
 	hitbox_light.monitoring = false
 	hitbox_heavy.monitoring = false
 	is_attacking = false
@@ -358,15 +363,16 @@ func die() -> void:
 	velocity = Vector2.ZERO
 	stocks -= 1
 	print("[Character] P%d died — %d stocks remaining" % [player_id, stocks])
-	change_state(State.DEAD)
 	is_invincible = true
 	GameManager.on_player_death(player_id)
 
 	if stocks > 0:
-		# Let the death animation play (~0.7s), then hide + disable physics
-		# while the remaining respawn wait finishes. Total: 1.5s until respawn.
+		# Let the death animation play (~0.7s), then move to respawn position
+		# before disabling physics — this prevents the body from sitting inside
+		# a kill zone while frozen, which would re-fire body_entered on re-enable.
 		get_tree().create_timer(0.7, true).timeout.connect(func() -> void:
 			if state == State.DEAD:
+				global_position = respawn_position
 				process_mode = Node.PROCESS_MODE_DISABLED
 				hide()
 		)

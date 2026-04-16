@@ -28,7 +28,9 @@ func _on_kill_zone_entered(body: Node) -> void:
 	if not (body is Character):
 		return
 	var character := body as Character
-	if character.state == Character.State.DEAD:
+	# is_invincible covers both the post-respawn i-frame window and the case where
+	# physics re-fires body_entered after process_mode is re-enabled in respawn()
+	if character.state == Character.State.DEAD or character.is_invincible:
 		return
 	print("[BattleScene] P%d entered kill zone — triggering die()" % character.player_id)
 	character.die()

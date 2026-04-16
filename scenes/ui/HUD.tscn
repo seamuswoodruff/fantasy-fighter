@@ -1,7 +1,147 @@
-[gd_scene load_steps=2 format=3 uid="uid://hud_scene_p6"]
+[gd_scene format=3 uid="uid://cswi27f80sg1q"]
 
-[ext_resource type="Script" uid="uid://hud_gd_p6" path="res://scripts/ui/HUD.gd" id="1_hud_script"]
+[ext_resource type="Script" uid="uid://d0l3ucjcja20q" path="res://scripts/ui/HUD.gd" id="1_hud_script"]
+[ext_resource type="Texture2D" uid="uid://bhhnx3mjdvx0p" path="res://assets/ui/hud/greenbar_1.png" id="2_green"]
 
-[node name="HUD" type="CanvasLayer"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_border"]
+bg_color = Color(0, 0, 0, 0)
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+
+[node name="HUD" type="CanvasLayer" unique_id=1891583749]
 layer = 10
 script = ExtResource("1_hud_script")
+
+[node name="P1Bar" type="TextureProgressBar" parent="." unique_id=64444865]
+texture_filter = 1
+anchors_preset = -1
+anchor_right = 0.18400002
+anchor_bottom = 0.089
+offset_left = 2.0
+offset_top = -23.0
+offset_right = 2.4799805
+offset_bottom = 190.92
+value = 100.0
+nine_patch_stretch = true
+texture_progress = ExtResource("2_green")
+
+[node name="P1BarTrough" type="ColorRect" parent="P1Bar" unique_id=410000001]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.90000004
+anchor_bottom = 0.397
+offset_left = 9.0
+offset_top = 33.0
+offset_right = -12.400009
+offset_bottom = -41.366005
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.50980395, 0.08627451, 0.17254902, 1)
+
+[node name="P1BarBorder" type="Panel" parent="P1Bar" unique_id=410000002]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.021000002
+anchor_top = 0.104
+anchor_right = 0.86600006
+anchor_bottom = 0.25500003
+offset_left = 2.0439997
+offset_top = 2.0879993
+offset_right = -2.376007
+offset_bottom = 0.10999298
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_border")
+
+[node name="P1Heart0" type="TextureRect" parent="." unique_id=410000003]
+texture_filter = 1
+offset_left = 130.0
+offset_top = 50.0
+offset_right = 151.0
+offset_bottom = 71.0
+stretch_mode = 5
+
+[node name="P1Heart1" type="TextureRect" parent="." unique_id=410000004]
+texture_filter = 1
+offset_left = 157.0
+offset_top = 50.0
+offset_right = 178.0
+offset_bottom = 71.0
+stretch_mode = 5
+
+[node name="P1Heart2" type="TextureRect" parent="." unique_id=410000005]
+texture_filter = 1
+offset_left = 183.0
+offset_top = 50.0
+offset_right = 204.0
+offset_bottom = 71.0
+stretch_mode = 5
+
+[node name="P2Bar" type="TextureProgressBar" parent="." unique_id=1692039726]
+texture_filter = 1
+offset_left = 1069.0
+offset_top = -27.0
+offset_right = 1303.0
+offset_bottom = 265.0
+value = 100.0
+nine_patch_stretch = true
+texture_progress = ExtResource("2_green")
+
+[node name="P2BarTrough" type="ColorRect" parent="P2Bar" unique_id=410000006]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.90700006
+anchor_bottom = 0.35000002
+offset_left = 6.0
+offset_top = 36.0
+offset_right = -11.238022
+offset_bottom = -32.200005
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.51061034, 0.087704845, 0.17134678, 1)
+
+[node name="P2BarBorder" type="Panel" parent="P2Bar" unique_id=410000007]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.09
+anchor_right = 0.90000004
+anchor_bottom = 0.24700001
+offset_left = 4.0
+offset_top = 7.7199993
+offset_right = -7.600006
+offset_bottom = -0.12400055
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_border")
+
+[node name="P2Heart0" type="TextureRect" parent="." unique_id=410000008]
+texture_filter = 1
+offset_left = 1119.0
+offset_top = 47.0
+offset_right = 1140.0
+offset_bottom = 68.0
+stretch_mode = 5
+
+[node name="P2Heart1" type="TextureRect" parent="." unique_id=410000009]
+texture_filter = 1
+offset_left = 1096.0
+offset_top = 47.0
+offset_right = 1117.0
+offset_bottom = 68.0
+stretch_mode = 5
+
+[node name="P2Heart2" type="TextureRect" parent="." unique_id=410000010]
+texture_filter = 1
+offset_left = 1073.0
+offset_top = 47.0
+offset_right = 1094.0
+offset_bottom = 68.0
+stretch_mode = 5
