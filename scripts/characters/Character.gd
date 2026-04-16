@@ -363,9 +363,13 @@ func die() -> void:
 	GameManager.on_player_death(player_id)
 
 	if stocks > 0:
-		# Disable physics + hide while waiting to respawn
-		process_mode = Node.PROCESS_MODE_DISABLED
-		hide()
+		# Let the death animation play (~0.7s), then hide + disable physics
+		# while the remaining respawn wait finishes. Total: 1.5s until respawn.
+		get_tree().create_timer(0.7, true).timeout.connect(func() -> void:
+			if state == State.DEAD:
+				process_mode = Node.PROCESS_MODE_DISABLED
+				hide()
+		)
 		get_tree().create_timer(1.5, true).timeout.connect(respawn)
 
 func respawn() -> void:
