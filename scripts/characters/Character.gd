@@ -19,6 +19,7 @@ var stocks: int = 3
 var is_blocking: bool = false
 var is_attacking: bool = false
 var facing_right: bool = true
+var spawn_facing_right: bool = true  # restored on every respawn
 var is_invincible: bool = false
 var respawn_position: Vector2 = Vector2(640.0, 300.0)
 
@@ -389,6 +390,7 @@ func respawn() -> void:
 	velocity = Vector2.ZERO
 	_invincibility_timer = 2.0
 	is_invincible = true
+	_set_facing(spawn_facing_right)
 	change_state(State.IDLE)
 	print("[Character] P%d respawned at %v — %.0f HP, 2s i-frames" % [
 		player_id, respawn_position, max_hp

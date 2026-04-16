@@ -15,6 +15,9 @@ func _ready() -> void:
 	player2.global_position = sp2.global_position
 	player2.respawn_position = sp2.global_position
 
+	player2.spawn_facing_right = false
+	player2._set_facing(false)
+
 	stage.body_entered_kill_zone.connect(_on_kill_zone_entered)
 	GameManager.selected_stage = "Windrise"
 	GameManager.start_match()

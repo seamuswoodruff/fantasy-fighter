@@ -12,7 +12,7 @@ character_name = "Knight"
 position = Vector2(0, 0)
 
 [node name="AnimatedSprite2D" parent="." index="1"]
-position = Vector2(-94, -16)
+position = Vector2(16, -26)
 sprite_frames = ExtResource("3_frames")
 animation = &"run"
 autoplay = "idle"
@@ -29,10 +29,10 @@ position = Vector2(0, 0)
 position = Vector2(2, 1)
 
 [node name="HitboxLightShape" parent="HitboxLight" index="0"]
-position = Vector2(42, -50)
+position = Vector2(42, -10)
 
 [node name="HitboxHeavy" parent="." index="5"]
 position = Vector2(2, -2)
 
 [node name="HitboxHeavyShape" parent="HitboxHeavy" index="0"]
-position = Vector2(48, -50)
+position = Vector2(48, -10)
