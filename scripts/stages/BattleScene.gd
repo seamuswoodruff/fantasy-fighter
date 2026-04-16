@@ -1,5 +1,17 @@
-# BattleScene.gd — Phase 6 battle scene controller (adds HUD wiring)
+# BattleScene.gd — Phase 7: adds stage music and ambience
 extends Node2D
+
+const WINDRISE_MUSIC := [
+	"res://assets/music/PerituneMaterial_Prairie3_loop.ogg",
+	"res://assets/music/PerituneMaterial_Prairie4_loop.ogg",
+	"res://assets/music/PerituneMaterial_Prairie5_loop.ogg",
+	"res://assets/music/PerituneMaterial_BattleField_loop.ogg",
+	"res://assets/music/PerituneMaterial_BattleField2_loop.ogg",
+	"res://assets/music/PerituneMaterial_BattleField3_loop.ogg",
+	"res://assets/music/PerituneMaterial_BattleField4_loop.ogg",
+	"res://assets/music/PerituneMaterial_BattleField5_loop.ogg",
+	"res://assets/music/PerituneMaterial_EpicBattle_loop.ogg",
+]
 
 @onready var stage = $Stage
 @onready var player1: Character = $Players/Player1
@@ -25,7 +37,11 @@ func _ready() -> void:
 	# Wire HUD to both player characters so it can poll HP
 	hud.set_characters(player1, player2)
 
-	print("[BattleScene] Phase 6 — Windrise | P1@%v  P2@%v | HUD wired" % [player1.global_position, player2.global_position])
+	# Stage audio
+	AudioManager.play_music(WINDRISE_MUSIC[randi() % WINDRISE_MUSIC.size()])
+	AudioManager.play_ambience("res://assets/sfx/ambience/Forest Day.ogg")
+
+	print("[BattleScene] Phase 7 — Windrise | P1@%v  P2@%v | HUD + audio wired" % [player1.global_position, player2.global_position])
 
 func _on_kill_zone_entered(body: Node) -> void:
 	if not (body is Character):

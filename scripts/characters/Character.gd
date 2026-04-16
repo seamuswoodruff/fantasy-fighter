@@ -88,7 +88,10 @@ func _physics_process(delta: float) -> void:
 		handle_input()
 	_apply_movement(delta)
 	_update_facing()
+	var _prev_on_floor := is_on_floor()
 	move_and_slide()
+	if not _prev_on_floor and is_on_floor() and state != State.DEAD:
+		VFXManager.play("dust", global_position + Vector2(0, 32))
 	_update_state()
 
 # ── Timer ticks ───────────────────────────────────────────────────────────────
@@ -296,6 +299,9 @@ func _apply_hit(area: Area2D, damage: float, is_heavy: bool) -> void:
 		_trigger_screen_freeze(0.1)
 	else:
 		hitbox_light.set_deferred("monitoring", false)
+	# VFX and audio on hit connect
+	VFXManager.play("hit_sparks", area.global_position)
+	AudioManager.play_sfx("Sword Impact Hit")
 
 # ── Combat ────────────────────────────────────────────────────────────────────
 func attack_light() -> void:
@@ -304,6 +310,7 @@ func attack_light() -> void:
 	is_attacking = true
 	hitbox_light.monitoring = false  # will activate on frame 1 via frame_changed
 	change_state(State.ATTACK_LIGHT)
+	AudioManager.play_sfx("Sword Attack")
 
 func attack_heavy() -> void:
 	if _is_locked():
@@ -311,6 +318,7 @@ func attack_heavy() -> void:
 	is_attacking = true
 	hitbox_heavy.monitoring = false
 	change_state(State.ATTACK_HEAVY)
+	AudioManager.play_sfx("Sword Attack")
 
 func special_attack() -> void:
 	pass  # Override in Warrior / Wizard / Samurai
@@ -366,6 +374,7 @@ func die() -> void:
 	print("[Character] P%d died — %d stocks remaining" % [player_id, stocks])
 	is_invincible = true
 	GameManager.on_player_death(player_id)
+	VFXManager.play("ko", global_position, 1.5)
 
 	if stocks > 0:
 		# Let the death animation play (~0.7s), then move to respawn position
