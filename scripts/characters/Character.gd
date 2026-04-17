@@ -88,12 +88,9 @@ func _physics_process(delta: float) -> void:
 		handle_input()
 	_apply_movement(delta)
 	_update_facing()
-	var _prev_on_floor := is_on_floor()
 	move_and_slide()
 	# Only fire dust when transitioning from an actual airborne state — guards against
 	# floor-detection flickering on TileMap tile edges triggering dust every frame.
-	if not _prev_on_floor and is_on_floor() and (state == State.JUMP or state == State.FALL):
-		VFXManager.play("dust", global_position + Vector2(0, 32), 1.5)
 	_update_state()
 
 # ── Timer ticks ───────────────────────────────────────────────────────────────
@@ -302,7 +299,7 @@ func _apply_hit(area: Area2D, damage: float, is_heavy: bool) -> void:
 	else:
 		hitbox_light.set_deferred("monitoring", false)
 	# VFX and audio on hit connect
-	VFXManager.play_single("hit_sparks", area.global_position)
+	VFXManager.play_single("hit_sparks", area.global_position, 2.0, 0.12, 618)
 	AudioManager.play_sfx("Sword Impact Hit")
 
 # ── Combat ────────────────────────────────────────────────────────────────────
@@ -376,7 +373,7 @@ func die() -> void:
 	print("[Character] P%d died — %d stocks remaining" % [player_id, stocks])
 	is_invincible = true
 	GameManager.on_player_death(player_id)
-	VFXManager.play("ko", global_position)
+	VFXManager.play("ko", global_position, 2.0, 19)
 
 	if stocks > 0:
 		# Let the death animation play (~0.7s), then move to respawn position

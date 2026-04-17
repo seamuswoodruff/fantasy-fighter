@@ -68,8 +68,15 @@ func _frame_size_for_height(h: int) -> int:
 		return 72   # 1 row of 72px (magic horizontal strips)
 	return h        # fallback: treat as single-row
 
-# Play a full frame-sequence animation. Picks one random row from the pool.
-func play(vfx_type: String, position: Vector2, scale_factor: float = 2.0) -> void:
+# Returns how many animations are loaded for a type — useful for picking a specific index.
+func get_anim_count(vfx_type: String) -> int:
+	if not _vfx_anims.has(vfx_type):
+		return 0
+	return (_vfx_anims[vfx_type] as Array).size()
+
+# Play a full frame-sequence animation.
+# anim_idx: -1 = random, 0..get_anim_count()-1 = specific animation row.
+func play(vfx_type: String, position: Vector2, scale_factor: float = 2.0, anim_idx: int = -1) -> void:
 	if not _vfx_anims.has(vfx_type):
 		push_warning("[VFXManager] Unknown VFX type: " + vfx_type)
 		return
@@ -77,7 +84,10 @@ func play(vfx_type: String, position: Vector2, scale_factor: float = 2.0) -> voi
 	if all_anims.is_empty():
 		return
 
-	var frames: Array = all_anims[randi() % all_anims.size()]
+	var idx := anim_idx if anim_idx >= 0 else randi() % all_anims.size()
+	idx = clampi(idx, 0, all_anims.size() - 1)
+	var frames: Array = all_anims[idx]
+
 	var sprite := AnimatedSprite2D.new()
 	var sf := SpriteFrames.new()
 	sf.add_animation("play")
@@ -92,8 +102,9 @@ func play(vfx_type: String, position: Vector2, scale_factor: float = 2.0) -> voi
 	sprite.play("play")
 	sprite.animation_finished.connect(sprite.queue_free)
 
-# Show a single random frame briefly — for hit sparks and instant flashes.
-func play_single(vfx_type: String, position: Vector2, scale_factor: float = 2.0, duration: float = 0.12) -> void:
+# Show a single frame briefly — for hit sparks and instant flashes.
+# anim_idx: -1 = random animation row, 0+ = specific row.
+func play_single(vfx_type: String, position: Vector2, scale_factor: float = 2.0, duration: float = 0.12, anim_idx: int = -1) -> void:
 	if not _vfx_anims.has(vfx_type):
 		push_warning("[VFXManager] Unknown VFX type: " + vfx_type)
 		return
@@ -101,7 +112,10 @@ func play_single(vfx_type: String, position: Vector2, scale_factor: float = 2.0,
 	if all_anims.is_empty():
 		return
 
-	var frames: Array = all_anims[randi() % all_anims.size()]
+	var idx := anim_idx if anim_idx >= 0 else randi() % all_anims.size()
+	idx = clampi(idx, 0, all_anims.size() - 1)
+	var frames: Array = all_anims[idx]
+
 	var sprite := Sprite2D.new()
 	sprite.texture = frames[randi() % frames.size()]
 	sprite.position = position
