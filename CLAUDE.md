@@ -1,93 +1,42 @@
 # Fantasy Fighter — Claude Code Project Brief
 
-## Working with Claude Code — Critical Workflow Rules
+## Workflow Rules
 
-These rules come from hard-won community experience building Godot games with Claude Code. Follow them to avoid the most common failure modes.
+### After every script or scene, verify immediately
+Run `run_project`, then `get_debug_output`. Fix all errors before writing the
+next script. Never batch multiple scripts without testing between them.
 
-### Context Window is the #1 Constraint
-Your entire conversation — every message, every file read, every error log — fills the context window. When it fills up, Claude starts "forgetting" earlier instructions and making more mistakes. Manage it aggressively:
+### After every stage or UI screen, take a screenshot
+Use `ScreenshotTool.take_screenshot("label")` or F12 in-game. Read the saved
+PNG and assess before continuing. Fix visual problems before moving on.
 
-- **Run `/clear` between each development phase.** Finish Phase 2, commit it, `/clear`, then start Phase 3 fresh.
-- **After correcting the same mistake twice in a row**, don't keep correcting — run `/clear` and restart with a better, more specific prompt. A clean session with a smarter prompt beats a long polluted one every time.
-- **Resume sessions** using the session history in the Claude app UI rather than re-explaining context from scratch. Treat each phase as its own named session.
-- **Use subagents for research.** If you need Claude to explore the codebase before implementing something, say "use a subagent to investigate X." Subagents run in their own context and report back summaries, keeping the main session clean.
+### GDScript API errors
+When a method call fails, read the exact error in `get_debug_output` and verify
+the correct method name against Godot 4 docs. Do not guess at alternatives.
+Prefix any uncertain API call with `# verify: method name unconfirmed` so it
+can be audited.
 
-### GDScript API Hallucination — The Biggest Godot-Specific Problem
-Godot has ~850 classes. Claude was trained on GDScript but will sometimes hallucinate method names that "look right" (e.g., `get_node_by_name()` instead of `find_child()`). This is the #1 source of bugs in AI-generated GDScript.
-
-**The best fix: install the GDScript LSP plugin before starting development.**
-
-This plugin bridges Claude Code to Godot's built-in language server over TCP, giving Claude the same real-time type info, diagnostics, and go-to-definition intelligence that the Godot editor itself uses. No guessing, no hallucinated API names.
-
-```
-# Install (run once, before starting development):
-git clone https://github.com/Sods2/claude-code-gdscript-lsp.git
-cd claude-code-gdscript-lsp
-./scripts/install.sh
-```
-
-The script builds a lightweight Node.js bridge (~200 lines, zero runtime deps), links it globally, and registers the plugin with Claude Code. Restart Claude Code after install.
-
-**How it works:**
-```
-Claude Code  ↔  Bridge (stdio)  ↔  Godot LSP (TCP:6005)
-```
-Godot 4 ships with a built-in LSP server. The bridge translates between the two protocols and buffers messages while Godot isn't running yet.
-
-**Usage:** Open your project in the Godot Editor first (this starts the LSP server on port 6005), then start your Claude Code session pointed at this project directory. Code intelligence will be live. If you prefer not to have the editor open, run Godot headless in a terminal:
-```
-godot --editor --headless --lsp-port 6005
-```
-
-Verify it's working: `claude plugin list` should show `gdscript-lsp` as enabled.
-
-**Requirements:** Claude Code v2.0.74+, Godot 4.x, Node.js 18+
-
-**If the LSP plugin isn't installed**, fall back to these manual safeguards:
-- Always run `run_project` + `get_debug_output` after every new script — don't batch multiple scripts without testing.
-- When a method isn't working, check the exact error in debug output and verify against Godot 4 docs rather than guessing.
-- Prefix uncertain API calls with `# verify this method exists in Godot 4.6` as an audit marker.
-- Trust the error output over assumptions — GDScript errors are specific.
-
-### Explore → Plan → Implement (Don't Skip Steps)
-For any phase that touches multiple files or systems:
-1. **Explore first** (Plan Mode, `Shift+Tab` to toggle): read existing files, understand patterns
-2. **Plan**: ask Claude to write out what it intends to change before touching anything
-3. **Implement**: execute the plan, verifying at each step
-4. **Commit**: commit working code before starting the next chunk
-
-Never ask Claude to implement a whole phase in one shot. Break it into pieces (e.g., "implement movement only, not combat") and verify each piece runs before continuing.
-
-### Verify Everything — Don't Trust "Looks Right"
-- **Always run the project** after each implementation step. Don't assume it works.
-- **Use the screenshot pipeline** (F12 or `ScreenshotTool.take_screenshot()`) to visually check every stage layout and UI screen before moving on.
-- **Always check `get_debug_output`** after `run_project` — errors in the output mean bugs that need fixing before proceeding.
-- After any character animation work, run the scene and take a screenshot to confirm sprites are loading correctly and frames are sliced right.
-
-### Godot MCP Tools Available in This Session
-The following MCP tools are available via `@coding-solo/godot-mcp` (already configured in Claude Desktop):
+### Godot MCP Tools
 
 | Tool | Use for |
 |------|---------|
-| `run_project` | Run the game and start playing/testing |
-| `get_debug_output` | Read console errors and print statements |
+| `run_project` | Run and test the game |
+| `get_debug_output` | Read console errors and print output |
 | `stop_project` | Stop a running game |
 | `create_scene` | Create new .tscn files |
-| `add_node` | Add nodes to scenes |
+| `add_node` | Add nodes to existing scenes |
 | `load_sprite` | Assign a texture to a Sprite2D |
 | `save_scene` | Save scene changes |
-| `launch_editor` | Open the Godot editor GUI |
 | `get_project_info` | Inspect project structure |
 | `get_uid` / `update_project_uids` | Fix UID reference errors (Godot 4.4+) |
 
-**Preferred workflow:** write scripts with the `Edit`/`Write` file tools, then use `run_project` + `get_debug_output` to test. Use `add_node` / `create_scene` MCP tools when building scene structure, but write all GDScript logic by editing `.gd` files directly.
+Write all GDScript by editing .gd files directly. Use MCP tools for scene
+structure (nodes, sprites). Use `run_project` + `get_debug_output` to test.
 
-### Phase Commit Discipline
-At the end of every phase, before `/clear`-ing and moving on:
-1. Verify the game runs without errors (`run_project` + `get_debug_output`)
-2. Take a screenshot to document the current state
-3. Make a git commit with a descriptive message
-4. Then `/clear` and start the next phase fresh
+### End of every phase
+1. `run_project` → `get_debug_output` — must be error-free
+2. `ScreenshotTool.take_screenshot("phase_N_complete")`
+3. Git commit with descriptive message
 
 ---
 
@@ -103,7 +52,7 @@ To invoke: use the Skill tool with `skill: "game-development"` before each imple
 
 ## Project Overview
 
-A 2D local-multiplayer platform fighter (Smash Bros-style) built in Godot 4.6.2 using GDScript. Two players fight on a stage, dealing damage to knock each other off. The game must run on macOS, support local multiplayer, and support game controllers.
+A 2D local-multiplayer platform fighter built in Godot 4.6.2 using GDScript. Two players fight on a stage, dealing damage to deplete each other's HP. Death occurs when HP reaches 0 or a player falls off the stage. The game must run on macOS, support local multiplayer, and support game controllers.
 
 **Timeline:** 3-week class project  
 **Engine:** Godot 4.6.2  
@@ -139,10 +88,9 @@ fantasy-fighter/
 │   │   │   ├── background/ (windrise-background.png, mountains.png, hills.png)
 │   │   │   ├── platforms/  (floating_platforms.png)
 │   │   │   └── foreground/ (decors.png)
-│   │   ├── dungeon/
-│   │   │   ├── background/ (dungeon_.png)
-│   │   │   ├── platforms/  (dungeon_.png, terrain_tiles.png)
-│   │   │   └── foreground/ (ceiling_sky.png)
+│   │   ├── ruins/
+│   │   │   ├── background/ (ruins_background.png)
+│   │   │   └── platforms/  (ruins_platform_tiles.png)
 │   │   └── desert_temple/
 │   │       ├── background/ (temple_walls.png)
 │   │       └── platforms/  (temple_platforms.png)
@@ -194,33 +142,124 @@ All character animations are **horizontal strip sprite sheets** (single PNG per 
 
 ## Characters
 
-### Archetypes
+There are 9 characters using 6 distinct scripts, all extending `Character.gd`.
+Do not use a generic "Warrior/Wizard/Samurai" class system — each script below
+implements its character's actual animations and unique mechanics.
 
-**Warriors** (knight_1, knight_2, knight_3)
-- Archetype: Heavy, high damage, medium speed, shorter range
-- Playstyle: Close-range brawlers with strong melee combos
-- Special mechanic: Shield/block absorbs one hit
+Animation names below are exact filenames (without .png) from each sprites/ folder.
 
-**Wizards** (fire_wizard, lightning_mage, wanderer_magician)
-- Archetype: Light, lower HP, fast projectiles, medium speed
-- Playstyle: Zoners who keep distance and cast spells
-- Special mechanic: Projectile attack (spawns magic VFX that travels across screen)
+---
 
-**Samurai** (samurai, samurai_archer, samurai_commander)
-- Archetype: Medium weight, high speed, precise attacks
-- Playstyle: Fast rushdown with quick multi-hit combos
-- Special mechanic: Dash attack (brief invincibility frames during dash)
+### Knight.gd — used by knight_1, knight_2, knight_3
 
-### Character Stats
+All three knights share this script. They are pure visual variants.
 
-| Stat | Warriors | Wizards | Samurai |
-|------|----------|---------|---------|
-| Max HP | 150 | 100 | 120 |
-| Move Speed | 200 | 220 | 260 |
-| Jump Force | -550 | -600 | -580 |
-| Attack Damage (light) | 12 | 8 | 10 |
-| Attack Damage (heavy) | 22 | 15 | 18 |
-| Knockback Multiplier | 1.0 | 0.8 | 0.9 |
+**Animations:** `Idle`, `Walk`, `Run`, `Jump`, `Attack 1`, `Attack 2`, `Attack 3`, `Defend`, `Protect`, `Run+Attack`, `Hurt`, `Dead`
+
+**Mechanics:**
+- Light attack → `Attack 1`
+- Heavy attack → `Attack 2`
+- Attack 3 → third hit in manual combo chain (press heavy again after heavy)
+- `Run+Attack` → play this animation when attack input is pressed while in RUN state
+- `Defend` → enter when block input held. Reduces incoming damage by 60%.
+- `Protect` → brief shield-raise pose played at start of Defend transition
+- No special projectile — knights are pure melee
+
+**Stats:** HP 150, Speed 200, Jump -550, Light damage 12, Heavy damage 22
+
+---
+
+### Samurai.gd — used by samurai, samurai_commander
+
+**Animations:** `Idle`, `Walk`, `Run`, `Jump`, `Attack_1`, `Attack_2`, `Attack_3`, `Protection` (samurai) / `Protect` (samurai_commander), `Hurt`, `Dead`
+
+Note: samurai uses `Protection`, samurai_commander uses `Protect` — detect which
+file exists in the character's sprites/ folder and use the correct name.
+
+**Mechanics:**
+- Light attack → `Attack_1`
+- Heavy attack → `Attack_2`
+- Special → `Attack_3`: fast multi-hit dash forward (moves character 80px forward
+  over the animation duration, hits up to 3 times for 6 damage each)
+- Block → `Protection`/`Protect`: same as knight Defend — reduces damage 60%
+
+**Stats:** HP 120, Speed 260, Jump -580, Light damage 10, Heavy damage 18
+
+---
+
+### SamuraiArcher.gd — used by samurai_archer only
+
+**Animations:** `Idle`, `Walk`, `Run`, `Jump`, `Attack_1`, `Attack_2`, `Attack_3`, `Shot`, `Arrow`, `Hurt`, `Dead`
+
+**Mechanics:**
+- Light attack → `Attack_1` (fast melee slash)
+- Heavy attack → `Attack_2` (slower melee)
+- Attack_3 → melee combo finisher
+- Special → `Shot`: plays Shot animation, spawns an Arrow projectile using the
+  `Arrow` sprite. Arrow travels at 600px/s, deals 14 damage on contact, despawns
+  after 1000px or on hit. Can fire in midair.
+- No block animation — most mobile character, avoidance over defense
+
+**Stats:** HP 110, Speed 280, Jump -600, Light damage 9, Heavy damage 16, Arrow damage 14
+
+---
+
+### FireWizard.gd — used by fire_wizard only
+
+**Animations:** `Idle`, `Walk`, `Run`, `Jump`, `Attack_1`, `Attack_2`, `Charge`, `Fireball`, `Flame_jet`, `Hurt`, `Dead`
+
+**Mechanics:**
+- Light attack → `Attack_1` (close melee swipe)
+- Heavy attack → `Attack_2` (slower melee)
+- Special (tap) → `Charge` into `Fireball`: plays Charge briefly (0.3s), then
+  launches a fireball projectile. Fireball travels at 450px/s, deals 18 damage,
+  despawns after 900px or on hit. Plays magic VFX on spawn and impact.
+- Special (hold 0.5s+) → `Charge` into `Flame_jet`: sustained flame in front of
+  character for 1 second. Any enemy in range takes 8 damage per 0.2s (up to 40
+  total). Plays magic VFX continuously during jet.
+- Implement by tracking how long special button is held before release
+
+**Stats:** HP 100, Speed 220, Jump -600, Light damage 8, Heavy damage 14
+
+---
+
+### LightningMage.gd — used by lightning_mage only
+
+**Animations:** `Idle`, `Walk`, `Run`, `Jump`, `Attack_1`, `Attack_2`, `Charge`, `Light_charge`, `Light_ball`, `Hurt`, `Dead`
+
+**Mechanics:**
+- Light attack → `Attack_1`
+- Heavy attack → `Attack_2`
+- Special (tap) → `Charge` briefly + `Light_ball`: quick cast, small fast
+  projectile at 500px/s, deals 12 damage
+- Special (hold 0.8s+) → `Light_charge` (visually different charged state) +
+  `Light_ball`: larger, slower projectile at 300px/s, deals 28 damage and applies
+  1 second of additional hitstun on hit
+- Implement: on special press, start Charge. At 0.8s switch to Light_charge
+  animation. On release, fire small or large ball depending on hold duration.
+
+**Stats:** HP 100, Speed 215, Jump -600, Light damage 8, Heavy damage 14
+
+---
+
+### WandererMagician.gd — used by wanderer_magician only
+
+**Animations:** `Idle`, `Walk`, `Run`, `Jump`, `Attack_1`, `Attack_2`, `Charge_1`, `Charge_2`, `Magic_arrow`, `Magic_sphere`, `Hurt`, `Dead`
+
+**Mechanics:**
+- Light attack → `Attack_1`
+- Heavy attack → `Attack_2`
+- Special (light) → `Charge_1` + `Magic_arrow`: fast cast (0.2s charge),
+  launches a magic arrow at 550px/s. Deals 10 damage. Low cooldown — can fire
+  quickly in succession.
+- Special (heavy / hold 0.6s) → `Charge_2` + `Magic_sphere`: slower cast,
+  launches a large sphere at 250px/s that pierces through the enemy (does not
+  despawn on first hit), deals 22 damage per target hit. Plays magic VFX on
+  spawn.
+- Implement as two separate special inputs: tap special = Magic_arrow,
+  hold special = Magic_sphere
+
+**Stats:** HP 105, Speed 225, Jump -595, Light damage 9, Heavy damage 15
 
 ---
 
@@ -244,23 +283,49 @@ All character animations are **horizontal strip sprite sheets** (single PNG per 
 ### Combat
 - **Light attack** (X button / Z key): Fast, low damage, low knockback
 - **Heavy attack** (Y button / X key on keyboard): Slow startup, high damage, high knockback
-- **Special attack** (B button / C key): Character-specific (projectile for wizards, charge for warriors, dash attack for samurai)
+- **Special attack** (B button / C key): Character-specific — see each character's spec in the Characters section. Mechanics vary significantly: knights have no special, samurai dash attacks, archer fires arrows, wizards have tap vs. hold charge variants with different projectiles
 - **Block/Shield** (L trigger / left shift): Reduces incoming damage by 60%, cannot move while blocking
 - Attacks have 3 phases: startup frames (no hitbox), active frames (hitbox live), recovery frames (vulnerable)
 - **Hitstun:** Receiving a hit freezes the character briefly (5–12 frames depending on attack weight)
-- **Knockback:** Applies an impulse velocity to the struck character. Heavy attacks at low HP = horizontal knockback. Heavy attacks at high HP = diagonal.
+- **Knockback:** Fixed impulse velocity per attack type — does NOT scale with accumulated damage. Use these tuned values (horizontal component only; vertical is handled separately):
+  ```gdscript
+  var kb_base := 350.0 if is_heavy else 200.0
+  var direction = sign(target.position.x - attacker_pos.x)
+  velocity = Vector2(direction * kb_base, -200.0 if is_heavy else -120.0)
+  ```
+  Knockback creates spacing pressure and edge danger but is never the primary kill condition.
+
+### Death & Stock System — HP BASED, NOT SMASH STYLE
+**This is not a Smash Bros damage percentage system. Do not implement percentage-based knockback scaling.**
+
+- Each character has a `current_hp` and `max_hp`. Attacks subtract flat damage values directly from `current_hp`.
+- **Primary death condition:** `current_hp <= 0` → triggers `die()`
+- **Secondary death condition:** character enters a kill zone (fell off stage) → also triggers `die()`
+- Both conditions decrement stocks identically.
+- On death: play KO VFX, decrement stock, respawn at spawn point after 1.5 seconds with 2 seconds of invincibility.
+- When stocks reach 0: player eliminated, match ends.
+- There is NO damage percentage accumulator. NO knockback scaling formula. Knockback values are fixed constants defined per attack type.
+
+### Death & Respawn — Required Ordering (learned in Phase 6)
+
+The following ordering rules must be preserved in `die()` and `respawn()`. Each exists to prevent a specific bug that shipped to Phase 6 before being fixed:
+
+1. **`die()` must set `change_state(State.DEAD)` on its very first line**, immediately after the `if state == State.DEAD: return` guard. Two overlapping kill zones (e.g., `KillBottom` + `KillLeft` at a corner) can fire `body_entered` in the same physics frame; the DEAD flag is what blocks the second callback from double-decrementing stocks.
+2. **In `respawn()`, teleport to `respawn_position` BEFORE setting `process_mode = PROCESS_MODE_DISABLED`.** If the body is frozen while still inside a kill zone, re-enabling it triggers `body_entered` again for the same zone. Teleport first, then disable.
+3. **BattleScene's `_on_kill_zone_entered()` must also check `character.is_invincible`** — post-respawn i-frames are what block the kill zone from refiring during the 2-second invincibility window.
+4. **Snap `current_hp` to 0.0 when it drops below 1.0** after damage subtraction. Floating-point remainders leave a tiny positive HP value that the progress bar still renders as non-zero, causing visible desync between "character died" and "bar empty".
+5. **Exit HURT state from `_tick_timers()`, not from `animation_finished`.** The hurt animation can end a few ms before the hitstun timer, leaving the state machine stuck. Always drive HURT exit from the timer.
+6. **Do NOT call `VFXManager` or `AudioManager` from `die()` until Phase 7.** Those managers are stubs until then and a silent nil-call can mask other errors.
 
 ### Hitboxes / Hurtboxes
 - Use `Area2D` nodes for hitboxes (attack zones) and hurtboxes (damageable zones)
-- Separate collision layers: Layer 1 = world, Layer 2 = player hurtboxes, Layer 3 = attack hitboxes
-- Hitboxes only active during active frames of animations
+- Collision layers (match Phase 1 setup exactly):
+  - Layer 1: CharacterBody2D world/platform collision
+  - Layer 2: Hurtboxes (`collision_layer = 2`)
+  - Layer 4: Hitboxes (`collision_layer = 4`, `collision_mask = 2`) — hitboxes scan for hurtboxes only
+  - Layer 8: Kill zones (`collision_layer = 8`)
+- Hitboxes activate via `_on_sprite_frame_changed()` signal and only while in attack state
 - Characters are immune during respawn (2-second invincibility)
-
-### Stock / Lives System
-- Each player starts with 3 stocks (lives)
-- Death trigger: fall below the stage kill zone (a large Area2D below the platforms) OR HP reaches 0
-- On death: play KO animation/VFX, decrement stock counter, respawn after 1.5 seconds at spawn point
-- When stocks reach 0: player is eliminated, match ends
 
 ---
 
@@ -294,90 +359,171 @@ Where `{n}` = 1 or 2. Use `device` parameter on InputEvents to differentiate con
 
 ## Stages
 
-### Stage 1: Windrise
-**Theme:** Bright outdoor field, daytime, pastoral/majestic  
-**Visual layers (back to front):**
-1. Sky background: `windrise-background.png` (or `windrise-background-4k.png` for high res)
-2. Distant mountains: `mountains.png` (parallax layer, moves at 0.3× camera speed)
-3. Hills: `hills.png` (parallax layer, moves at 0.6× camera speed)
-4. Platforms: `floating_platforms.png`
-5. Foreground decoration: `decors.png` (moves at 1.2× camera speed)
+## Stage Layout Philosophy
 
-**Platform layout:**
-- One large main platform (ground level, spans ~70% of screen width)
-- Two floating platforms (mid height, left and right of center)
-- One small platform (high center)
 
-**Music:** Randomly pick from Prairie_3, Prairie_4, Prairie_5, BattleField_1–5, EpicBattle (files in `assets/music/`)  
-**Ambience:** `forest_day` OGG, played at low volume under music
+**Critical implementation note — platforms must tile, not stretch:**
+Never scale a single Sprite2D to make a wide platform. This breaks the visual texture. Instead:
+- Use a `TileMap` node with the platform texture sliced into tiles (typically 16×16 or 32×32 per tile) so the texture repeats naturally across the platform's width
+- Or use multiple fixed-size Sprite2D nodes placed edge-to-edge to span the platform width
+- The left ground section, right ground section, and floating platforms must all use the same tileset so they look like they're cut from the same terrain
+
+**TileMap is VISUAL ONLY — all collision uses StaticBody2D:**
+Do NOT enable physics layers on the TileMap. All platform collision must be implemented as separate `StaticBody2D` nodes with `RectangleShape2D` sub-resources, placed to match the visual tile layout. This separation keeps physics predictable and independent of the visual tile grid.
+
+**Standard layout coordinates (1280×720 screen):**
+```
+Left ground section:    x: 0   → 480,  y: 460 → 600  (thick, ~140px tall)
+Right ground section:   x: 800 → 1280, y: 460 → 600  (mirror of left)
+Central gap:            x: 480 → 800              (320px — jumpable)
+Left float platform:    x: 260 → 530,  y: 310       (above gap-left)
+Right float platform:   x: 750 → 1020, y: 310       (above gap-right, mirror)
+Top center platform:    x: 530 → 750,  y: 160       (small, high center)
+Spawn points:           left at (240, 400), right at (1040, 400)
+Kill zones:             bottom Y > 850, left X < -250, right X > 1530, top Y < -300
+Wall barriers:          StaticBody2D at x=0 and x=1280 (full height) — prevent characters
+                        walking off screen edges; they must be knocked off or fall through the gap
+```
+These coordinates are starting points — adjust for visual balance after taking a screenshot.
 
 ---
 
-### Stage 2: Dungeon
-**Theme:** Dark underground, torchlit, oppressive  
+### Stage 1: Windrise
+**Theme:** Lush green meadow, rolling hills, open sky — bright and airy
+
 **Visual layers:**
-1. Dark background: `dungeon_.png` (from background folder)
-2. Ceiling element: `ceiling_sky.png` (top of screen, foreground)
-3. Platforms: `dungeon_.png` + `terrain_tiles.png` (from platforms folder — use terrain_tiles as tilesets)
+1. Background: `windrise-background.png` — full sky/horizon scene (parallax 0.2)
+2. Midground: `mountains.png` — distant mountain range (parallax 0.5)
+3. Foreground hills: `hills.png` — rolling hills in front of mountains (parallax 0.8)
+4. Platforms: built from `floating_platforms.png` using TileMap (parallax 1.0)
+5. Foreground decor: `decors.png` — no collision, parallax 1.2
 
-**Platform layout:**
-- No true "ground" — players fight on floating stone ledges
-- Three platforms at staggered heights
-- Narrower platforms than Windrise — more aggressive, closer quarters
+**Music:** Randomly pick from Prairie_3, Prairie_4, Prairie_5, BattleField_1–5, EpicBattle
+**Ambience:** `forest_day` OGG at low volume under music
 
-**Music:** Randomly pick from Gothic_Dark, Demise, Havoc, Fight_1–3, Crisis  
+---
+
+### Stage 2: Ruins
+**Theme:** Lush green overgrown ruins, floating castles in stormy sky, outdoor
+**Note:** This stage was previously called "dungeon" — all references to dungeon in scenes/scripts should use "ruins" instead. The old dungeon_.png and terrain_tiles.png assets are superseded and should be ignored.
+
+**Visual layers:**
+1. Background: `ruins_background.png` — full scene background, lush green valley with floating castles
+2. Platforms: built from `ruins_platform_tiles.png` tileset
+
+**Platform tileset — `ruins_platform_tiles.png` categories:**
+- **Ground & Cliff Tiles** (top-left section of sheet): use these for the two main ground sections
+- **Floating Island Tiles** (top-right section): pre-built floating island pieces — use for the three floating platforms above the gap
+- **Ruin Tiles**: columns, pillars — decorative on ground sections
+- **Stair Tiles**: for edges of ground sections
+- **Decor & Props**: trees, torches, arch — place on ground sections for visual interest
+- **Spike Tiles**: place at bottom of gap as a hazard visual (kill zone is still an Area2D, spikes are decoration)
+- The tileset has no explicit pixel grid label — detect tile size from the image and slice accordingly
+
+use the reference image to determin platform layout
+
+**Music:** Randomly pick from Gothic_Dark, Demise, Havoc, Fight_1–3, Crisis
 **Ambience:** `cave` or `interior` OGG
 
 ---
 
 ### Stage 3: Desert Temple
-**Theme:** Warm ancient ruins, sandy, mystical  
+**Theme:** Sandy desert ruins, warm golden tones, ancient and open
+**Note:** Old `temple_walls.png` and `temple_platforms.png` are superseded by the new dedicated assets below.
+
 **Visual layers:**
-1. Temple walls background: `temple_walls.png`
-2. Platforms: `temple_platforms.png`
+1. Background: `desert_background.png` — full desert scene with oasis and dunes
+2. Platforms: sliced from `desert_platforms.png` asset sheet
+
+**Platform asset sheet — `desert_platforms.png` (256×256 grid):**
+The sheet is labeled with named pieces. Slice on a 256×256 grid and use pieces by name:
+- `PLAT_MAIN_L` — left ground section piece
+- `PLAT_MAIN_H` — right/heavy ground section piece  
+- `PLAT_MAIN_C` — center ground section with pillar detail (use for decorating gap edge)
+- `FLOAT_ISL_C` — large center floating island with pillars and flag (center float)
+- `FLOAT_ISL_0` — medium floating island (left float)
+- `FLOAT_ISL_1` — small floating island (right float or top center)
+- `BROKEN_ARK` — broken arch, decorative
+- `PILLAR_L1`, `PILLAR_L0`, `PILLAR_L0_2`, `PILLAR_L0_3` — pillar variants for ground decoration
+- `FLAG_A` — flag prop
+- Cave arch at bottom center — visual detail for gap area
 
 **Platform layout:**
-- Two large stone platform slabs at ground level (with a gap in the middle)
-- Two smaller elevated platforms above each slab
-- Central top platform
 
-**Music:** Randomly pick from Raid_Ethnic, Raid_FolkMetal_1–2, Raid_1–3, Flap_1–2  
-**Ambience:** `water` or `forest_night` OGG (desert wind atmosphere)
+use the reference image to determine platform layout
+
+**Music:** Randomly pick from Raid_Ethnic, Raid_FolkMetal_1–2, Raid_1–3, Flap_1–2
+**Ambience:** `water` or `forest_night` OGG
 
 ---
 
 ## VFX System
 
-VFX are sprite-sheet sequences stored as individual PNG frames in subdirectories.
+**IMPORTANT — asset format correction (verified in Phase 7):**
+VFX PNGs are NOT individual frames. Each PNG is a sprite sheet. For the 576px-tall sheets (`hit_sparks`, `ko`, `dust`, most of `magic`) the sheet is a 9-row grid of 64×64 cells, where **each row is one complete animation**. For the 72px-tall sheets in `magic/`, the sheet is a single horizontal strip of 72×72 frames. Frame size is detected from the sheet height — 576px → 64×64 × 9 rows; 72px → 72×72 × 1 row.
 
-| Folder | Usage | Trigger |
-|--------|-------|---------|
-| `vfx/hit_sparks/` | Melee impact flash | On successful light/heavy hit |
-| `vfx/magic/` | Spell effects, projectile bodies, explosions | Wizard specials, magic impacts |
-| `vfx/ko/` | Knockout explosion, star burst | When a player loses a stock |
-| `vfx/dust/` | Landing puff, dash trail, footstep cloud | Jump land, dash start, fast movement |
+Do NOT load `DirAccess.get_files_at("res://assets/vfx/hit_sparks/")` and treat each PNG as a frame — that will render a 768×576 block across the screen. The VFXManager implemented in Phase 7 slices every PNG into per-row animations.
 
-**VFX Implementation:**
-- Create a `VFXManager` autoload singleton
-- `VFXManager.play(effect_name, position, scale)` spawns a one-shot `AnimatedSprite2D`
-- Preload all VFX frame sequences on game start
-- Auto-free nodes after animation completes (`animation_finished` signal)
-- Parse frame sequences by loading all PNGs from the relevant subfolder, sorted by filename
+| Folder | Usage | Trigger | Sheet count |
+|--------|-------|---------|-------------|
+| `vfx/hit_sparks/` | Melee impact flash | On successful light/heavy hit | 84 sheets × 9 rows = 756 animations |
+| `vfx/magic/` | Spell effects, projectile bodies, explosions | Wizard specials, magic impacts | mixed 64×64 and 72×72 strips |
+| `vfx/ko/` | Knockout explosion, star burst | When a player loses a stock | 48 sheets × 9 rows = 432 animations |
+| `vfx/dust/` | (unused — landing VFX removed in Phase 7) | — | 24 sheets × 9 rows = 216 animations |
+
+**VFXManager API (implemented in Phase 7):**
+- `VFXManager.play(type, position, scale, anim_idx)` — spawns a full `AnimatedSprite2D`, plays one row as an animation, auto-frees on `animation_finished`
+- `VFXManager.play_single(type, position, scale, duration, anim_idx)` — spawns a `Sprite2D` with one random frame from a row, frees after `duration` seconds (used for impact flashes so they don't loop)
+- `VFXManager.get_anim_count(type)` — number of animations loaded for that type
+- `anim_idx = -1` → random animation; `anim_idx >= 0` → pin to a specific row
+- `anim_idx` formula for pinning a specific sheet+row: `(sheet_number_0indexed * 9) + row_number_0indexed`
+
+### Pinned VFX Selections (reuse these exact calls across all characters)
+
+| Effect | Call | Purpose |
+|--------|------|---------|
+| Melee hit connect | `VFXManager.play_single("hit_sparks", hit_position, 2.0, 0.12, 618)` | Steel/grey claw burst (sheet `881.png` row 6) |
+| KO / stock loss | `VFXManager.play("ko", global_position, 2.0, 19)` | Purple starburst swirl (sheet `1103.png` row 1) |
+
+All melee characters in Phase 8 should reuse these pinned calls so VFX is consistent across the roster. Wizards/archer will add magic VFX for projectile spawns — pin those during Phase 8 using the same workflow.
+
+### VFX Pinning Workflow (how to pick a specific anim_idx)
+1. Open `assets/vfx/<type>/` in Finder, arrow-key through PNGs until you find one you like
+2. Note the filename and the row number (0-indexed from the top of the sheet)
+3. Run `ls assets/vfx/<type>/*.png | sort | grep -n "<filename>"` to get the 1-indexed line number
+4. `anim_idx = (line_number - 1) * 9 + row`
+5. Pass as the last argument to `play()` or `play_single()`
+
+### Landing / State-Transition VFX Gotcha
+`is_on_floor()` flickers rapidly as a character runs across TileMap tile-edge seams. A naive "spawn VFX on landing" hook triggered hundreds of overlapping animations within seconds of gameplay during Phase 7. If any future phase adds a landing / state-transition VFX, guard it with a state check — e.g., only fire when `state == State.JUMP or state == State.FALL` at the moment of floor contact — so tile-edge jitter doesn't register as a landing. (Dust-on-landing was tried and removed in Phase 7; listed here so the same mistake isn't repeated.)
 
 ---
 
 ## Audio System
 
-### AudioManager (Autoload Singleton)
+### AudioManager (Autoload Singleton — implemented in Phase 7)
 ```gdscript
-# Manages all game audio with categories
 # Methods:
-# AudioManager.play_sfx(sfx_name)       — plays one-shot sound
-# AudioManager.play_music(track_name)   — crossfades to new music track
-# AudioManager.play_ambience(amb_name)  — loops ambience track
-# AudioManager.stop_music()
-# AudioManager.set_volume(category, db) — "music", "sfx", "ambience"
+# AudioManager.play_sfx(sfx_name)        — prefix-group lookup, picks random variant
+# AudioManager.play_music(track_path)    — two-player crossfade over 1s
+# AudioManager.play_ambience(amb_path)   — loops OGG on Ambience bus at -12 db
+# AudioManager.stop_music()              — fades current music to silence over 1s
+# AudioManager.set_volume(category, db)  — "Master", "Music", "SFX", "Ambience"
 ```
+
+**SFX prefix-group semantics:**
+On startup AudioManager loads all WAVs from `sfx/attacks/`, `sfx/footsteps/`, `sfx/impacts/`, `sfx/ui/` and groups them by prefix — any trailing number is stripped. So `Sword Attack 1.wav`, `Sword Attack 2.wav`, `Sword Attack 3.wav` all land in the group `"Sword Attack"`. `play_sfx("Sword Attack")` picks one at random from the group. Lookups are **case-insensitive**.
+
+To inspect available groups at runtime: `print(AudioManager._sfx_groups.keys())`.
+
+**Known working group names (used by knight_1 in Phase 7 — reuse for all melee characters):**
+- `"Sword Attack"` — call on `attack_light()` and `attack_heavy()`
+- `"Sword Impact Hit"` — call in `_apply_hit` after `take_damage` returns
+
+Wizards/archer will need different groups (spell cast, bow shot, magic impact). Discover group names via the runtime print above during Phase 8.
+
+**Music crossfade:**
+`play_music(track_path)` alternates between `_music_a` and `_music_b` AudioStreamPlayers. Each call fades in the inactive player (−80 → 0 db over 1s) and fades out the active one (0 → −80 db over 1s) via separate Tweens. Safe to call mid-match for dynamic music switching.
 
 ### Sound Categories & Bus Setup
 Create 4 audio buses in Godot (Project → Audio):
@@ -441,7 +587,7 @@ Main (Node)
 │   │   ├── Player1 (scenes/characters/[character].tscn)
 │   │   └── Player2 (scenes/characters/[character].tscn)
 │   └── HUD (scenes/ui/HUD.tscn)
-│       ├── Player1HUD (health bar, stock icons, damage %)
+│       ├── Player1HUD (health bar, stock icons)
 │       └── Player2HUD
 │
 └── WinScreen (scenes/ui/WinScreen.tscn)
@@ -477,6 +623,7 @@ var facing_right: bool = true
 var is_invincible: bool = false
 var attack_damage_light: float
 var attack_damage_heavy: float
+var spawn_facing_right: bool = true   # BattleScene sets false for right-side player; respawn() restores this
 
 # State machine
 enum State { IDLE, RUN, JUMP, FALL, ATTACK_LIGHT, ATTACK_HEAVY, SPECIAL, 
@@ -503,15 +650,26 @@ func special_attack()          # override in subclasses
 func _on_hurtbox_area_entered(area)  # receive hits
 ```
 
-#### `scripts/characters/Warrior.gd` (extends Character)
-- Overrides `special_attack()`: enters block state for 0.5s, absorbs next hit
+#### `scripts/characters/Knight.gd` (extends Character) — knight_1, knight_2, knight_3
+- No special projectile. Block mechanic via `Defend`/`Protect` animations.
 
-#### `scripts/characters/Wizard.gd` (extends Character)
-- Overrides `special_attack()`: spawns `Projectile` scene at character position, traveling in facing direction
-- `scripts/characters/Projectile.gd`: moves horizontally, damages on contact, despawns at screen edge
+#### `scripts/characters/Samurai.gd` (extends Character) — samurai, samurai_commander
+- Special: dash forward with multi-hit hitbox active (`Attack_3`)
 
-#### `scripts/characters/Samurai.gd` (extends Character)
-- Overrides `special_attack()`: dashes forward with hitbox active, brief i-frames
+#### `scripts/characters/SamuraiArcher.gd` (extends Character) — samurai_archer
+- Special: spawn Arrow projectile using `Shot` animation. No block.
+
+#### `scripts/characters/FireWizard.gd` (extends Character) — fire_wizard
+- Special tap: Charge → Fireball projectile
+- Special hold (0.5s+): Charge → Flame_jet sustained AOE
+
+#### `scripts/characters/LightningMage.gd` (extends Character) — lightning_mage
+- Special tap: Charge → Light_ball (small, fast)
+- Special hold (0.8s+): Light_charge → Light_ball (large, slow, extra hitstun)
+
+#### `scripts/characters/WandererMagician.gd` (extends Character) — wanderer_magician
+- Special tap: Charge_1 → Magic_arrow (fast, low cooldown)
+- Special hold (0.6s+): Charge_2 → Magic_sphere (piercing, does not despawn on first hit)
 
 #### `scripts/managers/GameManager.gd`
 ```
@@ -554,6 +712,41 @@ Use assets from `assets/ui/hud/`:
 
 Layout: Player 1 HUD bottom-left, Player 2 HUD bottom-right (mirrored).
 
+### HUD Architecture Notes (from Phase 6 build)
+
+**HUD wiring pattern — no dynamic node creation:**
+`HUD.gd` contains pure runtime logic. All visual nodes (health bars, hearts, borders) are real scene nodes in `HUD.tscn` and editable in the Godot editor. Character references are injected via `HUD.set_characters(p1, p2)` called from `BattleScene._ready()` after spawn points assign their player references. HUD polls `current_hp / max_hp` each `_process` frame for the bar and connects to `GameManager.stock_lost` (signal) for heart greying — do NOT poll stocks every frame.
+
+**Low-HP color swap threshold:** below 25% HP, swap the `TextureProgressBar` fill from `greenbar_1.png` to `redblue_1.png`. Use `nine_patch_stretch = true` so the texture scales cleanly at any bar width.
+
+**Trough and border — use ColorRect + Panel, not StyleBoxEmpty:**
+Godot 4's scene serializer silently discards `StyleBoxEmpty` sub-resources on save. If you need a transparent background for a Panel, it will revert to the default style next time the scene loads. Instead:
+- Dark maroon trough behind the bar: use a sibling `ColorRect` with `show_behind_parent = true`
+- Border frame around the bar: use a `Panel` with a `StyleBoxFlat` that has `draw_center = false` (this one does persist)
+
+**Heart/stock icon generation — procedural pixel art:**
+`alagard.ttf` does not contain a ♥ glyph, so Label-based hearts silently fall back to the system font and render as squares or wrong glyphs. Always build heart icons as `TextureRect` nodes with a texture generated in code:
+```gdscript
+func _create_heart_texture() -> ImageTexture:
+    var pattern = [[0,1,1,0,1,1,0], [1,1,1,1,1,1,1], ...]
+    var img := Image.create(7, 7, false, Image.FORMAT_RGBA8)
+    for y in 7:
+        for x in 7:
+            img.set_pixel(x, y, color_for_pixel(pattern[y][x], x, y))
+    return ImageTexture.create_from_image(img)
+```
+Apply `TEXTURE_FILTER_NEAREST` and `stretch_mode = KEEP_ASPECT_CENTERED` so the 7×7 source stays crisp when scaled up to HUD size (e.g., 21×21 at 3×).
+
+**Heart depletion ordering — sort by position.x, never by node name:**
+Node names in `.tscn` files are not guaranteed to reflect spatial order. Sort the heart array by `position.x` in `_ready()` so index 0 is always leftmost:
+```gdscript
+rects.sort_custom(func(a, b): return (a as Control).position.x < (b as Control).position.x)
+```
+Unified depletion formula for both players: `grey_idx = 2 - remaining` (so P1 loses rightmost first, P2 loses rightmost first — if you want mirror behavior, reverse the sorted array for P2 only).
+
+**Spawn facing direction convention:**
+Each Character has `spawn_facing_right: bool = true`. In `BattleScene._ready()`, set `player2.spawn_facing_right = false` alongside the initial `_set_facing(false)` call. `respawn()` then automatically calls `_set_facing(spawn_facing_right)` — no per-player respawn logic needed in the scene controller. Apply this same convention to every character scene in Phase 8.
+
 ---
 
 ## Menu UI Design
@@ -577,10 +770,10 @@ Work through these phases in order. Each phase should result in a runnable, test
 2. Set stretch mode: `canvas_items`, aspect: `keep`
 3. Configure audio buses: Master, Music, SFX, Ambience
 4. Set up collision layers:
-   - Layer 1: World/Platforms
-   - Layer 2: Player Hurtboxes
-   - Layer 3: Attack Hitboxes
-   - Layer 4: Kill Zones
+   - Layer 1: CharacterBody2D (world/platform collision)
+   - Layer 2: Player Hurtboxes (Area2D, `collision_layer = 2`)
+   - Layer 4: Attack Hitboxes (Area2D, `collision_layer = 4`, `collision_mask = 2`)
+   - Layer 8: Kill Zones (Area2D, `collision_layer = 8`)
 5. Add all 4 autoload singletons (GameManager, AudioManager, VFXManager, InputManager) with stub scripts
 6. Configure InputMap with all `p1_` and `p2_` actions for keyboard + controller
 
@@ -612,35 +805,52 @@ Work through these phases in order. Each phase should result in a runnable, test
    - Disable outside active frames
    - Use `animation_looped` or frame-count tracking
 5. Implement `take_damage()` and `die()`
-6. Make knight_1 a `Warrior` subclass with shield special
+6. Create `scripts/characters/Knight.gd` extending `Character.gd` — wire shield block using `Defend`/`Protect` animations per the Knight spec in the Characters section
 
 ---
 
-### Phase 4: First Stage (Windrise)
-1. Create `scenes/stages/Windrise.tscn`
-2. Set up `ParallaxBackground` with layers:
-   - Layer 1 (motion scale 0.2): `windrise-background.png` or `windrise-background-4k.png`
-   - Layer 2 (motion scale 0.4): `mountains.png`
-   - Layer 3 (motion scale 0.7): `hills.png`
-3. Add platforms as `StaticBody2D` + `CollisionShape2D` + `Sprite2D` using `floating_platforms.png`
-4. Add `decors.png` as a foreground `Sprite2D` (no collision)
-5. Add kill zones: `Area2D` nodes at bottom (Y > 800), left (X < -200), right (X > 1480), top (Y < -300)
-6. Add two `Marker2D` spawn points (left-center and right-center above main platform)
-7. Create `BattleScene.tscn` — instantiate Windrise, spawn two knight_1 instances
+### Phase 4: First Stage (Windrise) — REQUIRES RETROACTIVE FIX IF ALREADY BUILT
+If Windrise.tscn already exists, rebuild the platform layout entirely using these rules:
+
+**Platform implementation — follow the Platform Building Protocol in full:**
+- Read and follow the Platform Building Protocol section before writing any platform code
+- Measure floating_platforms.png tile size first, log it, then build the TileSet
+- Build one section at a time with a screenshot after each — do not build all platforms then screenshot
+- Seamless visuals are the acceptance criteria, not pixel-perfect matching of the reference image
+
+**Scene setup:**
+1. Create/rebuild `scenes/stages/Windrise.tscn`
+2. `ParallaxBackground` with three layers: `windrise-background.png` at 0.2, `mountains.png` at 0.5, `hills.png` at 0.8
+3. `TileMap` with `floating_platforms.png` as TileSet — paint the standard layout:
+   - Left ground section: x 0–480, y 460–600
+   - Right ground section: x 800–1280, y 460–600
+   - Left float: x 260–530, y 310
+   - Right float: x 750–1020, y 310
+   - Top center: x 530–750, y 160
+4. `decors.png` as foreground Sprite2D (no collision, parallax 1.2)
+5. Kill zones: bottom Y > 750, left X < -150, right X > 1430, top Y < -200
+6. Two `Marker2D` spawn points: left (240, 400), right (1040, 400)
+7. `BattleScene.tscn` — instantiate Windrise, spawn two knight_1 instances at spawn points
+
+After building, take a screenshot and assess: do the platform sections look visually seamless? Do the ground sections have real visual weight? Adjust tile placement until it looks correct.
 
 ---
 
-### Phase 5: Combat System
-1. Implement hitbox → hurtbox collision detection:
-   - Hitbox `area_entered` signal → call `target.take_damage(damage, direction, is_heavy)`
-2. Implement knockback physics:
-   - `take_damage` applies velocity impulse to the struck character
-   - Light hit: moderate horizontal push + small upward
-   - Heavy hit: strong horizontal + upward arc
-3. Implement hitstun: brief `HURT` state where input is ignored
-4. Implement `die()` → stock decrement → respawn with i-frames
-5. Add `GameManager` stock tracking and match-end detection
-6. Add screen freeze (0.1s) on heavy hit landing (juice)
+### Phase 5: Combat System — HP BASED
+**Do not implement Smash-style damage percentage scaling. See Combat section above.**
+
+1. Implement hitbox → hurtbox collision:
+   - `area_entered` signal on hurtbox → `target.take_damage(amount, attacker_position, is_heavy)`
+2. `take_damage(amount, attacker_pos, is_heavy)`:
+   - Subtract `amount` from `current_hp`
+   - Calculate knockback direction from `attacker_pos` relative to target
+   - Apply fixed knockback impulse: light = `Vector2(±180, -120)`, heavy = `Vector2(±320, -200)`
+   - Enter HURT state for hitstun duration (light: 5 frames, heavy: 12 frames)
+   - If `current_hp <= 0`: call `die()`
+3. `die()`: play KO VFX, decrement stock, disable character, respawn after 1.5s with 2s i-frames
+4. Kill zone `body_entered` signal also calls `die()` on the entering character
+5. `GameManager` tracks stocks for both players, emits `match_ended(winner_id)` when one reaches 0
+6. Add 0.1s screen freeze on heavy hit landing
 
 ---
 
@@ -653,41 +863,40 @@ Work through these phases in order. Each phase should result in a runnable, test
 
 ---
 
-### Phase 7: VFX & Audio Integration
-1. Implement `VFXManager`:
-   - Preload frame sequences from each `vfx/` subfolder
-   - `play(type, position)` — spawns AnimatedSprite2D, auto-frees on finish
-2. Wire VFX triggers:
-   - `hit_sparks` → on any hit
-   - `magic` → on wizard special
-   - `ko` → on stock loss (death)
-   - `dust` → on landing, dash
-3. Implement `AudioManager`:
-   - Load all SFX into dictionary on start
-   - `play_sfx(name)` plays on SFX bus
-   - `play_music(name)` crossfades on Music bus
-4. Wire audio triggers per the SFX Trigger Map above
-5. Start stage music and ambience when BattleScene loads
+### Phase 7: VFX & Audio Integration — COMPLETE
+Implemented and verified. Concrete shape (see VFX System and Audio System sections for full detail):
+1. `VFXManager` autoload slices each PNG sheet into per-row 64×64 (or 72×72) animations. Exposes `play()`, `play_single()`, `get_anim_count()`. Pinned selections: `hit_sparks` anim_idx 618, `ko` anim_idx 19, both at scale 2.0.
+2. `AudioManager` autoload preloads 48 SFX groups, crossfades music via `_music_a`/`_music_b`, loops ambience at −12 db.
+3. Knight1 wired: `"Sword Attack"` on attack start, `"Sword Impact Hit"` + hit_sparks on connect, KO VFX in `die()` after `GameManager.on_player_death`. Dust-on-landing was tried and removed.
+4. BattleScene plays a random Windrise track + `Forest Day.ogg` ambience on `_ready()`.
 
 ---
 
 ### Phase 8: All 9 Characters
-Repeat Phase 3 for remaining characters. Create:
-- `scripts/characters/Warrior.gd` (knight_2, knight_3 inherit)
-- `scripts/characters/Wizard.gd` (fire_wizard, lightning_mage, wanderer_magician inherit)
-- `scripts/characters/Samurai.gd` (samurai, samurai_archer, samurai_commander inherit)
-- `scripts/characters/Projectile.gd` for wizard specials
+Repeat Phase 3 for remaining 8 characters using the 6-script model. Do NOT use a generic Warrior/Wizard/Samurai class system — each script below is distinct:
 
-Each character gets its own `.tscn` scene that inherits Character.tscn and sets its specific:
-- Sprite frames (from their sprites/ folder)
-- Stats (HP, speed, damage — see Character Stats table)
-- Script (Warrior / Wizard / Samurai)
+- `Knight.gd` (already built in Phase 3) → used by knight_2, knight_3 (visual-only variants, same script)
+- `Samurai.gd` → used by samurai, samurai_commander (detects `Protection` vs `Protect` animation at runtime)
+- `SamuraiArcher.gd` → used by samurai_archer only
+- `FireWizard.gd` → used by fire_wizard only
+- `LightningMage.gd` → used by lightning_mage only
+- `WandererMagician.gd` → used by wanderer_magician only
+
+Also create:
+- `scripts/characters/Projectile.gd` — base projectile class (used by SamuraiArcher Arrow, FireWizard Fireball, LightningMage Light_ball, WandererMagician Magic_arrow and Magic_sphere)
+
+Each character gets its own `.tscn` scene that instantiates Character.tscn and sets its specific:
+- Sprite frames (loaded from their sprites/ folder — list files to discover animation names)
+- Stats (HP, speed, damage, jump — see each character's spec in the Characters section)
+- Script (the appropriate one from the 6 above)
+
+See the Characters section for exact animation names, mechanics, and stats per character. VFX and audio triggers must be wired into each character's attack and death callbacks during this phase.
 
 ---
 
 ### Phase 9: All 3 Stages
-Repeat Phase 4 for Dungeon and Desert Temple:
-- `scenes/stages/Dungeon.tscn`
+Repeat Phase 4 for Ruins and Desert Temple:
+- `scenes/stages/Ruins.tscn` (was previously Dungeon — use ruins assets, not dungeon assets)
 - `scenes/stages/DesertTemple.tscn`
 
 Each with correct parallax layers, platform layouts, spawn points, and kill zones as described in Stages section.
@@ -742,6 +951,45 @@ In Project Settings:
 - Preload SFX (WAV) at game start — they're small enough to keep in memory
 - VFX nodes: pool and reuse rather than instantiate/free if frame rate drops
 
+### Sprite Art Offset — MUST DO FOR EVERY CHARACTER
+
+Character sprite art is rarely centered in the 128×128 frame. The body often sits left or right of the frame center. If you set `AnimatedSprite2D.position = Vector2(0, 0)`, `flip_h` will mirror around the node origin and the character's visual body will appear to jump horizontally when changing direction.
+
+**For every character, measure the body center before placing the sprite:**
+```gdscript
+# The formula:
+# x_offset = 64 - body_center_pixel_x   (positive = body is left of center)
+# y_offset = -(capsule_height / 2 - feet_margin)  (align feet to capsule bottom)
+
+# Known working values for knight_1 (as of Phase 6):
+# AnimatedSprite2D position = Vector2(16, -26)
+# → 16px right because body center is at ~48px (16px left of 64px center)
+# → -26px up to align feet to sit on top of grass (was -16, which caused
+#   ~10px of ground clipping; adjusted after HUD work made clipping visible)
+```
+When building each character in Phase 8, run the game with a test position, observe if the sprite jumps on direction change, and adjust `position.x` until it stays visually stable. Set `position.y` so the feet touch the ground (bottom of capsule at `center_y + capsule_height/2`).
+
+### CapsuleShape2D Height Convention
+
+In Godot 4, `CapsuleShape2D.height` is **total height including both hemisphere caps**, not the half-extent. A capsule with `height = 64` extends from `center_y - 32` to `center_y + 32`.
+
+This is critical for hitbox positioning: if you place a hitbox at `y = -50` expecting it to be "above center", you may be placing it above the top of the enemy's hurtbox entirely. Place hitboxes at torso level relative to the capsule center — approximately `y = -10` works for a standard 64px capsule.
+
+### GDScript 4.6 Gotchas (learned in Phase 7)
+
+**Integer division warning cannot be `@warning_ignore`'d reliably:**
+```gdscript
+# BAD — emits "Integer division. Decimal part will be discarded." even with
+# @warning_ignore annotations and explicit int type declarations:
+var cols: int = sheet_width / frame_size
+
+# GOOD — cast through float, then back to int. Same result, no warning:
+var cols := int(sheet_width / float(frame_size))
+```
+
+**Do not name a function parameter `name`:**
+`Node.name` exists on every Node. Using `name` as a parameter in a method on a Node-derived class shadows it and emits a warning. Always namespace parameters (`sfx_name`, `track_name`, `effect_name`, etc.).
+
 ### File Loading Pattern
 When loading sprite sheets dynamically (e.g., in CharacterSelect previews):
 ```gdscript
@@ -763,14 +1011,85 @@ var anim_files = DirAccess.get_files_at("res://assets/characters/warriors/knight
 
 ### Music Files (in assets/music/)
 Windrise stage: Prairie_3.ogg, Prairie_4.ogg, Prairie_5.ogg, BattleField_1.ogg through BattleField_5.ogg, EpicBattle.ogg  
-Dungeon stage: Gothic_Dark.ogg, Demise.ogg, Havoc.ogg, Fight_1.ogg through Fight_3.ogg, Crisis.ogg  
+Ruins stage: Gothic_Dark.ogg, Demise.ogg, Havoc.ogg, Fight_1.ogg through Fight_3.ogg, Crisis.ogg  
 Desert Temple: Raid_Ethnic.ogg, Raid_FolkMetal_1.ogg, Raid_FolkMetal_2.ogg, Raid_1.ogg through Raid_3.ogg, Flap_1.ogg, Flap_2.ogg
 
-### VFX Frames — load all PNGs from folder, sorted, as animation frames
+### VFX Frames — each PNG is a sprite sheet (not a frame)
 ```gdscript
-var frames = DirAccess.get_files_at("res://assets/vfx/hit_sparks/")
-frames.sort()  # ensures correct playback order
+# Correct: call VFXManager, which slices each PNG into per-row animations.
+VFXManager.play_single("hit_sparks", hit_position, 2.0, 0.12, 618)
+VFXManager.play("ko", global_position, 2.0, 19)
+
+# Incorrect (do NOT do this — renders a 768×576 block on screen):
+#   var frames = DirAccess.get_files_at("res://assets/vfx/hit_sparks/")
+#   frames.sort()  # each PNG is a SHEET, not a single frame
 ```
+See the VFX System section for sheet dimensions, pinned anim_idx values, and the pinning workflow.
+
+---
+
+## Platform Building Protocol — MANDATORY
+
+This protocol applies every time a stage platform is created or modified. Seamless visuals take priority over matching the reference image layout exactly. The reference images show the desired structural logic (two ground sections, gap, floating platforms above) — they are not pixel-perfect targets to clone.
+
+### Step 1: Measure the asset before using it
+
+Before placing any platform sprite or tile, read the actual pixel dimensions of the source image and log them. Never assume a tile size.
+
+```gdscript
+# Example — run this and read the output before building anything:
+var tex = load("res://assets/stages/desert_temple/platforms/desert_platforms.png")
+print("Sheet size: ", tex.get_width(), "x", tex.get_height())
+# Then divide by known grid (256x256 for desert) to confirm piece count
+```
+
+For tilesets (ruins_platform_tiles.png), inspect the image to identify the repeating grid unit. Look for the smallest repeated element and measure it. Common sizes are 16×16, 32×32, 48×48. Confirm before creating the TileSet.
+
+### Step 2: Never scale a platform sprite to fit a space
+
+**This is the single most common cause of visual seams. It is absolutely forbidden.**
+
+- Do NOT set `scale` on any platform Sprite2D to make it wider or taller
+- Do NOT stretch a TextureRect to fill a space
+- Do NOT use `region_rect` to crop a tile and then scale the result
+
+If a ground section needs to be 480px wide and your tile is 64px wide, place 7–8 tiles edge to edge. If a floating island piece is 256×256, place it at 1:1 scale. Platforms get their size from the number of tiles placed, never from scaling a single tile.
+
+### Step 3: Build one section at a time, screenshot after each
+
+Do not build the entire stage layout at once. Build in this order, taking a screenshot and verifying after each:
+
+1. Build the LEFT ground section only → screenshot → check edges are seamless
+2. Build the RIGHT ground section (mirror) → screenshot → check it matches the left visually
+3. Build one floating platform → screenshot → check it looks self-contained and correct
+4. Place all platforms in the full layout → screenshot → check overall composition
+
+If a section has a visible seam, gap, or texture stretch at any step, fix it before continuing. Do not proceed to the next section until the current one looks correct.
+
+### Step 4: Seamless verification checklist
+
+After each screenshot, specifically check:
+- **No visible seam lines** between adjacent tiles on the same platform
+- **No texture stretching** — pixels should be crisp, not blurred or elongated
+- **Platform edges** end cleanly — no half-tiles or cut-off pixels at the ends
+- **Left and right ground sections** use identical tile arrangement (mirror each other)
+- **Floating platforms** sit at 1:1 scale with no distortion
+- **The gap between ground sections** is clean empty space — no stray pixels
+
+### Step 5: Layout after seamlessness is confirmed
+
+Only after all individual platform sections pass the seamless check, position them in the full layout. Use the reference image at `res://references/[stage]_reference.png` as a guide for approximate positions and proportions, but adjust positions freely if it makes the stage look better. The reference is inspiration, not specification.
+
+### Asset-specific slicing instructions
+
+**desert_platforms.png (256×256 grid):**
+Each named piece occupies one or more 256×256 cells. Load the full sheet as a Texture2D, then use `AtlasTexture` with `region` set to the correct cell coordinates to extract each named piece. Place each piece as a Sprite2D at 1:1 scale. Do not combine pieces into a single stretched sprite.
+
+**ruins_platform_tiles.png (tileset):**
+This is a categorized tileset — Ground & Cliff Tiles, Floating Island Tiles, Ruin Tiles, etc. Measure the tile grid size from the image first. Create a `TileSet` resource, import the sheet, and define the tile size. Use a `TileMap` node to paint tiles. Ground sections = painted rows of ground/cliff tiles. Floating platforms = painted from floating island tile category.
+
+**floating_platforms.png (Windrise):**
+Already in the project and working. Use the same TileMap approach — measure the repeating tile unit and paint rather than scale.
 
 ---
 

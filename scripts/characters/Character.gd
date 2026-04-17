@@ -411,3 +411,22 @@ func _trigger_screen_freeze(duration: float) -> void:
 	get_tree().create_timer(duration, true, false, true).timeout.connect(
 		func() -> void: Engine.time_scale = 1.0
 	)
+
+# ── Sprite frame builder (shared by all character subclasses) ─────────────────
+func _add_anim(sf: SpriteFrames, anim_name: String, tex: Texture2D,
+		frame_w: int, frame_h: int, start: int, count: int,
+		fps: float, loop: bool) -> void:
+	sf.add_animation(anim_name)
+	sf.set_animation_speed(anim_name, fps)
+	sf.set_animation_loop(anim_name, loop)
+	for i in range(start, start + count):
+		var at := AtlasTexture.new()
+		at.atlas = tex
+		at.region = Rect2(i * frame_w, 0, frame_w, frame_h)
+		sf.add_frame(anim_name, at)
+
+func _frames(path: String, frame_size: int) -> int:
+	return int(load(path).get_width() / float(frame_size))
+
+func _apply_extra_hitstun(extra: float) -> void:
+	_hitstun_timer = maxf(_hitstun_timer, extra)

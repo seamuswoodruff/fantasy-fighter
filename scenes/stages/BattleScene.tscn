@@ -1,7 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://battlescene_p4"]
+[gd_scene load_steps=4 format=3 uid="uid://battlescene_p4"]
 
 [ext_resource type="PackedScene" uid="uid://windrise_scene_p4" path="res://scenes/stages/Windrise.tscn" id="1_windrise"]
-[ext_resource type="PackedScene" uid="uid://knight1scene_p3" path="res://scenes/characters/Knight1.tscn" id="2_knight"]
 [ext_resource type="Script" uid="uid://battlescene_gd_p4" path="res://scripts/stages/BattleScene.gd" id="3_script"]
 [ext_resource type="PackedScene" uid="uid://hud_scene_p6" path="res://scenes/ui/HUD.tscn" id="4_hud"]
 
@@ -11,11 +10,5 @@ script = ExtResource("3_script")
 [node name="Stage" parent="." instance=ExtResource("1_windrise")]
 
 [node name="Players" type="Node2D" parent="."]
-
-[node name="Player1" parent="Players" instance=ExtResource("2_knight")]
-player_id = 1
-
-[node name="Player2" parent="Players" instance=ExtResource("2_knight")]
-player_id = 2
 
 [node name="HUD" parent="." instance=ExtResource("4_hud")]

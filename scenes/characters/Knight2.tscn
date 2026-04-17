@@ -1,24 +1,18 @@
-[gd_scene format=3 uid="uid://c5m3e5y0yc084"]
+[gd_scene format=3 uid="uid://knight2_p8"]
 
 [ext_resource type="PackedScene" path="res://scenes/characters/Character.tscn" id="1_base"]
-[ext_resource type="Script" path="res://scripts/characters/Knight.gd" id="2_warrior"]
+[ext_resource type="Script" path="res://scripts/characters/Knight.gd" id="2_script"]
 
-[node name="Knight1" unique_id=223315011 instance=ExtResource("1_base")]
-script = ExtResource("2_warrior")
+[node name="Knight2" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
 character_name = "Knight"
-sprites_path = "res://assets/characters/warriors/knight_1/sprites/"
+sprites_path = "res://assets/characters/warriors/knight_2/sprites/"
 
 [node name="CollisionShape2D" parent="." index="0"]
 position = Vector2(0, 0)
 
 [node name="AnimatedSprite2D" parent="." index="1"]
 position = Vector2(16, -26)
-
-[node name="Placeholder" parent="." index="2"]
-visible = false
-
-[node name="HurtboxShape" parent="Hurtbox" index="0"]
-position = Vector2(0, 0)
 
 [node name="HitboxLight" parent="." index="4"]
 position = Vector2(2, 1)

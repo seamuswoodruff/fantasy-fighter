@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://fire_wizard_p8"]
+
+[ext_resource type="PackedScene" path="res://scenes/characters/Character.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scripts/characters/FireWizard.gd" id="2_script"]
+
+[node name="FireWizard" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+character_name = "Fire Wizard"
+sprites_path = "res://assets/characters/wizards/fire_wizard/sprites/"
+
+[node name="CollisionShape2D" parent="." index="0"]
+position = Vector2(0, 0)
+
+[node name="AnimatedSprite2D" parent="." index="1"]
+position = Vector2(0, -26)
+
+[node name="HitboxLight" parent="." index="4"]
+position = Vector2(2, 1)
+
+[node name="HitboxLightShape" parent="HitboxLight" index="0"]
+position = Vector2(50, -10)
+
+[node name="HitboxHeavy" parent="." index="5"]
+position = Vector2(2, -2)
+
+[node name="HitboxHeavyShape" parent="HitboxHeavy" index="0"]
+position = Vector2(50, -10)
