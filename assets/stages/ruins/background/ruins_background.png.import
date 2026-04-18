@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://fqg6ftodc52q"
-path="res://.godot/imported/ceiling_sky.png-9404a667aa2daab2f2ee65f589439f89.ctex"
+uid="uid://cjtcajs2cjwtt"
+path="res://.godot/imported/ruins_background.png-58899be99a173796dd3d2b03b966b37d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/stages/dungeon/foreground/ceiling_sky.png"
-dest_files=["res://.godot/imported/ceiling_sky.png-9404a667aa2daab2f2ee65f589439f89.ctex"]
+source_file="res://assets/stages/ruins/background/ruins_background.png"
+dest_files=["res://.godot/imported/ruins_background.png-58899be99a173796dd3d2b03b966b37d.ctex"]
 
 [params]
 

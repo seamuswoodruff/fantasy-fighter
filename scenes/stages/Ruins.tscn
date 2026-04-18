@@ -1,0 +1,135 @@
+[gd_scene format=3 uid="uid://ruins_stage_p9"]
+
+[ext_resource type="Script" path="res://scripts/stages/Ruins.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lg"]
+size = Vector2(450, 180)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rg"]
+size = Vector2(450, 180)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cf"]
+size = Vector2(200, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rf"]
+size = Vector2(120, 30)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sf"]
+size = Vector2(120, 30)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wl"]
+size = Vector2(40, 1500)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wr"]
+size = Vector2(40, 1500)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kb"]
+size = Vector2(2400, 200)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kl"]
+size = Vector2(300, 1440)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kr"]
+size = Vector2(300, 1440)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kt"]
+size = Vector2(2400, 200)
+
+[node name="Ruins" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="LeftGround" type="StaticBody2D" parent="Platforms"]
+position = Vector2(225, 630)
+collision_mask = 0
+
+[node name="LeftGroundShape" type="CollisionShape2D" parent="Platforms/LeftGround"]
+shape = SubResource("RectangleShape2D_lg")
+
+[node name="RightGround" type="StaticBody2D" parent="Platforms"]
+position = Vector2(1055, 630)
+collision_mask = 0
+
+[node name="RightGroundShape" type="CollisionShape2D" parent="Platforms/RightGround"]
+shape = SubResource("RectangleShape2D_rg")
+
+[node name="CenterFloat" type="StaticBody2D" parent="Platforms"]
+position = Vector2(550, 295)
+collision_mask = 0
+
+[node name="CenterFloatShape" type="CollisionShape2D" parent="Platforms/CenterFloat"]
+shape = SubResource("RectangleShape2D_cf")
+
+[node name="RightFloat" type="StaticBody2D" parent="Platforms"]
+position = Vector2(960, 185)
+collision_mask = 0
+
+[node name="RightFloatShape" type="CollisionShape2D" parent="Platforms/RightFloat"]
+shape = SubResource("RectangleShape2D_rf")
+
+[node name="SmallFloat" type="StaticBody2D" parent="Platforms"]
+position = Vector2(770, 390)
+collision_mask = 0
+
+[node name="SmallFloatShape" type="CollisionShape2D" parent="Platforms/SmallFloat"]
+shape = SubResource("RectangleShape2D_sf")
+
+[node name="WallLeft" type="StaticBody2D" parent="Platforms"]
+position = Vector2(0, 360)
+collision_mask = 0
+
+[node name="WallLeftShape" type="CollisionShape2D" parent="Platforms/WallLeft"]
+position = Vector2(-22, 0)
+shape = SubResource("RectangleShape2D_wl")
+
+[node name="WallRight" type="StaticBody2D" parent="Platforms"]
+position = Vector2(1280, 360)
+collision_mask = 0
+
+[node name="WallRightShape" type="CollisionShape2D" parent="Platforms/WallRight"]
+position = Vector2(20, 0)
+shape = SubResource("RectangleShape2D_wr")
+
+[node name="KillZones" type="Node2D" parent="."]
+
+[node name="KillBottom" type="Area2D" parent="KillZones"]
+position = Vector2(640, 850)
+collision_layer = 8
+monitorable = false
+
+[node name="KillBottomShape" type="CollisionShape2D" parent="KillZones/KillBottom"]
+shape = SubResource("RectangleShape2D_kb")
+
+[node name="KillLeft" type="Area2D" parent="KillZones"]
+position = Vector2(-250, 360)
+collision_layer = 8
+monitorable = false
+
+[node name="KillLeftShape" type="CollisionShape2D" parent="KillZones/KillLeft"]
+shape = SubResource("RectangleShape2D_kl")
+
+[node name="KillRight" type="Area2D" parent="KillZones"]
+position = Vector2(1530, 360)
+collision_layer = 8
+monitorable = false
+
+[node name="KillRightShape" type="CollisionShape2D" parent="KillZones/KillRight"]
+shape = SubResource("RectangleShape2D_kr")
+
+[node name="KillTop" type="Area2D" parent="KillZones"]
+position = Vector2(640, -300)
+collision_layer = 8
+monitorable = false
+
+[node name="KillTopShape" type="CollisionShape2D" parent="KillZones/KillTop"]
+position = Vector2(0, -160)
+shape = SubResource("RectangleShape2D_kt")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="SpawnP1" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(240, 400)
+
+[node name="SpawnP2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1040, 400)
