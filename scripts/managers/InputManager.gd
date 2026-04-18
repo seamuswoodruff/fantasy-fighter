@@ -37,6 +37,9 @@ func is_special_pressed(player_id: int) -> bool:
 func is_special_held(player_id: int) -> bool:
 	return Input.is_action_pressed("p%d_special" % player_id)
 
+func is_special2_pressed(player_id: int) -> bool:
+	return Input.is_action_just_pressed("p%d_special2" % player_id)
+
 func is_block_held(player_id: int) -> bool:
 	return Input.is_action_pressed("p%d_block" % player_id)
 

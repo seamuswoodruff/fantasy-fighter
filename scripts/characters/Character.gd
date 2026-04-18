@@ -148,6 +148,8 @@ func handle_input() -> void:
 		attack_heavy()
 	elif InputManager.is_special_pressed(player_id):
 		special_attack()
+	elif InputManager.is_special2_pressed(player_id):
+		special2_attack()
 
 # ── Jump ──────────────────────────────────────────────────────────────────────
 func _try_jump() -> void:
@@ -320,7 +322,10 @@ func attack_heavy() -> void:
 	AudioManager.play_sfx("Sword Attack")
 
 func special_attack() -> void:
-	pass  # Override in Warrior / Wizard / Samurai
+	pass  # Override in subclasses
+
+func special2_attack() -> void:
+	pass  # Override in subclasses that have two specials
 
 func take_damage(amount: float, attacker_pos: Vector2, is_heavy: bool) -> void:
 	if is_invincible or state == State.DEAD:
@@ -427,6 +432,25 @@ func _add_anim(sf: SpriteFrames, anim_name: String, tex: Texture2D,
 
 func _frames(path: String, frame_size: int) -> int:
 	return int(load(path).get_width() / float(frame_size))
+
+# Loads a PNG that has no .import file (bypasses Godot's importer).
+# Calculates hframes for a projectile texture.
+# Tries the sheet height as the frame size (square frames).
+# If the width isn't evenly divisible by height, falls back to 64px frames.
+func _calc_hframes(tex: Texture2D) -> int:
+	var w := tex.get_width()
+	var h := tex.get_height()
+	if w % h == 0:
+		return int(w / float(h))
+	return int(w / float(64))
+
+func _load_raw_texture(res_path: String) -> ImageTexture:
+	var img := Image.new()
+	var err := img.load(ProjectSettings.globalize_path(res_path))
+	if err != OK:
+		push_error("[Character] _load_raw_texture failed for: " + res_path + " (err %d)" % err)
+		return null
+	return ImageTexture.create_from_image(img)
 
 func _apply_extra_hitstun(extra: float) -> void:
 	_hitstun_timer = maxf(_hitstun_timer, extra)

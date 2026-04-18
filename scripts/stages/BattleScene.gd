@@ -35,8 +35,8 @@ var player2: Character
 func _ready() -> void:
 	_validate_all_characters()
 
-	var p1_key := GameManager.p1_character if GameManager.p1_character != "" else "knight_1"
-	var p2_key := GameManager.p2_character if GameManager.p2_character != "" else "knight_1"
+	var p1_key := GameManager.p1_character if GameManager.p1_character != "" else "fire_wizard"
+	var p2_key := GameManager.p2_character if GameManager.p2_character != "" else "lightning_mage"
 
 	player1 = _spawn_character(p1_key, 1)
 	player2 = _spawn_character(p2_key, 2)
