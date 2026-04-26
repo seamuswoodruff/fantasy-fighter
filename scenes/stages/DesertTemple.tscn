@@ -1,21 +1,331 @@
-[gd_scene format=3 uid="uid://desert_stage_p9"]
+[gd_scene format=3 uid="uid://cwfac0vam61vr"]
 
-[ext_resource type="Script" path="res://scripts/stages/DesertTemple.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://ctvytmbeduwnf" path="res://scripts/stages/DesertTemple.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://crul5yind7ss2" path="res://assets/stages/desert_temple/background/desert_background.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://by0oyvfksa2mk" path="res://assets/stages/desert_temple/platforms/AssetSheet_Yellow.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://dce814h3c8lie" path="res://assets/stages/desert_temple/platforms/DesertTemple_platforms.png" id="4_tex"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_lg"]
-size = Vector2(450, 190)
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1"]
+texture = ExtResource("3_tex")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+8:1/0 = 0
+9:1/0 = 0
+10:1/0 = 0
+11:1/0 = 0
+12:1/0 = 0
+13:1/0 = 0
+14:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+8:2/0 = 0
+9:2/0 = 0
+10:2/0 = 0
+11:2/0 = 0
+12:2/0 = 0
+13:2/0 = 0
+14:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+7:3/0 = 0
+8:3/0 = 0
+9:3/0 = 0
+10:3/0 = 0
+11:3/0 = 0
+12:3/0 = 0
+13:3/0 = 0
+14:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+7:4/0 = 0
+8:4/0 = 0
+9:4/0 = 0
+10:4/0 = 0
+11:4/0 = 0
+12:4/0 = 0
+13:4/0 = 0
+14:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+6:5/0 = 0
+7:5/0 = 0
+8:5/0 = 0
+9:5/0 = 0
+10:5/0 = 0
+11:5/0 = 0
+12:5/0 = 0
+13:5/0 = 0
+14:5/0 = 0
+0:6/0 = 0
+1:6/0 = 0
+2:6/0 = 0
+3:6/0 = 0
+4:6/0 = 0
+5:6/0 = 0
+6:6/0 = 0
+7:6/0 = 0
+8:6/0 = 0
+9:6/0 = 0
+10:6/0 = 0
+11:6/0 = 0
+12:6/0 = 0
+13:6/0 = 0
+14:6/0 = 0
+0:7/0 = 0
+1:7/0 = 0
+2:7/0 = 0
+3:7/0 = 0
+4:7/0 = 0
+5:7/0 = 0
+6:7/0 = 0
+7:7/0 = 0
+8:7/0 = 0
+9:7/0 = 0
+10:7/0 = 0
+11:7/0 = 0
+12:7/0 = 0
+13:7/0 = 0
+14:7/0 = 0
+0:8/0 = 0
+1:8/0 = 0
+2:8/0 = 0
+3:8/0 = 0
+4:8/0 = 0
+5:8/0 = 0
+6:8/0 = 0
+7:8/0 = 0
+8:8/0 = 0
+9:8/0 = 0
+10:8/0 = 0
+11:8/0 = 0
+12:8/0 = 0
+13:8/0 = 0
+14:8/0 = 0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_rg"]
-size = Vector2(450, 190)
+[sub_resource type="TileSet" id="TileSet_1"]
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_1")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_cf"]
-size = Vector2(260, 40)
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2"]
+texture = ExtResource("4_tex")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+8:1/0 = 0
+9:1/0 = 0
+10:1/0 = 0
+11:1/0 = 0
+12:1/0 = 0
+13:1/0 = 0
+14:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+8:2/0 = 0
+9:2/0 = 0
+10:2/0 = 0
+11:2/0 = 0
+12:2/0 = 0
+13:2/0 = 0
+14:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+7:3/0 = 0
+8:3/0 = 0
+9:3/0 = 0
+10:3/0 = 0
+11:3/0 = 0
+12:3/0 = 0
+13:3/0 = 0
+14:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+7:4/0 = 0
+8:4/0 = 0
+9:4/0 = 0
+10:4/0 = 0
+11:4/0 = 0
+12:4/0 = 0
+13:4/0 = 0
+14:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+6:5/0 = 0
+7:5/0 = 0
+8:5/0 = 0
+9:5/0 = 0
+10:5/0 = 0
+11:5/0 = 0
+12:5/0 = 0
+13:5/0 = 0
+14:5/0 = 0
+0:6/0 = 0
+1:6/0 = 0
+2:6/0 = 0
+3:6/0 = 0
+4:6/0 = 0
+5:6/0 = 0
+6:6/0 = 0
+7:6/0 = 0
+8:6/0 = 0
+9:6/0 = 0
+10:6/0 = 0
+11:6/0 = 0
+12:6/0 = 0
+13:6/0 = 0
+14:6/0 = 0
+0:7/0 = 0
+1:7/0 = 0
+2:7/0 = 0
+3:7/0 = 0
+4:7/0 = 0
+5:7/0 = 0
+6:7/0 = 0
+7:7/0 = 0
+8:7/0 = 0
+9:7/0 = 0
+10:7/0 = 0
+11:7/0 = 0
+12:7/0 = 0
+13:7/0 = 0
+14:7/0 = 0
+0:8/0 = 0
+1:8/0 = 0
+2:8/0 = 0
+3:8/0 = 0
+4:8/0 = 0
+5:8/0 = 0
+6:8/0 = 0
+7:8/0 = 0
+8:8/0 = 0
+9:8/0 = 0
+10:8/0 = 0
+11:8/0 = 0
+12:8/0 = 0
+13:8/0 = 0
+14:8/0 = 0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_lf"]
-size = Vector2(160, 30)
+[sub_resource type="TileSet" id="TileSet_2"]
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_2")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_rf"]
-size = Vector2(220, 40)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dt_bridge"]
+size = Vector2(169, 40.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dt_float_wide"]
+size = Vector2(126, 40.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dt_tile"]
+size = Vector2(179.875, 77.75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dt_cf_top"]
+size = Vector2(249, 27)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dt_rf_wide"]
+size = Vector2(98, 69)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dt_lg_upper"]
+size = Vector2(196, 256)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dt_lg_ext"]
+size = Vector2(191, 91)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dt_cg"]
+size = Vector2(192, 192)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dt_rg"]
+size = Vector2(382, 82)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_slope_r"]
+points = PackedVector2Array(-32, -33, 31, 31, -32, 32)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_slope_r3"]
+points = PackedVector2Array(-33, -30, -1, 3, -33, 1)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_slope_r4"]
+points = PackedVector2Array(-33, -32, 28, 32, -33, 113)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wl"]
 size = Vector2(40, 1500)
@@ -35,101 +345,202 @@ size = Vector2(300, 1440)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kt"]
 size = Vector2(2400, 200)
 
-[node name="DesertTemple" type="Node2D"]
+[node name="DesertTemple" type="Node2D" unique_id=436243569]
 script = ExtResource("1_script")
 
-[node name="Platforms" type="Node2D" parent="."]
+[node name="Background" type="Sprite2D" parent="." unique_id=229374469]
+z_index = -10
+position = Vector2(640, 360)
+scale = Vector2(0.96, 0.96)
+texture = ExtResource("2_bg")
 
-[node name="LeftGround" type="StaticBody2D" parent="Platforms"]
-position = Vector2(225, 625)
+[node name="TileMap" type="TileMap" parent="." unique_id=1866343063]
+scale = Vector2(4, 4)
+tile_set = SubResource("TileSet_1")
+format = 2
+layer_0/name = "Platforms"
+layer_1/name = "Foreground"
+layer_1/z_index = -1
+
+[node name="TileMap2" type="TileMap" parent="." unique_id=1712816031]
+scale = Vector2(4, 4)
+tile_set = SubResource("TileSet_2")
+format = 2
+layer_0/name = "Platforms"
+layer_0/tile_data = PackedInt32Array(589829, 917504, 6, 655365, 917504, 7, 589828, 655360, 5, 524291, 720896, 5, 524289, 655360, 5, 589823, 655360, 5, 524288, 524288, 5, 524290, 524288, 5, 589834, 524288, 5, 655377, 524288, 5, 655379, 524288, 5, 655381, 524288, 5, 655378, 655360, 5, 655380, 655360, 5, 589835, 655360, 5, 589833, 851968, 6, 196618, 655360, 5, 262162, 655360, 5, 196612, 655360, 5, 196613, 917504, 6, 262163, 917504, 6, 196611, 851968, 6, 196617, 851968, 6, 262161, 851968, 6, 262153, 851968, 7, 327697, 851968, 7, 262147, 851968, 7, 262148, 589824, 6, 262154, 589824, 6, 327698, 589824, 6, 196619, 524288, 5, 196620, 786432, 7, 327699, 917504, 7, 262155, 589824, 8, 262149, 917504, 7, 327690, 720896, 8, 393234, 655360, 8, 327684, 655360, 8, 589836, 720896, 5, 655376, 851968, 6, 720912, 851968, 7, 720914, 589824, 6, 720916, 589824, 6, 655361, 589824, 6, 720899, 589824, 8, 786431, 589824, 6, 589824, 589824, 6, 589825, 524288, 6, 589826, 524288, 6, 720898, 524288, 6, 720897, 655360, 6, 720896, 655360, 6, 589827, 655360, 6, 655363, 524288, 6, 655360, 524288, 6, 655364, 655360, 6, 655362, 655360, 6, 720900, 655360, 8, 655369, 458752, 7, 720906, 524288, 8, 720907, 917504, 7, 655372, 917504, 7, 655370, 589824, 7, 655371, 655360, 6, 720895, 589824, 6, 655359, 589824, 6, 131077, 589824, 0, 131078, 655360, 0, 131079, 720896, 0, 131080, 786432, 0, 131081, 851968, 0, 720913, 655360, 6, 720915, 589824, 7, 720917, 589824, 7)
+layer_1/name = "Foreground"
+layer_1/z_index = -1
+layer_1/tile_data = PackedInt32Array(458752, 458752, 4, 458753, 524288, 4, 393216, 458752, 3, 393217, 524288, 3, 327680, 458752, 2, 327681, 524288, 2, 262144, 458752, 1, 262145, 524288, 1, 196608, 458752, 0, 196609, 524288, 0, 524298, 655360, 4, 524299, 720896, 4, 458762, 655360, 3, 458763, 720896, 3, 393226, 655360, 2, 393227, 720896, 2, 524293, 917504, 4, 131082, 65536, 2, 65546, 65536, 1, 10, 65536, 0, 65545, 0, 1, 9, 0, 0, 65547, 131072, 1, 11, 131072, 0, 458754, 786432, 2, 524292, 851968, 3, 524297, 393216, 4, 196627, 589824, 4, 131091, 589824, 3, 196625, 262144, 6, 131089, 262144, 5, 65553, 262144, 4, 131090, 327680, 5, 131088, 196608, 5, 196626, 786432, 2, 589841, 393216, 6, 524305, 393216, 5)
+
+[node name="Platforms" type="Node2D" parent="." unique_id=263197901]
+
+[node name="TopBridge" type="StaticBody2D" parent="Platforms" unique_id=400000001]
+position = Vector2(480, 160)
 collision_mask = 0
 
-[node name="LeftGroundShape" type="CollisionShape2D" parent="Platforms/LeftGround"]
-shape = SubResource("RectangleShape2D_lg")
+[node name="TopBridgeShape" type="CollisionShape2D" parent="Platforms/TopBridge" unique_id=400000002]
+position = Vector2(0.5, 21.25)
+shape = SubResource("RectangleShape2D_dt_bridge")
 
-[node name="RightGround" type="StaticBody2D" parent="Platforms"]
-position = Vector2(1055, 625)
+[node name="LeftFloat" type="StaticBody2D" parent="Platforms" unique_id=400000003]
+position = Vector2(288, 256)
 collision_mask = 0
 
-[node name="RightGroundShape" type="CollisionShape2D" parent="Platforms/RightGround"]
-shape = SubResource("RectangleShape2D_rg")
+[node name="LeftFloatShape" type="CollisionShape2D" parent="Platforms/LeftFloat" unique_id=400000004]
+position = Vector2(1, 34.25)
+shape = SubResource("RectangleShape2D_dt_float_wide")
 
-[node name="CenterFloat" type="StaticBody2D" parent="Platforms"]
-position = Vector2(640, 245)
+[node name="LeftFloatTip" type="StaticBody2D" parent="Platforms" unique_id=400000005]
+position = Vector2(288, 352)
 collision_mask = 0
 
-[node name="CenterFloatShape" type="CollisionShape2D" parent="Platforms/CenterFloat"]
-shape = SubResource("RectangleShape2D_cf")
+[node name="LeftFloatTipShape" type="CollisionShape2D" parent="Platforms/LeftFloatTip" unique_id=400000006]
+position = Vector2(-0.0625, -121)
+shape = SubResource("RectangleShape2D_dt_tile")
 
-[node name="LeftFloat" type="StaticBody2D" parent="Platforms"]
-position = Vector2(230, 195)
+[node name="CenterFloat" type="StaticBody2D" parent="Platforms" unique_id=400000007]
+position = Vector2(704, 256)
 collision_mask = 0
 
-[node name="LeftFloatShape" type="CollisionShape2D" parent="Platforms/LeftFloat"]
-shape = SubResource("RectangleShape2D_lf")
+[node name="CenterFloatShape" type="CollisionShape2D" parent="Platforms/CenterFloat" unique_id=400000008]
+position = Vector2(-0.5, -50.5)
+shape = SubResource("RectangleShape2D_dt_cf_top")
 
-[node name="RightFloat" type="StaticBody2D" parent="Platforms"]
-position = Vector2(990, 190)
+[node name="CenterFloatTip" type="StaticBody2D" parent="Platforms" unique_id=400000009]
+position = Vector2(672, 352)
 collision_mask = 0
 
-[node name="RightFloatShape" type="CollisionShape2D" parent="Platforms/RightFloat"]
-shape = SubResource("RectangleShape2D_rf")
+[node name="CenterFloatTipShape" type="CollisionShape2D" parent="Platforms/CenterFloatTip" unique_id=400000010]
+position = Vector2(6, -94)
+shape = SubResource("RectangleShape2D_dt_tile")
 
-[node name="WallLeft" type="StaticBody2D" parent="Platforms"]
+[node name="RightFloat" type="StaticBody2D" parent="Platforms" unique_id=400000011]
+position = Vector2(1184, 320)
+collision_mask = 0
+
+[node name="RightFloatShape" type="CollisionShape2D" parent="Platforms/RightFloat" unique_id=400000012]
+position = Vector2(-3, 24)
+shape = SubResource("RectangleShape2D_dt_rf_wide")
+
+[node name="RightFloatTipShape" type="CollisionShape2D" parent="Platforms/RightFloat" unique_id=400000014]
+position = Vector2(0, -26)
+shape = SubResource("RectangleShape2D_dt_tile")
+
+[node name="RightFloatTip" type="StaticBody2D" parent="Platforms" unique_id=400000013]
+position = Vector2(1184, 416)
+collision_mask = 0
+
+[node name="LeftGroundUpper" type="StaticBody2D" parent="Platforms" unique_id=400000015]
+position = Vector2(128, 640)
+collision_mask = 0
+
+[node name="LeftGroundUpperShape" type="CollisionShape2D" parent="Platforms/LeftGroundUpper" unique_id=400000016]
+position = Vector2(-33, 0)
+shape = SubResource("RectangleShape2D_dt_lg_upper")
+
+[node name="LeftGroundExt" type="StaticBody2D" parent="Platforms" unique_id=400000017]
+position = Vector2(320, 672)
+collision_mask = 0
+
+[node name="LeftGroundExtShape" type="CollisionShape2D" parent="Platforms/LeftGroundExt" unique_id=400000018]
+position = Vector2(-31.5, -50.5)
+shape = SubResource("RectangleShape2D_dt_lg_ext")
+
+[node name="CenterGround" type="StaticBody2D" parent="Platforms" unique_id=400000019]
+position = Vector2(704, 672)
+collision_mask = 0
+
+[node name="CenterGroundShape" type="CollisionShape2D" parent="Platforms/CenterGround" unique_id=400000020]
+position = Vector2(-29, 0)
+shape = SubResource("RectangleShape2D_dt_cg")
+
+[node name="RightGround" type="StaticBody2D" parent="Platforms" unique_id=400000021]
+position = Vector2(1216, 704)
+collision_mask = 0
+
+[node name="RightGroundShape" type="CollisionShape2D" parent="Platforms/RightGround" unique_id=400000022]
+position = Vector2(1, -23)
+shape = SubResource("RectangleShape2D_dt_rg")
+
+[node name="SlopeRight" type="StaticBody2D" parent="Platforms" unique_id=400000023]
+position = Vector2(400, 450)
+collision_mask = 0
+
+[node name="SlopeRightShape" type="CollisionShape2D" parent="Platforms/SlopeRight" unique_id=400000024]
+position = Vector2(-175, 95)
+shape = SubResource("ConvexPolygonShape2D_slope_r")
+
+[node name="SlopeRight3" type="StaticBody2D" parent="Platforms" unique_id=400000027]
+position = Vector2(600, 450)
+collision_mask = 0
+
+[node name="SlopeRight3Shape" type="CollisionShape2D" parent="Platforms/SlopeRight3" unique_id=400000028]
+position = Vector2(-2, -259)
+shape = SubResource("ConvexPolygonShape2D_slope_r3")
+
+[node name="SlopeRight4" type="StaticBody2D" parent="Platforms" unique_id=400000029]
+position = Vector2(700, 450)
+collision_mask = 0
+
+[node name="SlopeRight4Shape" type="CollisionShape2D" parent="Platforms/SlopeRight4" unique_id=400000030]
+position = Vector2(104, 158)
+shape = SubResource("ConvexPolygonShape2D_slope_r4")
+
+[node name="WallLeft" type="StaticBody2D" parent="Platforms" unique_id=1287072909]
 position = Vector2(0, 360)
 collision_mask = 0
 
-[node name="WallLeftShape" type="CollisionShape2D" parent="Platforms/WallLeft"]
+[node name="WallLeftShape" type="CollisionShape2D" parent="Platforms/WallLeft" unique_id=128364991]
 position = Vector2(-22, 0)
 shape = SubResource("RectangleShape2D_wl")
 
-[node name="WallRight" type="StaticBody2D" parent="Platforms"]
+[node name="WallRight" type="StaticBody2D" parent="Platforms" unique_id=1183938355]
 position = Vector2(1280, 360)
 collision_mask = 0
 
-[node name="WallRightShape" type="CollisionShape2D" parent="Platforms/WallRight"]
+[node name="WallRightShape" type="CollisionShape2D" parent="Platforms/WallRight" unique_id=652754375]
 position = Vector2(20, 0)
 shape = SubResource("RectangleShape2D_wr")
 
-[node name="KillZones" type="Node2D" parent="."]
+[node name="KillZones" type="Node2D" parent="." unique_id=1268730386]
 
-[node name="KillBottom" type="Area2D" parent="KillZones"]
+[node name="KillBottom" type="Area2D" parent="KillZones" unique_id=613011794]
 position = Vector2(640, 850)
 collision_layer = 8
 monitorable = false
 
-[node name="KillBottomShape" type="CollisionShape2D" parent="KillZones/KillBottom"]
+[node name="KillBottomShape" type="CollisionShape2D" parent="KillZones/KillBottom" unique_id=976440856]
 shape = SubResource("RectangleShape2D_kb")
 
-[node name="KillLeft" type="Area2D" parent="KillZones"]
+[node name="KillLeft" type="Area2D" parent="KillZones" unique_id=1825746636]
 position = Vector2(-250, 360)
 collision_layer = 8
 monitorable = false
 
-[node name="KillLeftShape" type="CollisionShape2D" parent="KillZones/KillLeft"]
+[node name="KillLeftShape" type="CollisionShape2D" parent="KillZones/KillLeft" unique_id=951056406]
 shape = SubResource("RectangleShape2D_kl")
 
-[node name="KillRight" type="Area2D" parent="KillZones"]
+[node name="KillRight" type="Area2D" parent="KillZones" unique_id=577439864]
 position = Vector2(1530, 360)
 collision_layer = 8
 monitorable = false
 
-[node name="KillRightShape" type="CollisionShape2D" parent="KillZones/KillRight"]
+[node name="KillRightShape" type="CollisionShape2D" parent="KillZones/KillRight" unique_id=1479165078]
 shape = SubResource("RectangleShape2D_kr")
 
-[node name="KillTop" type="Area2D" parent="KillZones"]
+[node name="KillTop" type="Area2D" parent="KillZones" unique_id=1698030920]
 position = Vector2(640, -300)
 collision_layer = 8
 monitorable = false
 
-[node name="KillTopShape" type="CollisionShape2D" parent="KillZones/KillTop"]
+[node name="KillTopShape" type="CollisionShape2D" parent="KillZones/KillTop" unique_id=1240966378]
 position = Vector2(0, -160)
 shape = SubResource("RectangleShape2D_kt")
 
-[node name="SpawnPoints" type="Node2D" parent="."]
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=601687857]
 
-[node name="SpawnP1" type="Marker2D" parent="SpawnPoints"]
+[node name="SpawnP1" type="Marker2D" parent="SpawnPoints" unique_id=440260083]
 position = Vector2(240, 400)
 
-[node name="SpawnP2" type="Marker2D" parent="SpawnPoints"]
+[node name="SpawnP2" type="Marker2D" parent="SpawnPoints" unique_id=1730023375]
 position = Vector2(1040, 400)

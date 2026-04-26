@@ -17,6 +17,7 @@ signal stock_lost(player_id: int)
 signal match_ended(winner_id: int)
 
 func _ready() -> void:
+	get_tree().debug_collisions_hint = false
 	print("[GameManager] Ready")
 
 func start_match() -> void:

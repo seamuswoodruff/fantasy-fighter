@@ -1,21 +1,151 @@
-[gd_scene format=3 uid="uid://ruins_stage_p9"]
+[gd_scene format=3 uid="uid://i8ekjj25k6qi"]
 
-[ext_resource type="Script" path="res://scripts/stages/Ruins.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://pfd081h0u5l3" path="res://scripts/stages/Ruins.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cjtcajs2cjwtt" path="res://assets/stages/ruins/background/ruins_background.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://becsqtidduhmj" path="res://assets/stages/ruins/platforms/Ruins_tilemap.png" id="3_tex"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_lg"]
-size = Vector2(450, 180)
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1"]
+texture = ExtResource("3_tex")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+8:1/0 = 0
+9:1/0 = 0
+10:1/0 = 0
+11:1/0 = 0
+12:1/0 = 0
+13:1/0 = 0
+14:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+8:2/0 = 0
+9:2/0 = 0
+10:2/0 = 0
+11:2/0 = 0
+12:2/0 = 0
+13:2/0 = 0
+14:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+7:3/0 = 0
+8:3/0 = 0
+9:3/0 = 0
+10:3/0 = 0
+11:3/0 = 0
+12:3/0 = 0
+13:3/0 = 0
+14:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+7:4/0 = 0
+8:4/0 = 0
+9:4/0 = 0
+10:4/0 = 0
+11:4/0 = 0
+12:4/0 = 0
+13:4/0 = 0
+14:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+6:5/0 = 0
+7:5/0 = 0
+8:5/0 = 0
+9:5/0 = 0
+10:5/0 = 0
+11:5/0 = 0
+12:5/0 = 0
+13:5/0 = 0
+14:5/0 = 0
+0:6/0 = 0
+1:6/0 = 0
+2:6/0 = 0
+3:6/0 = 0
+4:6/0 = 0
+5:6/0 = 0
+6:6/0 = 0
+7:6/0 = 0
+8:6/0 = 0
+9:6/0 = 0
+10:6/0 = 0
+11:6/0 = 0
+12:6/0 = 0
+13:6/0 = 0
+14:6/0 = 0
+0:7/0 = 0
+1:7/0 = 0
+2:7/0 = 0
+3:7/0 = 0
+4:7/0 = 0
+5:7/0 = 0
+6:7/0 = 0
+7:7/0 = 0
+8:7/0 = 0
+9:7/0 = 0
+10:7/0 = 0
+11:7/0 = 0
+12:7/0 = 0
+13:7/0 = 0
+14:7/0 = 0
+0:8/0 = 0
+1:8/0 = 0
+2:8/0 = 0
+3:8/0 = 0
+4:8/0 = 0
+5:8/0 = 0
+6:8/0 = 0
+7:8/0 = 0
+8:8/0 = 0
+9:8/0 = 0
+10:8/0 = 0
+11:8/0 = 0
+12:8/0 = 0
+13:8/0 = 0
+14:8/0 = 0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_rg"]
-size = Vector2(450, 180)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_cf"]
-size = Vector2(200, 40)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_rf"]
-size = Vector2(120, 30)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_sf"]
-size = Vector2(120, 30)
+[sub_resource type="TileSet" id="TileSet_1"]
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_1")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wl"]
 size = Vector2(40, 1500)
@@ -35,101 +165,82 @@ size = Vector2(300, 1440)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kt"]
 size = Vector2(2400, 200)
 
-[node name="Ruins" type="Node2D"]
+[node name="Ruins" type="Node2D" unique_id=620816320]
 script = ExtResource("1_script")
 
-[node name="Platforms" type="Node2D" parent="."]
+[node name="Background" type="Sprite2D" parent="." unique_id=1804772815]
+z_index = -10
+position = Vector2(640, 360)
+scale = Vector2(0.96, 0.96)
+texture = ExtResource("2_bg")
 
-[node name="LeftGround" type="StaticBody2D" parent="Platforms"]
-position = Vector2(225, 630)
-collision_mask = 0
+[node name="TileMap" type="TileMap" parent="." unique_id=693966302]
+scale = Vector2(4, 4)
+tile_set = SubResource("TileSet_1")
+format = 2
+layer_0/name = "Platforms"
+layer_0/tile_data = PackedInt32Array(720896, 524288, 7, 720901, 524288, 6, 720902, 589824, 6, 720903, 524288, 7, 720904, 524288, 6, 720905, 524288, 6, 720906, 589824, 6, 720907, 524288, 6, 720908, 524288, 7, 720909, 524288, 6, 720910, 589824, 6, 720911, 524288, 6, 720912, 589824, 6, 720913, 524288, 6, 720915, 589824, 6, 720914, 524288, 7, 720900, 589824, 6, 720898, 589824, 6, 720899, 655360, 6, 720897, 655360, 6, 655360, 589824, 7, 655361, 524288, 7, 655365, 655360, 7, 655369, 589824, 5, 655374, 589824, 5, 655376, 589824, 5, 655379, 589824, 5, 655378, 655360, 5, 655372, 655360, 5, 655375, 655360, 5, 655367, 655360, 5, 655362, 589824, 7, 655364, 589824, 7, 655363, 589824, 6, 655366, 524288, 5, 655368, 524288, 5, 655370, 524288, 5, 655371, 524288, 5, 655373, 524288, 5, 655377, 524288, 5, 589829, 720896, 5, 524292, 720896, 5, 458755, 720896, 5, 458754, 524288, 5, 458753, 524288, 5, 458752, 524288, 5, 589825, 589824, 6, 524288, 589824, 6, 589827, 589824, 6, 589826, 524288, 7, 589824, 524288, 7, 524290, 524288, 7, 524291, 589824, 7, 589828, 655360, 7, 524289, 655360, 7, 458762, 655360, 7, 393225, 655360, 7, 327688, 589824, 5, 393227, 655360, 7, 327692, 655360, 5, 327693, 917504, 6, 327687, 458752, 5, 327689, 589824, 5, 327690, 655360, 5, 327691, 589824, 5, 393226, 655360, 7, 393224, 655360, 7, 393228, 655360, 7, 393223, 458752, 7, 458760, 524288, 8, 458761, 524288, 7, 393229, 917504, 7, 524297, 655360, 8, 524298, 655360, 8, 458763, 917504, 7, 458764, 720896, 8)
+layer_1/name = "Foreground"
+layer_1/z_index = -1
+layer_1/tile_data = PackedInt32Array(393217, 720896, 4, 393216, 655360, 4, 327680, 655360, 3, 327681, 720896, 3, 262156, 458752, 3, 262157, 524288, 3, 196621, 524288, 2, 196620, 458752, 2, 131085, 524288, 1, 131084, 458752, 1, 65548, 458752, 0, 65549, 524288, 0, 262152, 589824, 4, 196616, 589824, 3, 262154, 65536, 2, 196618, 65536, 1, 131082, 65536, 0, 131081, 0, 0, 196617, 0, 1, 196619, 131072, 1, 131083, 131072, 0, 262153, 786432, 2, 262155, 851968, 2, 262151, 786432, 3, 393218, 851968, 4)
 
-[node name="LeftGroundShape" type="CollisionShape2D" parent="Platforms/LeftGround"]
-shape = SubResource("RectangleShape2D_lg")
+[node name="Platforms" type="Node2D" parent="." unique_id=426419136]
 
-[node name="RightGround" type="StaticBody2D" parent="Platforms"]
-position = Vector2(1055, 630)
-collision_mask = 0
-
-[node name="RightGroundShape" type="CollisionShape2D" parent="Platforms/RightGround"]
-shape = SubResource("RectangleShape2D_rg")
-
-[node name="CenterFloat" type="StaticBody2D" parent="Platforms"]
-position = Vector2(550, 295)
-collision_mask = 0
-
-[node name="CenterFloatShape" type="CollisionShape2D" parent="Platforms/CenterFloat"]
-shape = SubResource("RectangleShape2D_cf")
-
-[node name="RightFloat" type="StaticBody2D" parent="Platforms"]
-position = Vector2(960, 185)
-collision_mask = 0
-
-[node name="RightFloatShape" type="CollisionShape2D" parent="Platforms/RightFloat"]
-shape = SubResource("RectangleShape2D_rf")
-
-[node name="SmallFloat" type="StaticBody2D" parent="Platforms"]
-position = Vector2(770, 390)
-collision_mask = 0
-
-[node name="SmallFloatShape" type="CollisionShape2D" parent="Platforms/SmallFloat"]
-shape = SubResource("RectangleShape2D_sf")
-
-[node name="WallLeft" type="StaticBody2D" parent="Platforms"]
+[node name="WallLeft" type="StaticBody2D" parent="Platforms" unique_id=1890080616]
 position = Vector2(0, 360)
 collision_mask = 0
 
-[node name="WallLeftShape" type="CollisionShape2D" parent="Platforms/WallLeft"]
+[node name="WallLeftShape" type="CollisionShape2D" parent="Platforms/WallLeft" unique_id=2106141793]
 position = Vector2(-22, 0)
 shape = SubResource("RectangleShape2D_wl")
 
-[node name="WallRight" type="StaticBody2D" parent="Platforms"]
+[node name="WallRight" type="StaticBody2D" parent="Platforms" unique_id=1422603972]
 position = Vector2(1280, 360)
 collision_mask = 0
 
-[node name="WallRightShape" type="CollisionShape2D" parent="Platforms/WallRight"]
+[node name="WallRightShape" type="CollisionShape2D" parent="Platforms/WallRight" unique_id=1485317422]
 position = Vector2(20, 0)
 shape = SubResource("RectangleShape2D_wr")
 
-[node name="KillZones" type="Node2D" parent="."]
+[node name="KillZones" type="Node2D" parent="." unique_id=1330686072]
 
-[node name="KillBottom" type="Area2D" parent="KillZones"]
+[node name="KillBottom" type="Area2D" parent="KillZones" unique_id=495089023]
 position = Vector2(640, 850)
 collision_layer = 8
 monitorable = false
 
-[node name="KillBottomShape" type="CollisionShape2D" parent="KillZones/KillBottom"]
+[node name="KillBottomShape" type="CollisionShape2D" parent="KillZones/KillBottom" unique_id=65921472]
 shape = SubResource("RectangleShape2D_kb")
 
-[node name="KillLeft" type="Area2D" parent="KillZones"]
+[node name="KillLeft" type="Area2D" parent="KillZones" unique_id=1564940769]
 position = Vector2(-250, 360)
 collision_layer = 8
 monitorable = false
 
-[node name="KillLeftShape" type="CollisionShape2D" parent="KillZones/KillLeft"]
+[node name="KillLeftShape" type="CollisionShape2D" parent="KillZones/KillLeft" unique_id=1550172821]
 shape = SubResource("RectangleShape2D_kl")
 
-[node name="KillRight" type="Area2D" parent="KillZones"]
+[node name="KillRight" type="Area2D" parent="KillZones" unique_id=2113394488]
 position = Vector2(1530, 360)
 collision_layer = 8
 monitorable = false
 
-[node name="KillRightShape" type="CollisionShape2D" parent="KillZones/KillRight"]
+[node name="KillRightShape" type="CollisionShape2D" parent="KillZones/KillRight" unique_id=1170739692]
 shape = SubResource("RectangleShape2D_kr")
 
-[node name="KillTop" type="Area2D" parent="KillZones"]
+[node name="KillTop" type="Area2D" parent="KillZones" unique_id=1220584985]
 position = Vector2(640, -300)
 collision_layer = 8
 monitorable = false
 
-[node name="KillTopShape" type="CollisionShape2D" parent="KillZones/KillTop"]
+[node name="KillTopShape" type="CollisionShape2D" parent="KillZones/KillTop" unique_id=1719121022]
 position = Vector2(0, -160)
 shape = SubResource("RectangleShape2D_kt")
 
-[node name="SpawnPoints" type="Node2D" parent="."]
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=492366300]
 
-[node name="SpawnP1" type="Marker2D" parent="SpawnPoints"]
+[node name="SpawnP1" type="Marker2D" parent="SpawnPoints" unique_id=411430950]
 position = Vector2(240, 400)
 
-[node name="SpawnP2" type="Marker2D" parent="SpawnPoints"]
+[node name="SpawnP2" type="Marker2D" parent="SpawnPoints" unique_id=203897285]
 position = Vector2(1040, 400)

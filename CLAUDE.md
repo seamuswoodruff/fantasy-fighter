@@ -208,16 +208,15 @@ file exists in the character's sprites/ folder and use the correct name.
 
 **Animations:** `Idle`, `Walk`, `Run`, `Jump`, `Attack_1`, `Attack_2`, `Charge`, `Fireball`, `Flame_jet`, `Hurt`, `Dead`
 
-**Mechanics:**
+**Mechanics:** (Phase 8: dropped the tap/hold duration design in favor of two separate inputs — C and V)
 - Light attack → `Attack_1` (close melee swipe)
 - Heavy attack → `Attack_2` (slower melee)
-- Special (tap) → `Charge` into `Fireball`: plays Charge briefly (0.3s), then
-  launches a fireball projectile. Fireball travels at 450px/s, deals 18 damage,
-  despawns after 900px or on hit. Plays magic VFX on spawn and impact.
-- Special (hold 0.5s+) → `Charge` into `Flame_jet`: sustained flame in front of
-  character for 1 second. Any enemy in range takes 8 damage per 0.2s (up to 40
-  total). Plays magic VFX continuously during jet.
-- Implement by tracking how long special button is held before release
+- Special (C) → `Fireball` cast animation, spawns `Fireball_projectile.png` at
+  450px/s, deals 18 damage, despawns after 900px or on hit. Plays magic VFX
+  on spawn and impact.
+- Special 2 (V) → `Flame_jet`: sustained AOE for 1 second. Implementation
+  activates `hitbox_light` for 1 second and deals 8 damage per 0.2s tick
+  (max 40 total). No extra VFX layered on top of the jet animation.
 
 **Stats:** HP 100, Speed 220, Jump -600, Light damage 8, Heavy damage 14
 
@@ -227,16 +226,16 @@ file exists in the character's sprites/ folder and use the correct name.
 
 **Animations:** `Idle`, `Walk`, `Run`, `Jump`, `Attack_1`, `Attack_2`, `Charge`, `Light_charge`, `Light_ball`, `Hurt`, `Dead`
 
-**Mechanics:**
+**Mechanics:** (Phase 8: dropped the tap/hold duration design. V was also re-scoped from a slow large projectile to a charged melee AOE — the Light_charge animation is visually a close-range burst, not a projectile wind-up.)
 - Light attack → `Attack_1`
 - Heavy attack → `Attack_2`
-- Special (tap) → `Charge` briefly + `Light_ball`: quick cast, small fast
-  projectile at 500px/s, deals 12 damage
-- Special (hold 0.8s+) → `Light_charge` (visually different charged state) +
-  `Light_ball`: larger, slower projectile at 300px/s, deals 28 damage and applies
-  1 second of additional hitstun on hit
-- Implement: on special press, start Charge. At 0.8s switch to Light_charge
-  animation. On release, fire small or large ball depending on hold duration.
+- Special (C) → `Light_ball` cast → spawns `Light_ball_projectile.png` at
+  500px/s, deals 12 damage, radius ~18px
+- Special 2 (V) → `Light_charge` animation → activates `hitbox_heavy` during
+  active frames (frame 1 through total-2) for a charged melee strike dealing
+  28 damage with 1 second of extra hitstun on hit. Not a projectile.
+  Overrides `_on_sprite_frame_changed()` to gate the hitbox window and
+  `_on_hitbox_heavy_area_entered()` to apply the extra hitstun.
 
 **Stats:** HP 100, Speed 215, Jump -600, Light damage 8, Heavy damage 14
 
@@ -246,18 +245,15 @@ file exists in the character's sprites/ folder and use the correct name.
 
 **Animations:** `Idle`, `Walk`, `Run`, `Jump`, `Attack_1`, `Attack_2`, `Charge_1`, `Charge_2`, `Magic_arrow`, `Magic_sphere`, `Hurt`, `Dead`
 
-**Mechanics:**
+**Mechanics:** (Phase 8: two-input model — C and V, as with the other wizards)
 - Light attack → `Attack_1`
 - Heavy attack → `Attack_2`
-- Special (light) → `Charge_1` + `Magic_arrow`: fast cast (0.2s charge),
-  launches a magic arrow at 550px/s. Deals 10 damage. Low cooldown — can fire
+- Special (C) → `Magic_arrow` cast → spawns `Magic_arrow_projectile.png` at
+  550px/s, deals 10 damage, rectangular hitbox, 0.25s cooldown — can fire
   quickly in succession.
-- Special (heavy / hold 0.6s) → `Charge_2` + `Magic_sphere`: slower cast,
-  launches a large sphere at 250px/s that pierces through the enemy (does not
-  despawn on first hit), deals 22 damage per target hit. Plays magic VFX on
-  spawn.
-- Implement as two separate special inputs: tap special = Magic_arrow,
-  hold special = Magic_sphere
+- Special 2 (V) → `Magic_sphere` cast → spawns `Magic_sphere_projectile.png`
+  at 250px/s, deals 22 damage, circular hitbox, pierces (does not despawn on
+  first hit).
 
 **Stats:** HP 105, Speed 225, Jump -595, Light damage 9, Heavy damage 15
 
@@ -332,7 +328,7 @@ The following ordering rules must be preserved in `die()` and `respawn()`. Each 
 ## Input System
 
 ### InputMap Actions (define in Project Settings → Input Map)
-All actions must support both keyboard AND controller:
+All actions must support both keyboard AND controller. **No numpad keys are used anywhere in the project** — numpad layout was dropped in Phase 8 in favor of the right-hand cluster below so laptops without numpads stay playable.
 
 | Action | Player 1 Keyboard | Player 2 Keyboard | Controller (both players) |
 |--------|------------------|------------------|--------------------------|
@@ -340,14 +336,17 @@ All actions must support both keyboard AND controller:
 | `p{n}_right` | D | Right Arrow | Left Stick Right / DPad Right |
 | `p{n}_up` | W | Up Arrow | Left Stick Up / DPad Up |
 | `p{n}_down` | S | Down Arrow | Left Stick Down / DPad Down |
-| `p{n}_jump` | Space | Numpad 0 | A (Xbox) / Cross (PS) |
-| `p{n}_light_attack` | Z | Numpad 1 | X (Xbox) / Square (PS) |
-| `p{n}_heavy_attack` | X | Numpad 2 | Y (Xbox) / Triangle (PS) |
-| `p{n}_special` | C | Numpad 3 | B (Xbox) / Circle (PS) |
+| `p{n}_jump` | Space | `/` | A (Xbox) / Cross (PS) |
+| `p{n}_light_attack` | Z | `,` | X (Xbox) / Square (PS) |
+| `p{n}_heavy_attack` | X | `.` | Y (Xbox) / Triangle (PS) |
+| `p{n}_special` | C | `'` | B (Xbox) / Circle (PS) |
+| `p{n}_special2` | V | `;` | Joypad button 10 |
 | `p{n}_block` | Left Shift | Right Shift | LB/L1 or LT/L2 |
 | `p{n}_dash` | Double-tap A/D | Double-tap Left/Right | Right Stick or RB/R1 |
 
 Where `{n}` = 1 or 2. Use `device` parameter on InputEvents to differentiate controllers.
+
+**About `p{n}_special2`:** Phase 8 added a second special-attack input for wizards (Fire Wizard, Lightning Mage, Wanderer Magician). The original design used hold-duration on the main special button to switch between two variants — that was dropped. Each wizard now has two completely separate inputs: `special` fires the tap-style cast, `special2` fires the heavy/hold-style cast. See each wizard's spec in the Characters section for which ability goes on which input. `InputManager.is_special2_pressed(player_id)` is the lookup. The base `Character.gd.special2_attack()` is a no-op; wizard scripts override it.
 
 ### Controller Detection
 - Detect connected controllers with `Input.get_connected_joypads()`
@@ -366,25 +365,9 @@ Where `{n}` = 1 or 2. Use `device` parameter on InputEvents to differentiate con
 Never scale a single Sprite2D to make a wide platform. This breaks the visual texture. Instead:
 - Use a `TileMap` node with the platform texture sliced into tiles (typically 16×16 or 32×32 per tile) so the texture repeats naturally across the platform's width
 - Or use multiple fixed-size Sprite2D nodes placed edge-to-edge to span the platform width
-- The left ground section, right ground section, and floating platforms must all use the same tileset so they look like they're cut from the same terrain
 
 **TileMap is VISUAL ONLY — all collision uses StaticBody2D:**
 Do NOT enable physics layers on the TileMap. All platform collision must be implemented as separate `StaticBody2D` nodes with `RectangleShape2D` sub-resources, placed to match the visual tile layout. This separation keeps physics predictable and independent of the visual tile grid.
-
-**Standard layout coordinates (1280×720 screen):**
-```
-Left ground section:    x: 0   → 480,  y: 460 → 600  (thick, ~140px tall)
-Right ground section:   x: 800 → 1280, y: 460 → 600  (mirror of left)
-Central gap:            x: 480 → 800              (320px — jumpable)
-Left float platform:    x: 260 → 530,  y: 310       (above gap-left)
-Right float platform:   x: 750 → 1020, y: 310       (above gap-right, mirror)
-Top center platform:    x: 530 → 750,  y: 160       (small, high center)
-Spawn points:           left at (240, 400), right at (1040, 400)
-Kill zones:             bottom Y > 850, left X < -250, right X > 1530, top Y < -300
-Wall barriers:          StaticBody2D at x=0 and x=1280 (full height) — prevent characters
-                        walking off screen edges; they must be knocked off or fall through the gap
-```
-These coordinates are starting points — adjust for visual balance after taking a screenshot.
 
 ---
 
@@ -499,6 +482,50 @@ All melee characters in Phase 8 should reuse these pinned calls so VFX is consis
 
 ---
 
+## Projectile Asset Conventions (learned in Phase 8)
+
+### Filename rule — `*_projectile.png` is the FLYING sprite
+Every wizard/archer has two related PNGs in their sprites folder. They are not interchangeable:
+
+| Filename | What it is |
+|----------|------------|
+| `Fireball.png`, `Light_ball.png`, `Magic_arrow.png`, `Magic_sphere.png`, `Shot.png` | Cast-pose animation of the character throwing / firing. Used on the character's `AnimatedSprite2D` during the cast. |
+| `Fireball_projectile.png`, `Light_ball_projectile.png`, `Magic_arrow_projectile.png`, `Magic_sphere_projectile.png`, `Arrow.png` | The flying projectile itself. Used on the `Projectile.gd` instance's `Sprite2D`. |
+
+Referencing the wrong file is a silent failure with a very visible symptom: the wizard's own cast-pose sprite flies across the screen as the "projectile". Always use the `_projectile` suffix when loading the flying sprite.
+
+### All projectile sheets use 64px-wide frames (no exceptions)
+Every flying-projectile sheet in this project uses **64px-wide frames**, regardless of sheet height. Do NOT compute `hframes` from `width / height` — that's wrong for sheets taller than 64px.
+
+| Sheet | Dimensions | Correct hframes | width/height would give |
+|-------|-----------|-----------------|-------------------------|
+| `Magic_arrow_projectile.png` | 384 × 128 | 6 | 3 (wrong — shows 2 frames side-by-side) |
+| `Magic_sphere_projectile.png` | 576 × 128 | 9 | 4.5 |
+| `Fireball_projectile.png` | 768 × 64 | 12 | 12 (only correct by coincidence) |
+| `Light_ball_projectile.png` | 576 × 64 | 9 | 9 (only correct by coincidence) |
+
+Always: `hframes = int(tex.get_width() / 64.0)`. This formula is canonical for every projectile in the project.
+
+### Sprite2D has no built-in frame playback
+`Sprite2D` draws frame 0 by default and does not advance on its own. `Projectile.gd` manually advances `spr.frame = (spr.frame + 1) % spr.hframes` in `_physics_process()` against an `anim_fps` timer. Any new projectile in a future phase must do the same — setting `hframes` and `texture` alone produces a static still image.
+
+### Un-imported PNGs — `_load_raw_texture()` in `Character.gd`
+Several `*_projectile.png` assets shipped without Godot `.import` sidecar files, so `load("res://…")` fails with `No loader found for resource`. `Character.gd` exposes a helper:
+
+```gdscript
+func _load_raw_texture(res_path: String) -> ImageTexture:
+    var img := Image.new()
+    img.load(ProjectSettings.globalize_path(res_path))
+    return ImageTexture.create_from_image(img)
+```
+
+Use it for any PNG that lacks an `.import` sidecar. It works in the editor and `--headless` debug runs but would need a real import pass for an exported build — flag any reliance on it as tech debt when approaching Phase 11.
+
+### `_calc_hframes(tex)` vs the 64px rule
+`Character.gd` also has `_calc_hframes(tex)` which returns `width / height`. That's fine for square-frame character sprite sheets (128×128 per frame). It is NOT the right helper for projectiles — always use the explicit `int(tex.get_width() / 64.0)` for projectile sheets, even if the numbers happen to match for a given sheet.
+
+---
+
 ## Audio System
 
 ### AudioManager (Autoload Singleton — implemented in Phase 7)
@@ -593,6 +620,28 @@ Main (Node)
 └── WinScreen (scenes/ui/WinScreen.tscn)
 ```
 
+### Character.tscn — Placeholder Node Invariant (Phase 8)
+
+`Character.tscn` has a `Placeholder` ColorRect child (the blue dev box used during Phase 2). **Do not delete it.** Its removal would shift child indices 4 and 5 — which are `HitboxLight` and `HitboxHeavy` — and break every one of the 9 character `.tscn` files that inherit from `Character.tscn` and reference hitboxes by path/index. The correct fix for visibility is `visible = false` on the Placeholder, which Phase 8 already applied. This is load-bearing invisible scaffolding; treat it as frozen until a future phase reworks the hitbox architecture wholesale.
+
+### BattleScene Boot-Time Character Validation (Phase 8)
+
+`BattleScene._validate_all_characters()` runs at startup, instantiates each of the 9 character scenes, and logs their HP/Speed. On failure it calls `push_error`. Expected console output on a healthy boot:
+
+```
+knight_1 — HP:150 Spd:200
+knight_2 — HP:150 Spd:200
+knight_3 — HP:150 Spd:200
+samurai — HP:120 Spd:260
+samurai_commander — HP:120 Spd:260
+samurai_archer — HP:110 Spd:280
+fire_wizard — HP:100 Spd:220
+lightning_mage — HP:100 Spd:215
+wanderer_magician — HP:105 Spd:225
+```
+
+Any future phase that changes stats, renames characters, or restructures the character tscn hierarchy must keep this validation passing — if it breaks, every boot logs an error. Three stale `invalid UID` warnings also appear on every boot; they're non-fatal (Godot falls back to path lookup) and were not worth fixing in Phase 8.
+
 ---
 
 ## Script Architecture
@@ -660,16 +709,24 @@ func _on_hurtbox_area_entered(area)  # receive hits
 - Special: spawn Arrow projectile using `Shot` animation. No block.
 
 #### `scripts/characters/FireWizard.gd` (extends Character) — fire_wizard
-- Special tap: Charge → Fireball projectile
-- Special hold (0.5s+): Charge → Flame_jet sustained AOE
+- Special (C): Fireball cast → `Fireball_projectile.png`
+- Special 2 (V): Flame_jet sustained AOE via `hitbox_light` for 1s
 
 #### `scripts/characters/LightningMage.gd` (extends Character) — lightning_mage
-- Special tap: Charge → Light_ball (small, fast)
-- Special hold (0.8s+): Light_charge → Light_ball (large, slow, extra hitstun)
+- Special (C): Light_ball cast → `Light_ball_projectile.png`
+- Special 2 (V): Light_charge melee AOE via `hitbox_heavy` (not a projectile — re-scoped in Phase 8)
 
 #### `scripts/characters/WandererMagician.gd` (extends Character) — wanderer_magician
-- Special tap: Charge_1 → Magic_arrow (fast, low cooldown)
-- Special hold (0.6s+): Charge_2 → Magic_sphere (piercing, does not despawn on first hit)
+- Special (C): Magic_arrow cast → `Magic_arrow_projectile.png`
+- Special 2 (V): Magic_sphere cast → `Magic_sphere_projectile.png` (piercing, does not despawn on first hit)
+
+#### `scripts/characters/Projectile.gd` (extends Area2D) — base projectile
+Used by SamuraiArcher Arrow, FireWizard Fireball, LightningMage Light_ball, WandererMagician Magic_arrow and Magic_sphere.
+- `collision_layer = 4`, `collision_mask = 3` (scans hurtboxes on layer 2 AND StaticBody2D platforms on layer 1)
+- Properties: `speed`, `damage`, `max_distance`, `is_piercing`, `owner_id`, `extra_hitstun`
+- Animates manually: `_physics_process()` advances `Sprite2D.frame = (frame + 1) % hframes` on an `anim_fps` timer because `Sprite2D` has no built-in playback
+- `area_entered` → `take_damage()` on the hit character, applies `extra_hitstun` if set, plays hit VFX/SFX, then `queue_free()` unless `is_piercing = true`
+- `body_entered` → `queue_free()` ONLY when `body is StaticBody2D` — filtering is required because character `CharacterBody2D` is also on layer 1 and would otherwise trigger a false despawn
 
 #### `scripts/managers/GameManager.gd`
 ```
@@ -872,25 +929,15 @@ Implemented and verified. Concrete shape (see VFX System and Audio System sectio
 
 ---
 
-### Phase 8: All 9 Characters
-Repeat Phase 3 for remaining 8 characters using the 6-script model. Do NOT use a generic Warrior/Wizard/Samurai class system — each script below is distinct:
+### Phase 8: All 9 Characters — COMPLETE
+All 9 characters implemented using the 6-script model, with VFX/audio wired per character. `Projectile.gd` base class handles all wizard/archer projectiles. Key outcomes and changes of direction:
 
-- `Knight.gd` (already built in Phase 3) → used by knight_2, knight_3 (visual-only variants, same script)
-- `Samurai.gd` → used by samurai, samurai_commander (detects `Protection` vs `Protect` animation at runtime)
-- `SamuraiArcher.gd` → used by samurai_archer only
-- `FireWizard.gd` → used by fire_wizard only
-- `LightningMage.gd` → used by lightning_mage only
-- `WandererMagician.gd` → used by wanderer_magician only
-
-Also create:
-- `scripts/characters/Projectile.gd` — base projectile class (used by SamuraiArcher Arrow, FireWizard Fireball, LightningMage Light_ball, WandererMagician Magic_arrow and Magic_sphere)
-
-Each character gets its own `.tscn` scene that instantiates Character.tscn and sets its specific:
-- Sprite frames (loaded from their sprites/ folder — list files to discover animation names)
-- Stats (HP, speed, damage, jump — see each character's spec in the Characters section)
-- Script (the appropriate one from the 6 above)
-
-See the Characters section for exact animation names, mechanics, and stats per character. VFX and audio triggers must be wired into each character's attack and death callbacks during this phase.
+- Wizards dropped the tap-vs-hold duration design in favor of a separate `p{n}_special2` input (V / `;`). Each wizard's two abilities are now bound to two distinct inputs. See the Input System and Characters sections.
+- LightningMage's "V" ability was re-scoped from a large slow projectile to a charged melee AOE via `hitbox_heavy`.
+- `Projectile.gd` scans layers 1+2 (platforms AND hurtboxes) and filters `body_entered` to `StaticBody2D` only — characters would otherwise despawn their own projectiles.
+- All `*_projectile.png` sheets use 64px-wide frames (see Projectile Asset Conventions).
+- `Character.tscn` Placeholder ColorRect is kept with `visible = false` to preserve child-index ordering.
+- `BattleScene._validate_all_characters()` runs at boot and logs HP/Speed for all 9.
 
 ---
 
