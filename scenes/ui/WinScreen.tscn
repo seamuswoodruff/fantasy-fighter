@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://win_screen"]
+
+[ext_resource type="Script" path="res://scripts/ui/WinScreen.gd" id="1_winscr"]
+
+[node name="WinScreen" type="Node2D"]
+script = ExtResource("1_winscr")

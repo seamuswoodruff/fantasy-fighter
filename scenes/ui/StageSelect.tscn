@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://stage_select"]
+
+[ext_resource type="Script" path="res://scripts/ui/StageSelect.gd" id="1_stagsel"]
+
+[node name="StageSelect" type="Node2D"]
+script = ExtResource("1_stagsel")

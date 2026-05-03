@@ -11,6 +11,7 @@ var selected_stage: String = ""
 var p1_stocks: int = 3
 var p2_stocks: int = 3
 var match_active: bool = false
+var winner_id: int = 0
 
 # Signals
 signal stock_lost(player_id: int)
@@ -40,10 +41,15 @@ func on_player_death(player_id: int) -> void:
 		if p2_stocks <= 0:
 			end_match(1)
 
-func end_match(winner_id: int) -> void:
+func end_match(winner_id_: int) -> void:
 	match_active = false
+	winner_id = winner_id_
 	print("[GameManager] Match ended — Winner: P%d" % winner_id)
 	emit_signal("match_ended", winner_id)
+	get_tree().create_timer(1.5).timeout.connect(go_to_win_screen)
+
+func go_to_win_screen() -> void:
+	get_tree().change_scene_to_file("res://scenes/ui/WinScreen.tscn")
 
 func go_to_main_menu() -> void:
 	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")
