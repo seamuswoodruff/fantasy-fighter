@@ -688,6 +688,13 @@ func _add_anim(sf: SpriteFrames, anim_name: String, tex: Texture2D,
 func _frames(path: String, frame_size: int) -> int:
 	return int(load(path).get_width() / float(frame_size))
 
+# For PNGs without .import sidecars — used by ninja characters
+func _frames_raw(path: String, frame_size: int) -> int:
+	var tex := _load_raw_texture(path)
+	if tex == null:
+		return 1
+	return int(tex.get_width() / float(frame_size))
+
 # Loads a PNG that has no .import file (bypasses Godot's importer).
 # Calculates hframes for a projectile texture.
 # Tries the sheet height as the frame size (square frames).

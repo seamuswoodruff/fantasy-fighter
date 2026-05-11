@@ -61,6 +61,9 @@ const CHARACTER_SCENES := {
 	"fire_wizard":        "res://scenes/characters/FireWizard.tscn",
 	"lightning_mage":     "res://scenes/characters/LightningMage.tscn",
 	"wanderer_magician":  "res://scenes/characters/WandererMagician.tscn",
+	"kunoichi":           "res://scenes/characters/Kunoichi.tscn",
+	"ninja_monk":         "res://scenes/characters/NinjaMonk.tscn",
+	"ninja_peasant":      "res://scenes/characters/NinjaPeasant.tscn",
 }
 
 @onready var players_node: Node2D = $Players

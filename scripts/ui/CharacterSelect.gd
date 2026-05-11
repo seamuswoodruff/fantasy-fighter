@@ -11,6 +11,9 @@ const CHARACTERS := [
 	{ "key": "fire_wizard",       "name": "FIRE WIZARD", "idle": "res://assets/characters/wizards/fire_wizard/sprites/Idle.png" },
 	{ "key": "lightning_mage",    "name": "LT. MAGE",    "idle": "res://assets/characters/wizards/lightning_mage/sprites/Idle.png" },
 	{ "key": "wanderer_magician", "name": "WANDERER",    "idle": "res://assets/characters/wizards/wanderer_magician/sprites/Idle.png" },
+	{ "key": "kunoichi",          "name": "KUNOICHI",    "idle": "res://assets/characters/ninjas/kunoichi/sprites/Idle.png" },
+	{ "key": "ninja_monk",        "name": "NINJA MONK",  "idle": "res://assets/characters/ninjas/ninja_monk/sprites/Idle.png" },
+	{ "key": "ninja_peasant",     "name": "NINJA",       "idle": "res://assets/characters/ninjas/ninja_peasant/sprites/Idle.png" },
 ]
 
 const CELL_SIZE   := 80
@@ -75,7 +78,7 @@ func _init_player_arrays(count: int) -> void:
 	_anim_frames       = []
 	_panel_xs          = []
 	for i in count:
-		_cursors.append(Vector2i(i % 3, 0))
+		_cursors.append(Vector2i(i % 4, 0))
 		_locked.append(false)
 		_is_cpu.append(false)
 		_cursor_rects.append(null)
@@ -308,8 +311,8 @@ func _build_panel(pid_idx: int) -> void:
 		add_child(warn)
 		_panel_node_refs.append(warn)
 
-	# Grid (3×3), centered in panel
-	var grid_offset_x := int((_panel_w - 3 * CELL_SIZE) / float(2))
+	# Grid (4×3), centered in panel
+	var grid_offset_x := int((_panel_w - 4 * CELL_SIZE) / float(2))
 	var grid_x        := panel_x + grid_offset_x
 
 	var cursor := ColorRect.new()
@@ -321,8 +324,8 @@ func _build_panel(pid_idx: int) -> void:
 	_cursor_rects[pid_idx] = cursor
 
 	for row in 3:
-		for col in 3:
-			var idx: int = row * 3 + col
+		for col in 4:
+			var idx: int = row * 4 + col
 			var cell_pos := Vector2(grid_x + col * CELL_SIZE, GRID_TOP_Y + row * CELL_SIZE)
 			var cell_bg := ColorRect.new()
 			cell_bg.color    = Color(0.15, 0.12, 0.22, 1)
@@ -331,13 +334,15 @@ func _build_panel(pid_idx: int) -> void:
 			cell_bg.z_index  = 0
 			add_child(cell_bg)
 			_panel_node_refs.append(cell_bg)
-			var tex := load(CHARACTERS[idx]["idle"]) as Texture2D
+			var tex := _load_portrait_tex(CHARACTERS[idx]["idle"])
 			var portrait := Sprite2D.new()
 			portrait.texture  = tex
-			portrait.hframes  = int(tex.get_width() / float(128))
+			# Frame size = sheet height (all idle sheets are square-per-frame)
+			var frame_px: int = tex.get_height() if tex != null else 128
+			portrait.hframes  = int(tex.get_width() / float(frame_px)) if tex != null else 1
 			portrait.frame    = 0
 			portrait.position = cell_pos + Vector2(CELL_SIZE / 2.0, CELL_SIZE / 2.0)
-			portrait.scale    = Vector2(PORTRAIT_PX / 128.0, PORTRAIT_PX / 128.0)
+			portrait.scale    = Vector2(PORTRAIT_PX / float(frame_px), PORTRAIT_PX / float(frame_px))
 			portrait.z_index  = 2
 			add_child(portrait)
 			_panel_node_refs.append(portrait)
@@ -375,10 +380,11 @@ func _build_panel(pid_idx: int) -> void:
 	_lock_lbls[pid_idx] = lock_lbl
 
 	# Preview sprite
-	var first_tex := load(CHARACTERS[_cursors[pid_idx].y * 3 + _cursors[pid_idx].x]["idle"]) as Texture2D
+	var first_tex := _load_portrait_tex(CHARACTERS[_cursors[pid_idx].y * 4 + _cursors[pid_idx].x]["idle"])
 	var preview := Sprite2D.new()
 	preview.texture  = first_tex
-	preview.hframes  = int(first_tex.get_width() / float(128))
+	var _fpx: int = first_tex.get_height() if first_tex != null else 128
+	preview.hframes  = int(first_tex.get_width() / float(_fpx)) if first_tex != null else 1
 	preview.frame    = 0
 	preview.position = Vector2(panel_x + int(_panel_w / float(2)), 618)
 	preview.scale    = Vector2(1.3, 1.3)
@@ -519,9 +525,10 @@ func _toggle_cpu(pid_idx: int) -> void:
 		_status_lbls[pid_idx].text = "CPU"
 		_lock_lbls[pid_idx].text   = "Random character selected"
 		_lock_lbls[pid_idx].add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
-		var tex := load(CHARACTERS[random_idx]["idle"]) as Texture2D
+		var tex := _load_portrait_tex(CHARACTERS[random_idx]["idle"])
+		var fpx := tex.get_height() if tex != null else 128
 		_previews[pid_idx].texture  = tex
-		_previews[pid_idx].hframes  = int(tex.get_width() / float(128))
+		_previews[pid_idx].hframes  = int(tex.get_width() / float(fpx)) if tex != null else 1
 		_previews[pid_idx].frame    = 0
 		_preview_hframes[pid_idx]   = _previews[pid_idx].hframes
 		AudioManager.play_sfx("confirm_1")
@@ -540,7 +547,7 @@ func _toggle_cpu(pid_idx: int) -> void:
 
 func _move_cursor(pid_idx: int, delta: Vector2i) -> void:
 	_cursors[pid_idx] = Vector2i(
-		(_cursors[pid_idx].x + delta.x + 3) % 3,
+		(_cursors[pid_idx].x + delta.x + 4) % 4,
 		(_cursors[pid_idx].y + delta.y + 3) % 3
 	)
 	_update_cursor(pid_idx)
@@ -550,16 +557,17 @@ func _update_cursor(pid_idx: int) -> void:
 	if _cursor_rects[pid_idx] == null or not is_instance_valid(_cursor_rects[pid_idx]):
 		return
 	var cur := _cursors[pid_idx]
-	var grid_offset_x := int((_panel_w - 3 * CELL_SIZE) / float(2))
+	var grid_offset_x := int((_panel_w - 4 * CELL_SIZE) / float(2))
 	var grid_x: int   = _panel_xs[pid_idx] + grid_offset_x
 	_cursor_rects[pid_idx].position = Vector2(
 		grid_x + cur.x * CELL_SIZE, GRID_TOP_Y + cur.y * CELL_SIZE)
-	var idx: int = cur.y * 3 + cur.x
+	var idx: int = cur.y * 4 + cur.x
 	if _name_lbls[pid_idx] != null:
 		_name_lbls[pid_idx].text = CHARACTERS[idx]["name"]
 	if _previews[pid_idx] != null:
-		var tex := load(CHARACTERS[idx]["idle"]) as Texture2D
-		var hf  := int(tex.get_width() / float(128))
+		var tex := _load_portrait_tex(CHARACTERS[idx]["idle"])
+		var fpx := tex.get_height() if tex != null else 128
+		var hf  := int(tex.get_width() / float(fpx)) if tex != null else 1
 		_previews[pid_idx].texture = tex
 		_previews[pid_idx].hframes = hf
 		_previews[pid_idx].frame   = 0
@@ -567,7 +575,7 @@ func _update_cursor(pid_idx: int) -> void:
 		_anim_frames[pid_idx]      = 0
 
 func _lock_player(pid_idx: int) -> void:
-	var idx: int = _cursors[pid_idx].y * 3 + _cursors[pid_idx].x
+	var idx: int = _cursors[pid_idx].y * 4 + _cursors[pid_idx].x
 	GameManager.player_characters[pid_idx] = CHARACTERS[idx]["key"]
 	_locked[pid_idx]         = true
 	_lock_lbls[pid_idx].text = "READY!"
@@ -586,3 +594,15 @@ func _check_all_locked() -> void:
 func _on_back_pressed() -> void:
 	AudioManager.play_sfx("back_1")
 	GameManager.go_to_main_menu()
+
+# Loads a PNG that may not have a .import sidecar (e.g. ninja sprites).
+# Falls back to raw Image load if load() fails.
+func _load_portrait_tex(res_path: String) -> Texture2D:
+	# Use ResourceLoader.exists() to avoid engine-level error logs for un-imported PNGs
+	if ResourceLoader.exists(res_path):
+		return load(res_path) as Texture2D
+	var img := Image.new()
+	var err := img.load(ProjectSettings.globalize_path(res_path))
+	if err != OK:
+		return null
+	return ImageTexture.create_from_image(img)

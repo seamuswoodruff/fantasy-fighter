@@ -11,6 +11,9 @@ const CHAR_IDLE_PATHS := {
 	"fire_wizard":       "res://assets/characters/wizards/fire_wizard/sprites/Idle.png",
 	"lightning_mage":    "res://assets/characters/wizards/lightning_mage/sprites/Idle.png",
 	"wanderer_magician": "res://assets/characters/wizards/wanderer_magician/sprites/Idle.png",
+	"kunoichi":          "res://assets/characters/ninjas/kunoichi/sprites/Idle.png",
+	"ninja_monk":        "res://assets/characters/ninjas/ninja_monk/sprites/Idle.png",
+	"ninja_peasant":     "res://assets/characters/ninjas/ninja_peasant/sprites/Idle.png",
 }
 
 const IDLE_FPS := 8.0
@@ -65,11 +68,12 @@ func _build_ui() -> void:
 
 	# Winner idle animation
 	if char_key != "" and CHAR_IDLE_PATHS.has(char_key):
-		var tex := load(CHAR_IDLE_PATHS[char_key]) as Texture2D
+		var tex := _load_tex_safe(CHAR_IDLE_PATHS[char_key])
 		if tex:
 			_winner_sprite = Sprite2D.new()
 			_winner_sprite.texture = tex
-			_winner_sprite.hframes = int(tex.get_width() / float(128))
+			var fpx: int = tex.get_height()
+			_winner_sprite.hframes = int(tex.get_width() / float(fpx))
 			_winner_sprite.frame = 0
 			_winner_sprite.position = Vector2(640, 390)
 			_winner_sprite.scale = Vector2(3.0, 3.0)
@@ -124,3 +128,12 @@ func _on_menu() -> void:
 	GameManager.selected_stage = ""
 	GameManager.winner_id = 0
 	GameManager.go_to_main_menu()
+
+func _load_tex_safe(res_path: String) -> Texture2D:
+	if ResourceLoader.exists(res_path):
+		return load(res_path) as Texture2D
+	var img := Image.new()
+	var err := img.load(ProjectSettings.globalize_path(res_path))
+	if err != OK:
+		return null
+	return ImageTexture.create_from_image(img)
