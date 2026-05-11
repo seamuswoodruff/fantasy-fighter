@@ -73,6 +73,7 @@ var _pause_menu: CanvasLayer
 var _pause_first_focus: Control = null
 
 func _ready() -> void:
+	add_to_group("battle_scene")
 	_validate_all_characters()
 
 	# Load stage — use GameManager selection if set, else default

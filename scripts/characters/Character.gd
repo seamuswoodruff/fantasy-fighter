@@ -22,6 +22,9 @@ var facing_right: bool = true
 var spawn_facing_right: bool = true  # restored on every respawn
 var is_invincible: bool = false
 var is_cpu: bool = false
+# CPU virtual input (set by CPUController each frame when is_cpu = true)
+var cpu_move_x: float = 0.0
+var cpu_wants_jump: bool = false
 var respawn_position: Vector2 = Vector2(640.0, 300.0)
 var _fast_falling: bool = false
 var _short_hop_timer: float = 0.0
@@ -89,6 +92,7 @@ func _is_locked() -> bool:
 
 # ── Lifecycle ─────────────────────────────────────────────────────────────────
 func _ready() -> void:
+	add_to_group("characters")
 	current_hp = max_hp
 	hitbox_light.monitoring = false
 	hitbox_heavy.monitoring = false
@@ -250,6 +254,19 @@ func _update_coyote(delta: float) -> void:
 
 # ── Input handling ────────────────────────────────────────────────────────────
 func handle_input() -> void:
+	if is_cpu:
+		# CPUController sets velocity and calls attack methods directly —
+		# we only need to handle the virtual jump here
+		if cpu_wants_jump:
+			_try_jump()
+			cpu_wants_jump = false
+		# Apply cpu_move_x to horizontal velocity
+		if cpu_move_x != 0.0:
+			velocity.x = move_toward(velocity.x, cpu_move_x * move_speed, ACCELERATION * get_process_delta_time())
+		else:
+			velocity.x = move_toward(velocity.x, 0.0, FRICTION * get_process_delta_time())
+		return   # skip all real input handling
+
 	# Mash escape — any attack or jump press during hitstun cuts ~2 frames off the timer.
 	# Intentionally before all guards so it fires during HURT state.
 	if _hitstun_timer > 0.0:
