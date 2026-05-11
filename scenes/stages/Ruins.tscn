@@ -153,6 +153,30 @@ size = Vector2(40, 1500)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wr"]
 size = Vector2(40, 1500)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gl"]
+size = Vector2(195, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gm"]
+size = Vector2(437, 79)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gr"]
+size = Vector2(908, 36)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g4"]
+size = Vector2(391, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g5"]
+size = Vector2(240, 50)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g7"]
+size = Vector2(150, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g8"]
+size = Vector2(60, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sr"]
+size = Vector2(284.42352, 52.11315)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kb"]
 size = Vector2(2400, 200)
 
@@ -167,6 +191,15 @@ size = Vector2(2400, 200)
 
 [node name="Ruins" type="Node2D" unique_id=620816320]
 script = ExtResource("1_script")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=2003000001]
+color = Color(0.82, 0.88, 1, 1)
+
+[node name="SunLight" type="DirectionalLight2D" parent="." unique_id=2004000001]
+rotation = -0.6
+color = Color(1, 0.92, 0.75, 1)
+energy = 0.35
+height = 0.5
 
 [node name="Background" type="Sprite2D" parent="." unique_id=1804772815]
 z_index = -10
@@ -201,6 +234,67 @@ collision_mask = 0
 [node name="WallRightShape" type="CollisionShape2D" parent="Platforms/WallRight" unique_id=1485317422]
 position = Vector2(20, 0)
 shape = SubResource("RectangleShape2D_wr")
+
+[node name="GroundLeft" type="StaticBody2D" parent="Platforms" unique_id=2001000001]
+position = Vector2(240, 572)
+collision_mask = 0
+
+[node name="GroundLeftShape" type="CollisionShape2D" parent="Platforms/GroundLeft" unique_id=2001000002]
+position = Vector2(-141.5, -108)
+shape = SubResource("RectangleShape2D_gl")
+
+[node name="GroundMiddle" type="StaticBody2D" parent="Platforms" unique_id=2001000003]
+position = Vector2(640, 420)
+collision_mask = 0
+
+[node name="GroundMiddleShape" type="CollisionShape2D" parent="Platforms/GroundMiddle" unique_id=2001000004]
+position = Vector2(33.5, -60.5)
+shape = SubResource("RectangleShape2D_gm")
+
+[node name="GroundRight" type="StaticBody2D" parent="Platforms" unique_id=2001000005]
+position = Vector2(1040, 572)
+collision_mask = 0
+
+[node name="GroundRightShape" type="CollisionShape2D" parent="Platforms/GroundRight" unique_id=2001000006]
+position = Vector2(-202, 86)
+shape = SubResource("RectangleShape2D_gr")
+
+[node name="GroundPlatform4" type="StaticBody2D" parent="Platforms" unique_id=2001000009]
+position = Vector2(350, 460)
+
+[node name="GroundPlatform4Shape" type="CollisionShape2D" parent="Platforms/GroundPlatform4" unique_id=2001000010]
+position = Vector2(327.5, -40)
+shape = SubResource("RectangleShape2D_g4")
+
+[node name="GroundPlatform5" type="StaticBody2D" parent="Platforms" unique_id=2001000011]
+position = Vector2(900, 460)
+
+[node name="GroundPlatform5Shape" type="CollisionShape2D" parent="Platforms/GroundPlatform5" unique_id=2001000012]
+position = Vector2(-262, 5)
+shape = SubResource("RectangleShape2D_g5")
+
+[node name="GroundPlatform7" type="StaticBody2D" parent="Platforms" unique_id=2001000015]
+position = Vector2(640, 280)
+
+[node name="GroundPlatform7Shape" type="CollisionShape2D" parent="Platforms/GroundPlatform7" unique_id=2001000016]
+position = Vector2(-2, 226)
+shape = SubResource("RectangleShape2D_g7")
+
+[node name="GroundPlatform8" type="StaticBody2D" parent="Platforms" unique_id=2001000017]
+position = Vector2(1080, 350)
+
+[node name="GroundPlatform8Shape" type="CollisionShape2D" parent="Platforms/GroundPlatform8" unique_id=2001000018]
+position = Vector2(-279, 98)
+shape = SubResource("RectangleShape2D_g8")
+
+[node name="SlopeRight" type="StaticBody2D" parent="Platforms" unique_id=2001000007]
+position = Vector2(900, 510)
+collision_mask = 0
+
+[node name="SlopeRightShape" type="CollisionShape2D" parent="Platforms/SlopeRight" unique_id=2001000008]
+position = Vector2(-617.7064, 54.00238)
+rotation = 0.75000006
+shape = SubResource("RectangleShape2D_sr")
 
 [node name="KillZones" type="Node2D" parent="." unique_id=1330686072]
 
@@ -244,3 +338,9 @@ position = Vector2(240, 400)
 
 [node name="SpawnP2" type="Marker2D" parent="SpawnPoints" unique_id=203897285]
 position = Vector2(1040, 400)
+
+[node name="SpawnP3" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(380, 400)
+
+[node name="SpawnP4" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(900, 400)

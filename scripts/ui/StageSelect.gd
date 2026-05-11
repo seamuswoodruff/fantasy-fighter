@@ -20,7 +20,10 @@ func _ready() -> void:
 	_build_ui()
 	_update_selection()
 	AudioManager.play_sfx("menu_open_1")
-	print("[StageSelect] P1: %s  P2: %s" % [GameManager.p1_character, GameManager.p2_character])
+	var names: Array = []
+	for i in GameManager.active_player_count:
+		names.append("P%d: %s" % [i + 1, GameManager.player_characters[i]])
+	print("[StageSelect] %s" % "  |  ".join(names))
 
 func _build_ui() -> void:
 	# Background
@@ -29,6 +32,18 @@ func _build_ui() -> void:
 	bg.position = Vector2.ZERO
 	bg.size = Vector2(1280, 720)
 	add_child(bg)
+
+	# Back button
+	var back_btn := Button.new()
+	back_btn.text = "BACK"
+	back_btn.position = Vector2(30.0, 20.0)
+	back_btn.size = Vector2(160.0, 44.0)
+	var font_back := load("res://assets/ui/fonts/alagard.ttf") as FontFile
+	if font_back:
+		back_btn.add_theme_font_override("font", font_back)
+	back_btn.add_theme_font_size_override("font_size", 22)
+	back_btn.pressed.connect(_on_back_pressed)
+	add_child(back_btn)
 
 	var font_big := load("res://assets/ui/fonts/alagard.ttf") as FontFile
 	var font_sm  := load("res://assets/ui/fonts/Planes_ValMore.ttf") as FontFile
@@ -44,10 +59,12 @@ func _build_ui() -> void:
 	title.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
 	add_child(title)
 
-	# Characters chosen banner
+	# Characters chosen banner — supports 2–4 players
+	var banner_parts: Array = []
+	for i in GameManager.active_player_count:
+		banner_parts.append(GameManager.player_characters[i].replace("_", " ").to_upper())
 	var banner := Label.new()
-	banner.text = "%s  vs  %s" % [GameManager.p1_character.replace("_", " ").to_upper(),
-	                               GameManager.p2_character.replace("_", " ").to_upper()]
+	banner.text = "  vs  ".join(banner_parts)
 	banner.position = Vector2(0, 150)
 	banner.size = Vector2(1280, 36)
 	banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -125,6 +142,10 @@ func _build_ui() -> void:
 	add_child(instr)
 
 func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("ui_cancel"):
+		_on_back_pressed()
+		return
+
 	if Input.is_action_just_pressed("p1_left"):
 		_selected = max(0, _selected - 1)
 		_update_selection()
@@ -147,3 +168,7 @@ func _confirm() -> void:
 	AudioManager.play_sfx("confirm_1")
 	print("[StageSelect] Stage selected: %s" % GameManager.selected_stage)
 	GameManager.go_to_battle()
+
+func _on_back_pressed() -> void:
+	AudioManager.play_sfx("back_1")
+	GameManager.go_to_character_select()

@@ -10,16 +10,18 @@ extends "res://scripts/characters/Character.gd"
 
 @export var sprites_path: String = "res://assets/characters/wizards/fire_wizard/sprites/"
 
-const FIREBALL_SPEED: float = 450.0
+const FIREBALL_SPEED: float = 325.0
 const FIREBALL_DAMAGE: float = 18.0
 const FIREBALL_RANGE: float = 900.0
-const FLAMEJET_TICK_DAMAGE: float = 8.0
+const FLAMEJET_TICK_DAMAGE: float = 28.0
 const FLAMEJET_TICK_INTERVAL: float = 0.2
 const FLAMEJET_DURATION: float = 1.0
+const FLAMEJET_COOLDOWN: float = 0.3
 
 var _flamejet_active: bool = false
 var _flamejet_timer: float = 0.0
 var _flamejet_tick_timer: float = 0.0
+var _flamejet_cooldown_timer: float = 0.0
 var _firing_fireball: bool = false
 var _projectile_scene: PackedScene
 
@@ -62,7 +64,7 @@ func special_attack() -> void:
 	AudioManager.play_sfx("Sword Attack")
 
 func special2_attack() -> void:
-	if _is_locked() or _flamejet_active:
+	if _is_locked() or _flamejet_active or _flamejet_cooldown_timer > 0.0:
 		return
 	_begin_flamejet()
 
@@ -71,8 +73,9 @@ func _begin_flamejet() -> void:
 	_firing_fireball = false
 	_flamejet_timer = FLAMEJET_DURATION
 	_flamejet_tick_timer = FLAMEJET_TICK_INTERVAL
+	_light_hit_connected = false
 	is_attacking = true
-	hitbox_light.monitoring = true
+	hitbox_light.monitoring = false
 	change_state(State.SPECIAL)
 	_try_play("special_hold")
 	AudioManager.play_sfx("Sword Attack")
@@ -95,6 +98,10 @@ func _launch_fireball() -> void:
 	proj.damage = FIREBALL_DAMAGE
 	proj.max_distance = FIREBALL_RANGE
 	proj.owner_id = player_id
+	# Loop frames 0–4 four times, then play the die-out tail (frames 5–11) and despawn
+	proj.loop_end_frame = 4
+	proj.loop_count = 2
+	proj.tail_start_frame = 5
 
 	get_parent().add_child(proj)
 	proj.global_position = global_position + Vector2(50.0 * proj.direction, -15.0)
@@ -103,6 +110,13 @@ func _launch_fireball() -> void:
 	_firing_fireball = false
 	is_attacking = false
 	change_state(State.IDLE)
+	_attack_recovery_timer = SPECIAL_ATTACK_RECOVERY
+
+func _apply_movement(delta: float) -> void:
+	if _flamejet_active:
+		velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
+		return
+	super._apply_movement(delta)
 
 func _physics_process(delta: float) -> void:
 	if _flamejet_active:
@@ -112,20 +126,36 @@ func _physics_process(delta: float) -> void:
 			_flamejet_tick_timer = FLAMEJET_TICK_INTERVAL
 		if _flamejet_timer <= 0.0:
 			_end_flamejet()
+	if _flamejet_cooldown_timer > 0.0:
+		_flamejet_cooldown_timer -= delta
 	super._physics_process(delta)
 
 func _end_flamejet() -> void:
 	_flamejet_active = false
+	_flamejet_cooldown_timer = FLAMEJET_COOLDOWN
+	_light_hit_connected = false
 	hitbox_light.monitoring = false
 	is_attacking = false
 	change_state(State.IDLE)
+	_attack_recovery_timer = SPECIAL_ATTACK_RECOVERY
+
+func _on_sprite_frame_changed() -> void:
+	if state == State.SPECIAL and _flamejet_active:
+		var f: int = sprite.frame
+		hitbox_light.monitoring = (f >= 5 and f <= 12) and not _light_hit_connected
+	else:
+		super._on_sprite_frame_changed()
 
 func _on_hitbox_light_area_entered(area: Area2D) -> void:
 	if _flamejet_active:
 		var target = area.get_parent()
 		if not (target is Character) or target == self:
 			return
-		target.take_damage(FLAMEJET_TICK_DAMAGE, global_position, false)
+		_light_hit_connected = true
+		var actual := FLAMEJET_TICK_DAMAGE * 0.2 if target.is_blocking else FLAMEJET_TICK_DAMAGE
+		target.take_damage(FLAMEJET_TICK_DAMAGE, global_position, true)
+		_spawn_damage_number(area.global_position, actual)
+		hitbox_light.set_deferred("monitoring", false)
 		AudioManager.play_sfx("Sword Impact Hit")
 	else:
 		super._on_hitbox_light_area_entered(area)

@@ -23,6 +23,7 @@ var _anim_frame: int = 0
 func _ready() -> void:
 	_build_ui()
 	AudioManager.play_sfx("confirm_2")
+	AudioManager.play_music("res://assets/music/PerituneMaterial_EpicBattle_loop.ogg")
 
 func _build_ui() -> void:
 	# Background
@@ -33,7 +34,7 @@ func _build_ui() -> void:
 	add_child(bg)
 
 	var winner: int = GameManager.winner_id
-	var char_key: String = GameManager.p1_character if winner == 1 else GameManager.p2_character
+	var char_key: String = GameManager.player_characters[clamp(winner - 1, 0, 3)]
 	var win_color: Color = Color(0.4, 0.7, 1.0) if winner == 1 else Color(1.0, 0.45, 0.45)
 
 	var font_big := load("res://assets/ui/fonts/alagard.ttf") as FontFile

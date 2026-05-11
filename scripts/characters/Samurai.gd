@@ -7,15 +7,18 @@ extends "res://scripts/characters/Character.gd"
 
 @export var sprites_path: String = "res://assets/characters/samurai/samurai/sprites/"
 
-const SPECIAL_DAMAGE: float = 6.0
+const SPECIAL_DAMAGE: float = 8.0
 const SPECIAL_MAX_HITS: int = 3
 const SPECIAL_DASH_SPEED: float = 300.0
 const SPECIAL_DURATION: float = 0.30
+const LIGHT_RECOVERY: float = 0.10
+const SPECIAL_RECOVERY: float = 0.12
 
 var _special_timer: float = 0.0
 var _special_hits: int = 0
 var _is_special_active: bool = false
 var _dash_dir: float = 1.0
+var _recovery_timer: float = 0.0
 
 func _ready() -> void:
 	max_hp = 120.0
@@ -47,7 +50,12 @@ func _build_sprite_frames() -> SpriteFrames:
 	_add_anim(sf, "dead",         load(p + "Dead.png"),      128, 128, 0, 6, 8.0,  false)
 	return sf
 
+func _is_locked() -> bool:
+	return super._is_locked() or _recovery_timer > 0.0
+
 func _physics_process(delta: float) -> void:
+	if _recovery_timer > 0.0:
+		_recovery_timer -= delta
 	if _is_special_active:
 		_special_timer -= delta
 		velocity.x = _dash_dir * SPECIAL_DASH_SPEED
@@ -80,9 +88,20 @@ func _on_sprite_animation_finished() -> void:
 			hitbox_light.monitoring = false
 			_is_special_active = false
 			is_attacking = false
+			_recovery_timer = SPECIAL_RECOVERY
 			change_state(State.IDLE)
+			_attack_recovery_timer = SPECIAL_ATTACK_RECOVERY
+		State.ATTACK_LIGHT:
+			hitbox_light.monitoring = false
+			is_attacking = false
+			_recovery_timer = LIGHT_RECOVERY
+			change_state(State.IDLE)
+			_attack_recovery_timer = LIGHT_ATTACK_RECOVERY
 		_:
 			super._on_sprite_animation_finished()
+
+func _read_block_input() -> bool:
+	return InputManager.is_special2_held(player_id)
 
 func _on_hitbox_light_area_entered(area: Area2D) -> void:
 	if state == State.SPECIAL:
@@ -92,7 +111,9 @@ func _on_hitbox_light_area_entered(area: Area2D) -> void:
 		if not (target is Character) or target == self:
 			return
 		_special_hits += 1
+		var actual := SPECIAL_DAMAGE * 0.2 if target.is_blocking else SPECIAL_DAMAGE
 		target.take_damage(SPECIAL_DAMAGE, global_position, false)
+		_spawn_damage_number(area.global_position, actual)
 		VFXManager.play_single("hit_sparks", area.global_position, 2.0, 0.12, 618)
 		AudioManager.play_sfx("Sword Impact Hit")
 	else:

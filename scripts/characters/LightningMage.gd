@@ -3,20 +3,22 @@
 # Attacks:
 #   Z/,   → Attack_1 (light melee, 8 dmg)
 #   X/.   → Attack_2 (heavy melee, 14 dmg)
-#   C/'   → Light_ball: cast anim → fires Light_ball_projectile (500px/s, 12 dmg)
+#   C/'   → Light_ball: cast anim → fires Light_ball_projectile (325px/s, 12 dmg)
 #   V/;   → Light_charge: animation-range burst (no projectile), 28 dmg + 1s hitstun, hitbox_heavy
 class_name LightningMage
 extends "res://scripts/characters/Character.gd"
 
 @export var sprites_path: String = "res://assets/characters/wizards/lightning_mage/sprites/"
 
-const BALL_SPEED: float = 500.0
-const BALL_DAMAGE: float = 12.0
+const BALL_SPEED: float = 325.0
+const BALL_DAMAGE: float = 18.0
 const BALL_RANGE: float = 1200.0
 const CHARGE_DAMAGE: float = 28.0
-const EXTRA_HITSTUN: float = 1.0
+const EXTRA_HITSTUN: float = 0.25
+const CHARGE_COOLDOWN: float = 0.3
 
 var _is_charged: bool = false
+var _charge_cooldown_timer: float = 0.0
 var _projectile_scene: PackedScene
 
 func _ready() -> void:
@@ -60,14 +62,26 @@ func special_attack() -> void:
 
 # V/; — Light_charge: plays charge animation, hitbox activates during active frames
 func special2_attack() -> void:
-	if _is_locked():
+	if _is_locked() or _charge_cooldown_timer > 0.0:
 		return
+	_heavy_hit_connected = false
 	_is_charged = true
 	is_attacking = true
 	hitbox_heavy.monitoring = false
 	change_state(State.SPECIAL)
 	_try_play("special_hold")
 	AudioManager.play_sfx("Sword Attack")
+
+func _apply_movement(delta: float) -> void:
+	if _is_charged and state == State.SPECIAL:
+		velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
+		return
+	super._apply_movement(delta)
+
+func _physics_process(delta: float) -> void:
+	if _charge_cooldown_timer > 0.0:
+		_charge_cooldown_timer -= delta
+	super._physics_process(delta)
 
 func _fire_ball() -> void:
 	var proj := _projectile_scene.instantiate()
@@ -88,6 +102,10 @@ func _fire_ball() -> void:
 	proj.damage = BALL_DAMAGE
 	proj.max_distance = BALL_RANGE
 	proj.owner_id = player_id
+	# Loop frames 0–4 three times, then play die-out frames 5–8 and despawn
+	proj.loop_end_frame = 4
+	proj.loop_count = 3
+	proj.tail_start_frame = 5
 
 	get_parent().add_child(proj)
 	proj.global_position = global_position + Vector2(50.0 * proj.direction, -15.0)
@@ -95,13 +113,13 @@ func _fire_ball() -> void:
 
 	is_attacking = false
 	change_state(State.IDLE)
+	_attack_recovery_timer = SPECIAL_ATTACK_RECOVERY
 
 # Activate hitbox_heavy during the active window of Light_charge animation
 func _on_sprite_frame_changed() -> void:
 	if state == State.SPECIAL and _is_charged:
 		var f: int = sprite.frame
-		var total: int = sprite.sprite_frames.get_frame_count(sprite.animation)
-		hitbox_heavy.monitoring = (f >= 1 and f <= total - 2)
+		hitbox_heavy.monitoring = (f >= 5 and f <= 12) and not _heavy_hit_connected
 	else:
 		super._on_sprite_frame_changed()
 
@@ -111,8 +129,11 @@ func _on_hitbox_heavy_area_entered(area: Area2D) -> void:
 		var target = area.get_parent()
 		if not (target is Character) or target == self:
 			return
+		var actual := CHARGE_DAMAGE * 0.2 if target.is_blocking else CHARGE_DAMAGE
+		_heavy_hit_connected = true
 		target.take_damage(CHARGE_DAMAGE, global_position, true)
 		target._apply_extra_hitstun(EXTRA_HITSTUN)
+		_spawn_damage_number(area.global_position, actual)
 		hitbox_heavy.set_deferred("monitoring", false)
 		_trigger_screen_freeze(0.1)
 		VFXManager.play_single("hit_sparks", area.global_position, 2.0, 0.12, 618)
@@ -128,6 +149,9 @@ func _on_sprite_animation_finished() -> void:
 			else:
 				hitbox_heavy.monitoring = false
 				is_attacking = false
+				_heavy_hit_connected = false
 				change_state(State.IDLE)
+				_attack_recovery_timer = SPECIAL_ATTACK_RECOVERY
+				_charge_cooldown_timer = CHARGE_COOLDOWN
 		_:
 			super._on_sprite_animation_finished()

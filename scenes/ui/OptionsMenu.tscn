@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://options_menu_p11"]
+
+[ext_resource type="Script" path="res://scripts/ui/OptionsMenu.gd" id="1_options"]
+
+[node name="OptionsMenu" type="Node2D"]
+script = ExtResource("1_options")

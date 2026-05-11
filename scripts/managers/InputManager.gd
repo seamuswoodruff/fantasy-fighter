@@ -40,6 +40,9 @@ func is_special_held(player_id: int) -> bool:
 func is_special2_pressed(player_id: int) -> bool:
 	return Input.is_action_just_pressed("p%d_special2" % player_id)
 
+func is_special2_held(player_id: int) -> bool:
+	return Input.is_action_pressed("p%d_special2" % player_id)
+
 func is_block_held(player_id: int) -> bool:
 	return Input.is_action_pressed("p%d_block" % player_id)
 
@@ -51,3 +54,8 @@ func is_moving_right(player_id: int) -> bool:
 
 func is_moving_down(player_id: int) -> bool:
 	return Input.is_action_pressed("p%d_down" % player_id)
+
+func get_active_player_count() -> int:
+	# P1 and P2 always exist (keyboard). P3 needs device 0, P4 needs device 1.
+	var joy_count := Input.get_connected_joypads().size()
+	return mini(2 + joy_count, 4)

@@ -337,14 +337,14 @@ All actions must support both keyboard AND controller. **No numpad keys are used
 | `p{n}_up` | W | Up Arrow | Left Stick Up / DPad Up |
 | `p{n}_down` | S | Down Arrow | Left Stick Down / DPad Down |
 | `p{n}_jump` | Space | `/` | A (Xbox) / Cross (PS) |
-| `p{n}_light_attack` | Z | `,` | X (Xbox) / Square (PS) |
-| `p{n}_heavy_attack` | X | `.` | Y (Xbox) / Triangle (PS) |
-| `p{n}_special` | C | `'` | B (Xbox) / Circle (PS) |
-| `p{n}_special2` | V | `;` | Joypad button 10 |
-| `p{n}_block` | Left Shift | Right Shift | LB/L1 or LT/L2 |
-| `p{n}_dash` | Double-tap A/D | Double-tap Left/Right | Right Stick or RB/R1 |
+| `p{n}_light_attack` | Z | `,` | Right Stick Right |
+| `p{n}_heavy_attack` | X | `.` | Right Stick Left |
+| `p{n}_special` | C | `'` | Right Stick Up |
+| `p{n}_special2` | V | `;` | Right Stick Down |
 
 Where `{n}` = 1 or 2. Use `device` parameter on InputEvents to differentiate controllers.
+
+**Controller attack scheme (post-Phase 8 revision):** All four attack actions are bound exclusively to right stick directions. Block and dash controller bindings were removed — the unified scheme is: move with left stick/DPad, jump with A/Cross, and all four attacks with right stick directions. There are no face button, shoulder button, or trigger bindings for attacks.
 
 **About `p{n}_special2`:** Phase 8 added a second special-attack input for wizards (Fire Wizard, Lightning Mage, Wanderer Magician). The original design used hold-duration on the main special button to switch between two variants — that was dropped. Each wizard now has two completely separate inputs: `special` fires the tap-style cast, `special2` fires the heavy/hold-style cast. See each wizard's spec in the Characters section for which ability goes on which input. `InputManager.is_special2_pressed(player_id)` is the lookup. The base `Character.gd.special2_attack()` is a no-op; wizard scripts override it.
 
