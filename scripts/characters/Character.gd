@@ -615,6 +615,12 @@ func die() -> void:
 				hide()
 		)
 		get_tree().create_timer(1.5, true).timeout.connect(respawn)
+	else:
+		# Eliminated — hide and permanently disable after death animation
+		get_tree().create_timer(0.7, true).timeout.connect(func() -> void:
+			hide()
+			process_mode = Node.PROCESS_MODE_DISABLED
+		)
 
 func respawn() -> void:
 	if stocks <= 0:

@@ -94,6 +94,7 @@ func _ready() -> void:
 		if key == "":
 			key = fallbacks[i % fallbacks.size()]
 		var char_node := _spawn_character(key, i + 1)
+		char_node.stocks = GameManager.stock_count   # sync with selected stock count
 		var sp_node := stage.get_node_or_null("SpawnPoints/SpawnP%d" % (i + 1))
 		if sp_node == null:
 			push_error("[BattleScene] Missing SpawnP%d — using default position" % (i + 1))

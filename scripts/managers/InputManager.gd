@@ -65,7 +65,17 @@ func _clear_joy_bindings(pid: int) -> void:
 			if evt is InputEventJoypadButton or evt is InputEventJoypadMotion:
 				InputMap.action_erase_event(action, evt)
 
+func _ensure_player_actions(pid: int) -> void:
+	var suffixes := ["left", "right", "up", "down", "jump",
+					 "light_attack", "heavy_attack", "special", "special2"]
+	for suffix in suffixes:
+		var action: String = "p%d_%s" % [pid, suffix]
+		if not InputMap.has_action(action):
+			InputMap.add_action(action)
+			print("[InputManager] Created action: %s" % action)
+
 func _assign_joy_to_player(pid: int, device: int) -> void:
+	_ensure_player_actions(pid)
 	var bindings: Dictionary = {
 		"left":         [_joy_axis(JOY_AXIS_LEFT_X, -1.0, device),
 						 _joy_btn(JOY_BUTTON_DPAD_LEFT, device)],
