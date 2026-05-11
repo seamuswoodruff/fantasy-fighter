@@ -34,19 +34,21 @@ func reassign_controllers() -> void:
 	var joypads: Array = Input.get_connected_joypads()
 	var active: int = GameManager.active_player_count
 
-	# Always clear p3 and p4 joypad bindings first
-	_clear_joy_bindings(3)
-	_clear_joy_bindings(4)
+	# Clear joypad bindings from ALL players so no device is double-assigned
+	for pid in [1, 2, 3, 4]:
+		_clear_joy_bindings(pid)
 
 	if joypads.is_empty():
 		return
 
-	# Assign controllers from highest active slot downward (only to P3/P4)
-	# Slot numbering: slot 3 = P4, slot 2 = P3 (P1/P2 always keyboard)
-	var slot := active  # 1-based, start from highest
+	# Assign controllers from highest active slot downward.
+	# This means with 2 players and 1 controller: controller → P2.
+	# With 3 players and 1 controller: controller → P3.
+	# With 4 players and 2 controllers: controller0 → P4, controller1 → P3.
+	var slot: int = active  # 1-based, start from highest
 	for device in joypads:
-		if slot < 3:
-			break  # reached P2 — P1/P2 keep keyboard only for now
+		if slot < 1:
+			break
 		_assign_joy_to_player(slot, device)
 		slot -= 1
 

@@ -197,20 +197,38 @@ func _build_static_ui() -> void:
 	stock_lbl.add_theme_color_override("font_color", Color(0.8, 0.8, 1.0))
 	add_child(stock_lbl)
 
+	var st_minus := Button.new()
+	st_minus.text     = "<"
+	st_minus.position = Vector2(512, 94)
+	st_minus.size     = Vector2(34, 30)
+	st_minus.add_theme_font_override("font", font_big)
+	st_minus.add_theme_font_size_override("font_size", 18)
+	st_minus.pressed.connect(func() -> void: _change_stocks(-1))
+	add_child(st_minus)
+
 	_stock_lbl = Label.new()
 	_stock_lbl.text     = str(GameManager.stock_count)
-	_stock_lbl.position = Vector2(512, 96)
-	_stock_lbl.size     = Vector2(120, 26)
+	_stock_lbl.position = Vector2(548, 96)
+	_stock_lbl.size     = Vector2(34, 26)
 	_stock_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_stock_lbl.add_theme_font_override("font", font_big)
 	_stock_lbl.add_theme_font_size_override("font_size", 20)
 	_stock_lbl.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
 	add_child(_stock_lbl)
 
+	var st_plus := Button.new()
+	st_plus.text     = ">"
+	st_plus.position = Vector2(584, 94)
+	st_plus.size     = Vector2(34, 30)
+	st_plus.add_theme_font_override("font", font_big)
+	st_plus.add_theme_font_size_override("font_size", 18)
+	st_plus.pressed.connect(func() -> void: _change_stocks(1))
+	add_child(st_plus)
+
 	var stock_hint := Label.new()
-	stock_hint.text     = "(P1 ← / → to change)"
-	stock_hint.position = Vector2(638, 100)
-	stock_hint.size     = Vector2(200, 20)
+	stock_hint.text     = "([ ] keys)"
+	stock_hint.position = Vector2(622, 100)
+	stock_hint.size     = Vector2(100, 20)
 	stock_hint.add_theme_font_override("font", font_sm)
 	stock_hint.add_theme_font_size_override("font_size", 12)
 	stock_hint.add_theme_color_override("font_color", Color(0.5, 0.5, 0.6))
@@ -485,7 +503,10 @@ func _process(delta: float) -> void:
 
 # ── Game actions ──────────────────────────────────────────────────────────────
 func _change_stocks(delta: int) -> void:
-	GameManager.stock_count = clampi(GameManager.stock_count + delta, 1, 3)
+	var new_val := clampi(GameManager.stock_count + delta, 1, 5)
+	if new_val == GameManager.stock_count:
+		return
+	GameManager.stock_count = new_val
 	_stock_lbl.text = str(GameManager.stock_count)
 	AudioManager.play_sfx("select")
 
