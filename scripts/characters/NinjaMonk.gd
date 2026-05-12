@@ -28,7 +28,9 @@ func _ready() -> void:
 	# 96px frames but art fills ~71px (vs 64px art in 128px frames) — scale to match
 	sprite.scale    = Vector2(0.90, 0.90)
 	sprite.position = Vector2(0, -5)
-	_staff_tex           = _load_raw_texture(SPRITES + "special1_projectile.png")
+	_staff_tex           = load(SPRITES + "special1_projectile.png") as Texture2D
+	if _staff_tex == null:
+		push_error("[NinjaMonk] Failed to load staff texture")
 	super._ready()
 
 func _build_sprite_frames() -> SpriteFrames:

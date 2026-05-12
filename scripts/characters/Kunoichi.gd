@@ -26,7 +26,9 @@ func _ready() -> void:
 	jump_count           = 5
 	sprite.sprite_frames = _build_sprite_frames()
 	sprite.position      = Vector2(0, -26)
-	_shuriken_tex        = _load_raw_texture(SPRITES + "special_projectile.png")
+	_shuriken_tex        = load(SPRITES + "special_projectile.png") as Texture2D
+	if _shuriken_tex == null:
+		push_error("[Kunoichi] Failed to load shuriken texture")
 	super._ready()
 
 func _build_sprite_frames() -> SpriteFrames:

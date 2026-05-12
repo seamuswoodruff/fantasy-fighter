@@ -18,6 +18,18 @@ func _ready() -> void:
 	_buttons = [$StartButton, $OptionsButton, $CreditsButton, $QuitButton]
 	_update_highlight()
 	AudioManager.play_music("res://new asets/Homescreen.ogg")
+	if OS.get_name() == "Web":
+		var hint := Label.new()
+		hint.text = "Controller users: click the game first, then press any button"
+		hint.position = Vector2(0, 700)
+		hint.size = Vector2(1280, 20)
+		hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var font_sm := load("res://assets/ui/fonts/Planes_ValMore.ttf") as FontFile
+		if font_sm:
+			hint.add_theme_font_override("font", font_sm)
+		hint.add_theme_font_size_override("font_size", 13)
+		hint.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+		add_child(hint)
 	print("[MainMenu] Ready")
 
 func _process(_delta: float) -> void:
@@ -49,9 +61,9 @@ func _load_homescreen_anim() -> void:
 
 	for i in FRAME_COUNT:
 		var res_path := FRAME_DIR + "frame_%03d.png" % i
-		var img := Image.new()
-		img.load(ProjectSettings.globalize_path(res_path))
-		frames.add_frame("idle", ImageTexture.create_from_image(img))
+		var tex := load(res_path) as Texture2D
+		if tex:
+			frames.add_frame("idle", tex)
 
 	var anim: AnimatedSprite2D = $HomescreenAnim
 	anim.sprite_frames = frames

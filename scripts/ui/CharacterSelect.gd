@@ -123,9 +123,9 @@ func _build_static_ui() -> void:
 	cs_sf.set_animation_loop("bg", true)
 	cs_sf.set_animation_speed("bg", 7.0)
 	for i in CS_FRAME_COUNT:
-		var img := Image.new()
-		img.load(ProjectSettings.globalize_path(CS_FRAME_DIR + "frame_%02d.png" % i))
-		cs_sf.add_frame("bg", ImageTexture.create_from_image(img))
+		var tex := load(CS_FRAME_DIR + "frame_%02d.png" % i) as Texture2D
+		if tex:
+			cs_sf.add_frame("bg", tex)
 	var cs_bg := AnimatedSprite2D.new()
 	cs_bg.sprite_frames = cs_sf
 	cs_bg.animation = "bg"
@@ -621,14 +621,5 @@ func _on_back_pressed() -> void:
 	AudioManager.play_sfx("click")
 	GameManager.go_to_main_menu()
 
-# Loads a PNG that may not have a .import sidecar (e.g. ninja sprites).
-# Falls back to raw Image load if load() fails.
 func _load_portrait_tex(res_path: String) -> Texture2D:
-	# Use ResourceLoader.exists() to avoid engine-level error logs for un-imported PNGs
-	if ResourceLoader.exists(res_path):
-		return load(res_path) as Texture2D
-	var img := Image.new()
-	var err := img.load(ProjectSettings.globalize_path(res_path))
-	if err != OK:
-		return null
-	return ImageTexture.create_from_image(img)
+	return load(res_path) as Texture2D
