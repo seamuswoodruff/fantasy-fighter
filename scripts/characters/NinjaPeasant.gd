@@ -1,19 +1,18 @@
-# NinjaPeasant.gd — scrappy fastest ninja + stone throw + blade slash
+# NinjaPeasant.gd — scrappy fastest ninja + stone throw + block/defend
 # Stats: HP 85, Speed 295, Jump -610
 # Special 1 (C): throw stone projectile
-# Special 2 (V): blade slash — melee heavy hit using special 2.png,
-#   hitbox_heavy active on frames 2–6 of 9.
+# Special 2 (V, hold): block — 60% damage reduction while held.
+#   Uses special 2.png as the block animation.
+#   Identical to Knight/Samurai block system, triggered by special2 input.
 class_name NinjaPeasant
 extends "res://scripts/characters/Character.gd"
 
-const SPRITES         := "res://assets/characters/ninjas/ninja_peasant/sprites/"
-const FRAME_SIZE      := 96
-const STONE_SPEED     := 520.0
-const STONE_DAMAGE    := 11.0
-const STONE_RANGE     := 800.0
-const SPECIAL2_DAMAGE := 18.0   # blade slash — heavier than normal heavy attack
+const SPRITES     := "res://assets/characters/ninjas/ninja_peasant/sprites/"
+const FRAME_SIZE  := 96
+const STONE_SPEED  := 520.0
+const STONE_DAMAGE := 11.0
+const STONE_RANGE  := 800.0
 
-var _special2_active: bool = false
 var _stone_tex: Texture2D
 
 func _ready() -> void:
@@ -24,7 +23,9 @@ func _ready() -> void:
 	attack_damage_heavy  = 15.0
 	character_name       = "Ninja Peasant"
 	sprite.sprite_frames = _build_sprite_frames()
-	sprite.position      = Vector2(0, -20)
+	# 96px frames but art fills ~68px (vs 64px art in 128px frames) — scale to match
+	sprite.scale    = Vector2(0.94, 0.94)
+	sprite.position = Vector2(0, -7)
 	_stone_tex           = _load_raw_texture(SPRITES + "special1_projectile.png")
 	super._ready()
 
@@ -39,33 +40,30 @@ func _build_sprite_frames() -> SpriteFrames:
 	_add_anim(sf, "attack_light", _load_raw_texture(p + "light attack.png"), fs, fs, 0, _frames_raw(p + "light attack.png", fs), 16.0, false)
 	_add_anim(sf, "attack_heavy", _load_raw_texture(p + "heavy attack.png"), fs, fs, 0, _frames_raw(p + "heavy attack.png", fs), 13.0, false)
 	_add_anim(sf, "special",      _load_raw_texture(p + "special 1.png"),    fs, fs, 0, _frames_raw(p + "special 1.png", fs),    14.0, false)
-	_add_anim(sf, "special2",     _load_raw_texture(p + "special 2.png"),    fs, fs, 0, _frames_raw(p + "special 2.png", fs),    14.0, false)
+	# "block" anim uses special 2.png — base class plays this for State.BLOCKING
+	_add_anim(sf, "block",        _load_raw_texture(p + "special 2.png"),    fs, fs, 0, _frames_raw(p + "special 2.png", fs),    8.0,  true)
 	_add_anim(sf, "hurt",         _load_raw_texture(p + "Hurt.png"),         fs, fs, 0, _frames_raw(p + "Hurt.png", fs),         10.0, false)
 	_add_anim(sf, "dead",         _load_raw_texture(p + "Dead.png"),         fs, fs, 0, _frames_raw(p + "Dead.png", fs),         8.0,  false)
 	return sf
 
-# Override to play "special2" anim when blade slash is active
-func _play_animation_for_state() -> void:
-	if state == State.SPECIAL and _special2_active:
-		_try_play("special2")
-	else:
-		super._play_animation_for_state()
+# Override handle_input so holding Special 2 activates the block state.
+# The base class handles all block logic — we just map the input.
+func handle_input() -> void:
+	super.handle_input()
+	if not _is_locked() and not is_cpu:
+		if Input.is_action_pressed("p%d_special2" % player_id):
+			is_blocking = true
 
 # Special 1 — stone throw
 func special_attack() -> void:
-	if _is_locked() or _special2_active:
+	if _is_locked() or is_blocking:
 		return
 	change_state(State.SPECIAL)
 	AudioManager.play_sfx("Sword Attack")
 
-# Special 2 — blade slash (melee, uses hitbox_heavy with SPECIAL2_DAMAGE)
+# Special 2 is the block button — no separate attack action
 func special2_attack() -> void:
-	if _is_locked() or _special2_active:
-		return
-	_special2_active     = true
-	_heavy_hit_connected = false
-	change_state(State.SPECIAL)
-	AudioManager.play_sfx("Sword Attack")
+	pass
 
 func _on_sprite_frame_changed() -> void:
 	var f := sprite.frame
@@ -77,37 +75,17 @@ func _on_sprite_frame_changed() -> void:
 			# 6 frames: 0-1=startup, 2-4=active, 5=recovery
 			hitbox_heavy.monitoring = (f >= 2 and f <= 4) and not _heavy_hit_connected
 		State.SPECIAL:
-			if _special2_active:
-				# 9-frame blade slash: 0-1=startup, 2-6=active, 7-8=recovery
-				hitbox_heavy.monitoring = (f >= 2 and f <= 6) and not _heavy_hit_connected
-			else:
-				# Stone throw — no hitbox during cast
-				hitbox_light.monitoring = false
-				hitbox_heavy.monitoring = false
-
-# Override to use SPECIAL2_DAMAGE when blade slash connects
-func _on_hitbox_heavy_area_entered(area: Area2D) -> void:
-	if state == State.SPECIAL and _special2_active:
-		var target = area.get_parent()
-		if not (target is Character) or target == self:
-			return
-		target.take_damage(SPECIAL2_DAMAGE, global_position, true)
-		_heavy_hit_connected = true
-		hitbox_heavy.set_deferred("monitoring", false)
-		VFXManager.play_single("hit_sparks", area.global_position, 2.0, 0.12, 618)
-		AudioManager.play_sfx("Sword Impact Hit")
-	else:
-		super._on_hitbox_heavy_area_entered(area)
+			# Stone throw — no hitbox during cast
+			hitbox_light.monitoring = false
+			hitbox_heavy.monitoring = false
 
 func _on_sprite_animation_finished() -> void:
 	match state:
 		State.SPECIAL:
 			hitbox_light.monitoring = false
 			hitbox_heavy.monitoring = false
-			if not _special2_active:
-				_spawn_stone()
-			_special2_active = false
-			is_attacking     = false
+			_spawn_stone()
+			is_attacking = false
 			change_state(State.IDLE)
 			_attack_recovery_timer = SPECIAL_ATTACK_RECOVERY
 		_:
@@ -122,10 +100,16 @@ func _spawn_stone() -> void:
 	spr.hframes = 1
 	spr.frame   = 0
 	spr.scale   = Vector2(4.0, 4.0)   # 6×6 → 24×24 display
-	proj.speed        = STONE_SPEED * (1.0 if facing_right else -1.0)
+	spr.flip_h  = not facing_right
+	var shape_node: CollisionShape2D = proj.get_node("CollisionShape2D")
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(20.0, 20.0)
+	shape_node.shape = rect
+	proj.direction    = 1.0 if facing_right else -1.0
+	proj.speed        = STONE_SPEED
 	proj.damage       = STONE_DAMAGE
 	proj.max_distance = STONE_RANGE
 	proj.owner_id     = player_id
-	proj.global_position = global_position + Vector2(24.0 * (1.0 if facing_right else -1.0), -18.0)
-	get_tree().root.add_child(proj)
+	get_parent().add_child(proj)
+	proj.global_position = global_position + Vector2(24.0 * proj.direction, -18.0)
 	AudioManager.play_sfx("Sword Attack")

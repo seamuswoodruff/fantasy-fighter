@@ -107,14 +107,20 @@ func _spawn_shuriken() -> void:
 		return
 	var proj := preload("res://scenes/characters/Projectile.tscn").instantiate()
 	var spr: Sprite2D = proj.get_node("Sprite2D")
-	spr.texture = _shuriken_tex
-	spr.hframes = 1
-	spr.frame   = 0
-	spr.scale   = Vector2(3.0, 3.0)
-	proj.speed        = SHURIKEN_SPEED * (1.0 if facing_right else -1.0)
+	spr.texture  = _shuriken_tex
+	spr.hframes  = 1
+	spr.frame    = 0
+	spr.scale    = Vector2(3.0, 3.0)
+	spr.flip_h   = not facing_right
+	var shape_node: CollisionShape2D = proj.get_node("CollisionShape2D")
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(28.0, 16.0)
+	shape_node.shape = rect
+	proj.direction    = 1.0 if facing_right else -1.0
+	proj.speed        = SHURIKEN_SPEED
 	proj.damage       = SHURIKEN_DAMAGE
 	proj.max_distance = SHURIKEN_RANGE
 	proj.owner_id     = player_id
-	proj.global_position = global_position + Vector2(30.0 * (1.0 if facing_right else -1.0), -20.0)
-	get_tree().root.add_child(proj)
+	get_parent().add_child(proj)
+	proj.global_position = global_position + Vector2(30.0 * proj.direction, -20.0)
 	AudioManager.play_sfx("Sword Attack")

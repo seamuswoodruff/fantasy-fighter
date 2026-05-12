@@ -342,7 +342,7 @@ func _build_panel(pid_idx: int) -> void:
 			portrait.hframes  = int(tex.get_width() / float(frame_px)) if tex != null else 1
 			portrait.frame    = 0
 			portrait.position = cell_pos + Vector2(CELL_SIZE / 2.0, CELL_SIZE / 2.0)
-			portrait.scale    = Vector2(PORTRAIT_PX / float(frame_px), PORTRAIT_PX / float(frame_px))
+			portrait.scale    = Vector2(PORTRAIT_PX / 128.0, PORTRAIT_PX / 128.0)
 			portrait.z_index  = 2
 			add_child(portrait)
 			_panel_node_refs.append(portrait)
