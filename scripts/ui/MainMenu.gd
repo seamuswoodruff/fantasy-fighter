@@ -17,18 +17,16 @@ func _ready() -> void:
 	$QuitButton.pressed.connect(_on_quit_pressed)
 	_buttons = [$StartButton, $OptionsButton, $CreditsButton, $QuitButton]
 	_update_highlight()
-	AudioManager.play_sfx("menu_open_1")
+	AudioManager.play_music("res://new asets/Homescreen.ogg")
 	print("[MainMenu] Ready")
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("p1_up") or Input.is_action_just_pressed("p2_up"):
 		_cursor = (_cursor - 1 + _buttons.size()) % _buttons.size()
 		_update_highlight()
-		AudioManager.play_sfx("select")
 	elif Input.is_action_just_pressed("p1_down") or Input.is_action_just_pressed("p2_down"):
 		_cursor = (_cursor + 1) % _buttons.size()
 		_update_highlight()
-		AudioManager.play_sfx("select")
 	elif Input.is_action_just_pressed("p1_jump") or Input.is_action_just_pressed("p2_jump") \
 		or Input.is_action_just_pressed("p1_light_attack") or Input.is_action_just_pressed("p2_light_attack"):
 		_buttons[_cursor].emit_signal("pressed")
@@ -69,17 +67,17 @@ func _apply_title_font() -> void:
 	lbl.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
 
 func _on_start_pressed() -> void:
-	AudioManager.play_sfx("confirm_1")
+	AudioManager.play_sfx("mainmenuselect")
 	GameManager.go_to_character_select()
 
 func _on_options_pressed() -> void:
-	AudioManager.play_sfx("confirm_1")
+	AudioManager.play_sfx("mainmenuselect")
 	get_tree().change_scene_to_file("res://scenes/ui/OptionsMenu.tscn")
 
 func _on_credits_pressed() -> void:
-	AudioManager.play_sfx("confirm_1")
+	AudioManager.play_sfx("mainmenuselect")
 	get_tree().change_scene_to_file("res://scenes/ui/Credits.tscn")
 
 func _on_quit_pressed() -> void:
-	AudioManager.play_sfx("back_1")
+	AudioManager.play_sfx("mainmenuselect")
 	get_tree().quit()

@@ -5,10 +5,17 @@ const BUS_MUSIC    := "Music"
 const BUS_SFX      := "SFX"
 const BUS_AMBIENCE := "Ambience"
 
+var _back_btn: Button = null
+var _sliders: Array = []
+
 func _ready() -> void:
 	_build_ui()
-	AudioManager.play_sfx("menu_open_1")
+	AudioManager.play_music("res://new asets/Homescreen.ogg")
 	print("[OptionsMenu] Ready")
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		_on_back_pressed()
 
 func _build_ui() -> void:
 	var font_big := load("res://assets/ui/fonts/alagard.ttf") as FontFile
@@ -140,6 +147,20 @@ func _build_ui() -> void:
 	_style_button(back_btn, font_big, 22)
 	back_btn.pressed.connect(_on_back_pressed)
 	add_child(back_btn)
+	_back_btn = back_btn
+
+	# ── Wire focus chain for controller navigation ────────────────────────────
+	# Order: Back → Music → SFX → Ambience → (wraps to Back)
+	await get_tree().process_frame
+	var focusables: Array = [_back_btn] + _sliders
+	var n := focusables.size()
+	for i in n:
+		var cur: Control = focusables[i]
+		var prv: Control = focusables[(i - 1 + n) % n]
+		var nxt: Control = focusables[(i + 1) % n]
+		cur.focus_neighbor_top    = cur.get_path_to(prv)
+		cur.focus_neighbor_bottom = cur.get_path_to(nxt)
+	_back_btn.grab_focus()
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -178,6 +199,7 @@ func _add_slider_row(y: float, bus_name: String, label_text: String,
 		pct_lbl.text = "%d%%" % int(val)
 	)
 	add_child(slider)
+	_sliders.append(slider)
 	return y + 50.0
 
 func _db_to_pct(db: float) -> float:
@@ -203,5 +225,5 @@ func _style_button(btn: Button, font: FontFile, size: int) -> void:
 	btn.add_theme_font_size_override("font_size", size)
 
 func _on_back_pressed() -> void:
-	AudioManager.play_sfx("back_1")
+	AudioManager.play_sfx("click")
 	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")

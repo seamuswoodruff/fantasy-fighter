@@ -2,24 +2,44 @@
 extends Node2D
 
 const CHARACTERS := [
-	{ "key": "knight_1",          "name": "KNIGHT I",    "idle": "res://assets/characters/warriors/knight_1/sprites/Idle.png" },
-	{ "key": "knight_2",          "name": "KNIGHT II",   "idle": "res://assets/characters/warriors/knight_2/sprites/Idle.png" },
-	{ "key": "knight_3",          "name": "KNIGHT III",  "idle": "res://assets/characters/warriors/knight_3/sprites/Idle.png" },
-	{ "key": "samurai",           "name": "SAMURAI",     "idle": "res://assets/characters/samurai/samurai/sprites/Idle.png" },
-	{ "key": "samurai_commander", "name": "COMMANDER",   "idle": "res://assets/characters/samurai/samurai_commander/sprites/Idle.png" },
-	{ "key": "samurai_archer",    "name": "ARCHER",      "idle": "res://assets/characters/samurai/samurai_archer/sprites/Idle.png" },
-	{ "key": "fire_wizard",       "name": "FIRE WIZARD", "idle": "res://assets/characters/wizards/fire_wizard/sprites/Idle.png" },
-	{ "key": "lightning_mage",    "name": "LT. MAGE",    "idle": "res://assets/characters/wizards/lightning_mage/sprites/Idle.png" },
-	{ "key": "wanderer_magician", "name": "WANDERER",    "idle": "res://assets/characters/wizards/wanderer_magician/sprites/Idle.png" },
-	{ "key": "kunoichi",          "name": "KUNOICHI",    "idle": "res://assets/characters/ninjas/kunoichi/sprites/Idle.png" },
-	{ "key": "ninja_monk",        "name": "NINJA MONK",  "idle": "res://assets/characters/ninjas/ninja_monk/sprites/Idle.png" },
-	{ "key": "ninja_peasant",     "name": "NINJA",       "idle": "res://assets/characters/ninjas/ninja_peasant/sprites/Idle.png" },
+	{ "key": "knight_1",          "name": "THE BLUE KNIGHT",    "idle": "res://assets/characters/warriors/knight_1/sprites/Idle.png" },
+	{ "key": "knight_2",          "name": "THE GALLANT",        "idle": "res://assets/characters/warriors/knight_2/sprites/Idle.png" },
+	{ "key": "knight_3",          "name": "THE RED KNIGHT",     "idle": "res://assets/characters/warriors/knight_3/sprites/Idle.png" },
+	{ "key": "samurai",           "name": "SHADOW",             "idle": "res://assets/characters/samurai/samurai/sprites/Idle.png" },
+	{ "key": "samurai_commander", "name": "THE COMMANDER",      "idle": "res://assets/characters/samurai/samurai_commander/sprites/Idle.png" },
+	{ "key": "samurai_archer",    "name": "THE SHARPSHOOTER",   "idle": "res://assets/characters/samurai/samurai_archer/sprites/Idle.png" },
+	{ "key": "fire_wizard",       "name": "THE FLAME",          "idle": "res://assets/characters/wizards/fire_wizard/sprites/Idle.png" },
+	{ "key": "lightning_mage",    "name": "THE THUNDER",        "idle": "res://assets/characters/wizards/lightning_mage/sprites/Idle.png" },
+	{ "key": "wanderer_magician", "name": "HE WHO WANDERS",     "idle": "res://assets/characters/wizards/wanderer_magician/sprites/Idle.png" },
+	{ "key": "kunoichi",          "name": "THE HIDDEN LADY",    "idle": "res://assets/characters/ninjas/kunoichi/sprites/Idle.png" },
+	{ "key": "ninja_monk",        "name": "BROTHER OF KNIVES",  "idle": "res://assets/characters/ninjas/ninja_monk/sprites/Idle.png" },
+	{ "key": "ninja_peasant",     "name": "THE VAGABOND",       "idle": "res://assets/characters/ninjas/ninja_peasant/sprites/Idle.png" },
 ]
 
 const CELL_SIZE   := 80
 const PORTRAIT_PX := 72
 const GRID_TOP_Y  := 148
 const IDLE_FPS    := 8.0
+
+# Per-character preview offset from the base centered position (x, y)
+const PREVIEW_OFFSETS := {
+	"knight_1":          Vector2(55, 0),
+	"knight_2":          Vector2(55, 0),
+	"knight_3":          Vector2(55, 0),
+	"samurai":           Vector2(55, 0),
+	"wanderer_magician": Vector2(-25, 0),
+	"kunoichi":          Vector2(-25, 0),
+	"samurai_commander": Vector2(-25, 0),
+	"samurai_archer":    Vector2(-25, 0),
+	"ninja_peasant":     Vector2(-25, 45),
+	"ninja_monk":        Vector2(-25, 45),
+}
+
+# Per-character preview tint (default white = no tint)
+const PREVIEW_TINTS := {
+	"knight_1": Color(0.75, 0.85, 1.4),
+	"knight_3": Color(0.95, 0.38, 0.38),
+}
 
 const PLAYER_COLORS := [
 	Color(0.4, 0.7, 1.0),   # P1 blue
@@ -60,7 +80,7 @@ func _ready() -> void:
 	_init_player_arrays(_player_count)
 	_build_static_ui()
 	_rebuild_panels()
-	AudioManager.play_sfx("menu_open_1")
+	AudioManager.play_music("res://japanese music by hitslab.ogg")
 	print("[CharacterSelect] Ready — %d players" % _player_count)
 
 # ── Array init ────────────────────────────────────────────────────────────────
@@ -101,7 +121,7 @@ func _build_static_ui() -> void:
 	var cs_sf := SpriteFrames.new()
 	cs_sf.add_animation("bg")
 	cs_sf.set_animation_loop("bg", true)
-	cs_sf.set_animation_speed("bg", 10.0)
+	cs_sf.set_animation_speed("bg", 7.0)
 	for i in CS_FRAME_COUNT:
 		var img := Image.new()
 		img.load(ProjectSettings.globalize_path(CS_FRAME_DIR + "frame_%02d.png" % i))
@@ -114,10 +134,11 @@ func _build_static_ui() -> void:
 	cs_bg.scale    = Vector2(cs_scale, cs_scale)
 	cs_bg.position = Vector2(640.0, 360.0)
 	cs_bg.z_index  = -1
+	cs_bg.modulate = Color(1.25, 1.25, 1.25)
 	add_child(cs_bg)
 
 	var overlay := ColorRect.new()
-	overlay.color    = Color(0.0, 0.0, 0.0, 0.45)
+	overlay.color    = Color(0.0, 0.0, 0.0, 0.02)
 	overlay.position = Vector2.ZERO
 	overlay.size     = Vector2(1280, 720)
 	add_child(overlay)
@@ -328,7 +349,7 @@ func _build_panel(pid_idx: int) -> void:
 			var idx: int = row * 4 + col
 			var cell_pos := Vector2(grid_x + col * CELL_SIZE, GRID_TOP_Y + row * CELL_SIZE)
 			var cell_bg := ColorRect.new()
-			cell_bg.color    = Color(0.15, 0.12, 0.22, 1)
+			cell_bg.color    = Color(0.04, 0.03, 0.10, 0.40)
 			cell_bg.position = cell_pos
 			cell_bg.size     = Vector2(CELL_SIZE, CELL_SIZE)
 			cell_bg.z_index  = 0
@@ -386,8 +407,13 @@ func _build_panel(pid_idx: int) -> void:
 	var _fpx: int = first_tex.get_height() if first_tex != null else 128
 	preview.hframes  = int(first_tex.get_width() / float(_fpx)) if first_tex != null else 1
 	preview.frame    = 0
-	preview.position = Vector2(panel_x + int(_panel_w / float(2)), 618)
-	preview.scale    = Vector2(1.3, 1.3)
+	var first_key: String = CHARACTERS[_cursors[pid_idx].y * 4 + _cursors[pid_idx].x]["key"]
+	var _base_preview_x := panel_x + int(_panel_w / float(2)) + 30
+	var _base_preview_y := 510
+	var first_off: Vector2 = PREVIEW_OFFSETS.get(first_key, Vector2.ZERO)
+	preview.position = Vector2(_base_preview_x + first_off.x, _base_preview_y + first_off.y)
+	preview.modulate = PREVIEW_TINTS.get(first_key, Color.WHITE)
+	preview.scale    = Vector2(2.5, 2.5)
 	preview.z_index  = 3
 	add_child(preview)
 	_panel_node_refs.append(preview)
@@ -444,7 +470,6 @@ func _change_player_count(delta: int) -> void:
 	if _count_lbl:
 		_count_lbl.text = str(_player_count)
 
-	AudioManager.play_sfx("select")
 	print("[CharacterSelect] Player count → %d (max:%d)" % [_player_count, max_count])
 
 # ── Input ─────────────────────────────────────────────────────────────────────
@@ -514,7 +539,6 @@ func _change_stocks(delta: int) -> void:
 		return
 	GameManager.stock_count = new_val
 	_stock_lbl.text = str(GameManager.stock_count)
-	AudioManager.play_sfx("select")
 
 func _toggle_cpu(pid_idx: int) -> void:
 	_is_cpu[pid_idx]                   = not _is_cpu[pid_idx]
@@ -531,9 +555,8 @@ func _toggle_cpu(pid_idx: int) -> void:
 		_previews[pid_idx].hframes  = int(tex.get_width() / float(fpx)) if tex != null else 1
 		_previews[pid_idx].frame    = 0
 		_preview_hframes[pid_idx]   = _previews[pid_idx].hframes
-		AudioManager.play_sfx("confirm_1")
 		_locked[pid_idx] = true
-		_check_all_locked()
+		AudioManager.play_sfx("click")
 	else:
 		GameManager.player_characters[pid_idx] = ""
 		GameManager.player_is_cpu[pid_idx]     = false
@@ -543,7 +566,7 @@ func _toggle_cpu(pid_idx: int) -> void:
 		_lock_lbls[pid_idx].text = hint
 		_lock_lbls[pid_idx].add_theme_color_override("font_color", Color(0.2, 1.0, 0.4))
 		_locked[pid_idx] = false
-		AudioManager.play_sfx("back_1")
+	_check_all_locked()
 
 func _move_cursor(pid_idx: int, delta: Vector2i) -> void:
 	_cursors[pid_idx] = Vector2i(
@@ -551,7 +574,7 @@ func _move_cursor(pid_idx: int, delta: Vector2i) -> void:
 		(_cursors[pid_idx].y + delta.y + 3) % 3
 	)
 	_update_cursor(pid_idx)
-	AudioManager.play_sfx("select")
+	AudioManager.play_sfx("click")
 
 func _update_cursor(pid_idx: int) -> void:
 	if _cursor_rects[pid_idx] == null or not is_instance_valid(_cursor_rects[pid_idx]):
@@ -573,6 +596,10 @@ func _update_cursor(pid_idx: int) -> void:
 		_previews[pid_idx].frame   = 0
 		_preview_hframes[pid_idx]  = hf
 		_anim_frames[pid_idx]      = 0
+		var base_x := _panel_xs[pid_idx] + int(_panel_w / float(2)) + 30
+		var off: Vector2 = PREVIEW_OFFSETS.get(CHARACTERS[idx]["key"], Vector2.ZERO)
+		_previews[pid_idx].position = Vector2(base_x + off.x, 510 + off.y)
+		_previews[pid_idx].modulate = PREVIEW_TINTS.get(CHARACTERS[idx]["key"], Color.WHITE)
 
 func _lock_player(pid_idx: int) -> void:
 	var idx: int = _cursors[pid_idx].y * 4 + _cursors[pid_idx].x
@@ -580,7 +607,6 @@ func _lock_player(pid_idx: int) -> void:
 	_locked[pid_idx]         = true
 	_lock_lbls[pid_idx].text = "READY!"
 	_lock_lbls[pid_idx].add_theme_color_override("font_color", Color(0.2, 1.0, 0.4))
-	AudioManager.play_sfx("confirm_1")
 	print("[CharacterSelect] P%d locked: %s" % [pid_idx + 1, CHARACTERS[idx]["key"]])
 	_check_all_locked()
 
@@ -592,7 +618,7 @@ func _check_all_locked() -> void:
 	GameManager.go_to_stage_select()
 
 func _on_back_pressed() -> void:
-	AudioManager.play_sfx("back_1")
+	AudioManager.play_sfx("click")
 	GameManager.go_to_main_menu()
 
 # Loads a PNG that may not have a .import sidecar (e.g. ninja sprites).

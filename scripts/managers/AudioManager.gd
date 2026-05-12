@@ -33,6 +33,9 @@ func _ready() -> void:
 	_ambience_player.volume_db = -12.0
 	add_child(_ambience_player)
 
+	# Lower music bus default so it doesn't overpower SFX and ambience
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(MUSIC_BUS), -10.0)
+
 	_preload_sfx()
 	print("[AudioManager] Ready — %d SFX groups preloaded" % _sfx_groups.size())
 
@@ -47,7 +50,8 @@ func _preload_sfx() -> void:
 		var fname := dir.get_next()
 		while fname != "":
 			if fname.ends_with(".wav"):
-				var stream = load(dir_path + fname)
+				var res_path := dir_path + fname
+				var stream: AudioStream = load(res_path) if ResourceLoader.exists(res_path) else _load_raw_wav(res_path)
 				if stream:
 					var prefix := _strip_number_suffix(fname.get_basename())
 					if not _sfx_groups.has(prefix):
@@ -82,7 +86,7 @@ func play_sfx(sfx_name: String) -> void:
 
 # Crossfade to a new music track (full res:// path).
 func play_music(track_path: String) -> void:
-	var stream = load(track_path)
+	var stream: AudioStream = load(track_path) if ResourceLoader.exists(track_path) else _load_raw_wav(track_path)
 	if stream == null:
 		push_warning("[AudioManager] Music not found: " + track_path)
 		return
@@ -98,12 +102,16 @@ func play_music(track_path: String) -> void:
 	_use_a = not _use_a
 
 	next.stream = stream
-	next.volume_db = -80.0
-	next.play()
-
-	# Fade in next player
-	var tween_in := create_tween()
-	tween_in.tween_property(next, "volume_db", 0.0, 1.0)
+	if stream is AudioStreamOggVorbis:
+		stream.loop = true
+		next.volume_db = -80.0
+		next.play()
+		var tween_in := create_tween()
+		tween_in.tween_property(next, "volume_db", 0.0, 1.0)
+	elif stream is AudioStreamWAV:
+		(stream as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_FORWARD
+		next.volume_db = 0.0
+		next.play()
 
 	# Fade out and stop previous player if it was playing
 	if prev.playing:
@@ -142,3 +150,46 @@ func set_volume(category: String, db: float) -> void:
 		AudioServer.set_bus_volume_db(bus_idx, db)
 	else:
 		push_warning("[AudioManager] Unknown bus: " + category)
+
+func _load_raw_wav(res_path: String) -> AudioStreamWAV:
+	var abs_path := ProjectSettings.globalize_path(res_path)
+	var f := FileAccess.open(abs_path, FileAccess.READ)
+	if f == null:
+		push_warning("[AudioManager] Cannot open raw WAV: " + abs_path)
+		return null
+	f.get_buffer(4)  # "RIFF"
+	f.get_32()       # file size
+	f.get_buffer(4)  # "WAVE"
+	var is_8bit: bool = false
+	var mix_rate: int = 44100
+	var stereo: bool = true
+	var data_bytes := PackedByteArray()
+	while f.get_position() < f.get_length() - 8:
+		var chunk_id := f.get_buffer(4).get_string_from_ascii()
+		var chunk_size := f.get_32()
+		if chunk_id == "fmt ":
+			f.get_16()  # audio format
+			var channels := f.get_16()
+			mix_rate = f.get_32()
+			f.get_32()  # byte rate
+			f.get_16()  # block align
+			var bits := f.get_16()
+			stereo = channels == 2
+			is_8bit = bits == 8
+			if chunk_size > 16:
+				f.get_buffer(chunk_size - 16)
+		elif chunk_id == "data":
+			data_bytes = f.get_buffer(chunk_size)
+			break
+		else:
+			f.get_buffer(chunk_size)
+	f.close()
+	if data_bytes.is_empty():
+		push_warning("[AudioManager] No data chunk in WAV: " + abs_path)
+		return null
+	var stream := AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_8_BITS if is_8bit else AudioStreamWAV.FORMAT_16_BITS
+	stream.mix_rate = mix_rate
+	stream.stereo = stereo
+	stream.data = data_bytes
+	return stream

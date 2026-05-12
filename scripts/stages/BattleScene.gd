@@ -212,7 +212,7 @@ func _run_countdown() -> void:
 		var pop := create_tween()
 		pop.tween_property(label, "scale", Vector2(1.15, 1.15), 0.12)
 		pop.tween_property(label, "scale", Vector2(1.0,  1.0),  0.08)
-		AudioManager.play_sfx("confirm_1")
+		AudioManager.play_sfx("countdown")
 		await pop.finished
 
 		# Hold
@@ -393,6 +393,8 @@ func _setup_pause_menu() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause") and GameManager.match_active:
+		_toggle_pause()
+	elif event.is_action_pressed("ui_cancel") and get_tree().paused:
 		_toggle_pause()
 
 func _toggle_pause() -> void:

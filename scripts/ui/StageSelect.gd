@@ -19,7 +19,7 @@ var _card_rects: Array = []
 func _ready() -> void:
 	_build_ui()
 	_update_selection()
-	AudioManager.play_sfx("menu_open_1")
+	AudioManager.play_music("res://japanese music by hitslab.ogg")
 	var names: Array = []
 	for i in GameManager.active_player_count:
 		names.append("P%d: %s" % [i + 1, GameManager.player_characters[i]])
@@ -149,11 +149,11 @@ func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("p1_left"):
 		_selected = max(0, _selected - 1)
 		_update_selection()
-		AudioManager.play_sfx("select")
+		AudioManager.play_sfx("click")
 	elif Input.is_action_just_pressed("p1_right"):
 		_selected = min(STAGES.size() - 1, _selected + 1)
 		_update_selection()
-		AudioManager.play_sfx("select")
+		AudioManager.play_sfx("click")
 	elif Input.is_action_just_pressed("p1_jump") or Input.is_action_just_pressed("p1_light_attack"):
 		_confirm()
 
@@ -164,11 +164,11 @@ func _update_selection() -> void:
 	_highlight.position = card_pos - Vector2(6, 6)
 
 func _confirm() -> void:
+	AudioManager.play_sfx("click")
 	GameManager.selected_stage = STAGES[_selected]["key"]
-	AudioManager.play_sfx("confirm_1")
 	print("[StageSelect] Stage selected: %s" % GameManager.selected_stage)
 	GameManager.go_to_battle()
 
 func _on_back_pressed() -> void:
-	AudioManager.play_sfx("back_1")
+	AudioManager.play_sfx("click")
 	GameManager.go_to_character_select()
