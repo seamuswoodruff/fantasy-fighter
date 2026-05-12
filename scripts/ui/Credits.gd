@@ -108,19 +108,19 @@ func _credits_text() -> String:
 [center]A 2D Local Multiplayer Platform Fighter[/center]
 [center]DCS 247 — AI in the World  ·  Bowdoin College  ·  2026[/center]
 
-[color=#ffd966][center]* * * * * * * * * * * * * *[/center][/color]
+[center][color=#ffd966]* * * * * * * * * * * * * *[/color][/center]
 
 [center][color=#ffd966][b]DEVELOPMENT[/b][/color][/center]
 [center]Seamus Woodruff — Developer[/center]
 [center]Claude Code (Anthropic) — AI Coding Assistant[/center]
 
-[color=#ffd966][center]* * * * * * * * * * * * * *[/center][/color]
+[center][color=#ffd966]* * * * * * * * * * * * * *[/color][/center]
 
 [center][color=#ffd966][b]ENGINE[/b][/color][/center]
 [center]Godot 4.6.2[/center]
 [center]godotengine.org[/center]
 
-[color=#ffd966][center]* * * * * * * * * * * * * *[/center][/color]
+[center][color=#ffd966]* * * * * * * * * * * * * *[/color][/center]
 
 [center][color=#ffd966][b]MUSIC[/b][/color][/center]
 [center][b]Battle Music[/b][/center]
@@ -131,7 +131,7 @@ func _credits_text() -> String:
 [center]alkakrab — alkakrab.itch.io[/center]
 [center]HitsLab — "Japan Japanese Music"[/center]
 
-[color=#ffd966][center]* * * * * * * * * * * * * *[/center][/color]
+[center][color=#ffd966]* * * * * * * * * * * * * *[/color][/center]
 
 [center][color=#ffd966][b]SOUND EFFECTS[/b][/color][/center]
 [center][b]UI Sounds[/b][/center]
@@ -142,7 +142,7 @@ func _credits_text() -> String:
 [center][b]Fantasy SFX Pack[/b][/center]
 [center]TomMusic — tommusic.itch.io[/center]
 
-[color=#ffd966][center]* * * * * * * * * * * * * *[/center][/color]
+[center][color=#ffd966]* * * * * * * * * * * * * *[/color][/center]
 
 [center][color=#ffd966][b]VISUAL ASSETS[/b][/color][/center]
 [center][b]Character Sprites[/b][/center]
@@ -167,19 +167,19 @@ func _credits_text() -> String:
 [center][b]Win Screens[/b][/center]
 [center]Generated with Gemini[/center]
 
-[color=#ffd966][center]* * * * * * * * * * * * * *[/center][/color]
+[center][color=#ffd966]* * * * * * * * * * * * * *[/color][/center]
 
 [center][color=#ffd966][b]FONTS[/b][/color][/center]
 [center]Alagard — Hewett Tsoi[/center]
 [center]dafont.com/alagard.font  ·  Free[/center]
 [center]Planes ValMore[/center]
 
-[color=#ffd966][center]* * * * * * * * * * * * * *[/center][/color]
+[center][color=#ffd966]* * * * * * * * * * * * * *[/color][/center]
 
 [center][color=#ffd966][b]SPECIAL THANKS[/b][/color][/center]
 [center]My lovely roommates for playtesting[/center]
 
-[color=#ffd966][center]* * * * * * * * * * * * * *[/center][/color]
+[center][color=#ffd966]* * * * * * * * * * * * * *[/color][/center]
 
 [center][color=#888888]Built with Claude Code for DCS 247 — AI in the World[/color][/center]
 [center]Bowdoin College  ·  2026[/center]
