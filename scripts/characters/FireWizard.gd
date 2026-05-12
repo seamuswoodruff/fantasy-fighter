@@ -26,12 +26,13 @@ var _firing_fireball: bool = false
 var _projectile_scene: PackedScene
 
 func _ready() -> void:
-	max_hp = 100.0
+	max_hp = 120.0
 	move_speed = 220.0
-	jump_force = -600.0
+	jump_force = -500.0
 	attack_damage_light = 8.0
 	attack_damage_heavy = 14.0
 	knockback_multiplier = 1.0
+	jump_count = 3
 	sprite.sprite_frames = _build_sprite_frames()
 	sprite.position = Vector2(0, -26)
 	_projectile_scene = load("res://scenes/characters/Projectile.tscn")
@@ -105,7 +106,6 @@ func _launch_fireball() -> void:
 
 	get_parent().add_child(proj)
 	proj.global_position = global_position + Vector2(50.0 * proj.direction, -15.0)
-	VFXManager.play("ko", proj.global_position, 0.5, -1)
 
 	_firing_fireball = false
 	is_attacking = false

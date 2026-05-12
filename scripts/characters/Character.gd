@@ -38,7 +38,7 @@ const MAX_FALL_SPEED: float = 1000.0
 const ACCELERATION: float = 1800.0
 const FRICTION: float = 1200.0
 const AIR_FRICTION: float = 150.0
-const JUMP_COUNT: int = 2
+var jump_count: int = 2
 const COYOTE_TIME: float = 6.0 / 60.0
 const SHORT_HOP_WINDOW: float = 5.0 / 60.0
 const SHORT_HOP_MULTIPLIER: float = 0.55
@@ -49,7 +49,7 @@ const HEAVY_ATTACK_RECOVERY: float = 0.20   # 12 frames post-attack lockout
 const SPECIAL_ATTACK_RECOVERY: float = 0.15 # used by subclasses
 
 # ── Jump tracking ─────────────────────────────────────────────────────────────
-var _jumps_remaining: int = JUMP_COUNT
+var _jumps_remaining: int = jump_count
 var _coyote_timer: float = 0.0
 var _coyote_expired_this_fall: bool = false
 
@@ -61,6 +61,7 @@ var _shadow_floor_y: float = 0.0
 var _shield_damage: float = 0.0     # cumulative raw damage absorbed in current block session
 var _combo_hit_count: int = 0
 var _combo_reset_timer: float = 0.0
+var _special_state_timer: float = 0.0  # safety timeout for SPECIAL state
 
 # ── State machine ─────────────────────────────────────────────────────────────
 enum State {
@@ -225,6 +226,19 @@ func _tick_timers(delta: float) -> void:
 	if _attack_recovery_timer > 0.0:
 		_attack_recovery_timer -= delta
 
+	# Safety timeout: if stuck in SPECIAL for >2s, force exit to prevent permanent lock
+	if state == State.SPECIAL:
+		_special_state_timer += delta
+		if _special_state_timer > 2.0:
+			push_warning("[Character] %s P%d stuck in SPECIAL >2s — forcing IDLE" % [character_name, player_id])
+			_special_state_timer = 0.0
+			is_attacking = false
+			hitbox_light.monitoring = false
+			hitbox_heavy.monitoring = false
+			change_state(State.IDLE)
+	else:
+		_special_state_timer = 0.0
+
 	# I-frame flicker — 6 blinks per second while invincible
 	if is_invincible and _invincibility_timer > 0.0:
 		sprite.visible = (int(_invincibility_timer * 12.0) % 2 == 0)
@@ -239,7 +253,7 @@ func _apply_gravity(delta: float) -> void:
 # ── Coyote time & jump-count reset ────────────────────────────────────────────
 func _update_coyote(delta: float) -> void:
 	if is_on_floor():
-		_jumps_remaining = JUMP_COUNT
+		_jumps_remaining = jump_count
 		_coyote_timer = COYOTE_TIME
 		_coyote_expired_this_fall = false
 		_fast_falling = false
@@ -250,7 +264,7 @@ func _update_coyote(delta: float) -> void:
 			_coyote_timer -= delta
 			if _coyote_timer <= 0.0 and not _coyote_expired_this_fall:
 				_coyote_expired_this_fall = true
-				_jumps_remaining = mini(_jumps_remaining, JUMP_COUNT - 1)
+				_jumps_remaining = mini(_jumps_remaining, jump_count - 1)
 
 # ── Input handling ────────────────────────────────────────────────────────────
 func handle_input() -> void:
@@ -333,12 +347,12 @@ func handle_input() -> void:
 func _try_jump() -> void:
 	if is_on_floor():
 		velocity.y = jump_force
-		_jumps_remaining = JUMP_COUNT - 1
+		_jumps_remaining = jump_count - 1
 		_coyote_timer = 0.0
 		_short_hop_timer = SHORT_HOP_WINDOW
 	elif _coyote_timer > 0.0:
 		velocity.y = jump_force
-		_jumps_remaining = JUMP_COUNT - 1
+		_jumps_remaining = jump_count - 1
 		_coyote_timer = 0.0
 		_coyote_expired_this_fall = true
 		_short_hop_timer = SHORT_HOP_WINDOW
@@ -433,12 +447,11 @@ func _try_play(anim_name: String) -> void:
 	if not sprite.sprite_frames:
 		return
 	if sprite.sprite_frames.has_animation(anim_name):
-		if sprite.animation != anim_name:
+		# Restart if animation differs OR if it already finished (at last frame, not playing)
+		if sprite.animation != anim_name or not sprite.is_playing():
 			sprite.play(anim_name)
 	else:
-		# Fall back to idle if animation missing (shouldn't happen with knight_1)
-		if sprite.sprite_frames.has_animation("idle") and sprite.animation != "idle":
-			sprite.play("idle")
+		push_warning("[Character] %s missing animation: %s" % [character_name, anim_name])
 
 # ── Sprite signal handlers ────────────────────────────────────────────────────
 func _on_sprite_frame_changed() -> void:
@@ -500,7 +513,6 @@ func _apply_hit(area: Area2D, damage: float, is_heavy: bool) -> void:
 	velocity.x += recoil_dir * (28.0 if is_heavy else 16.0)
 
 	_spawn_damage_number(area.global_position, actual)
-	VFXManager.play_single("hit_sparks", area.global_position, 2.0, 0.12, 618)
 	AudioManager.play_sfx("Sword Impact Hit")
 
 # ── Combat ────────────────────────────────────────────────────────────────────
@@ -602,7 +614,11 @@ func take_damage(amount: float, attacker_pos: Vector2, is_heavy: bool) -> void:
 		is_blocking = false
 		_light_hit_connected = false
 		_heavy_hit_connected = false
+		_on_special_interrupted()
 		change_state(State.HURT)
+
+func _on_special_interrupted() -> void:
+	pass  # override in subclasses to reset special-state flags on hit
 
 func die() -> void:
 	if state == State.DEAD:
@@ -610,6 +626,7 @@ func die() -> void:
 	# Set DEAD immediately — prevents a second kill-zone body_entered (fired in the
 	# same physics frame before either callback runs) from also calling die().
 	change_state(State.DEAD)
+	_on_special_interrupted()
 	hitbox_light.monitoring = false
 	hitbox_heavy.monitoring = false
 	is_attacking = false
@@ -619,7 +636,6 @@ func die() -> void:
 	print("[Character] P%d died — %d stocks remaining" % [player_id, stocks])
 	is_invincible = true
 	GameManager.on_player_death(player_id)
-	VFXManager.play("ko", global_position, 2.0, 19)
 
 	if stocks > 0:
 		# Let the death animation play (~0.7s), then move to respawn position

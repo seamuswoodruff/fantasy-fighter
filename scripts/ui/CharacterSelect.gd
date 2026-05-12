@@ -2,12 +2,12 @@
 extends Node2D
 
 const CHARACTERS := [
-	{ "key": "knight_1",          "name": "THE BLUE KNIGHT",    "idle": "res://assets/characters/warriors/knight_1/sprites/Idle.png" },
+	{ "key": "knight_1",          "name": "THE ICE BLADE",      "idle": "res://assets/characters/warriors/knight_1/sprites/Idle.png" },
 	{ "key": "knight_2",          "name": "THE GALLANT",        "idle": "res://assets/characters/warriors/knight_2/sprites/Idle.png" },
-	{ "key": "knight_3",          "name": "THE RED KNIGHT",     "idle": "res://assets/characters/warriors/knight_3/sprites/Idle.png" },
+	{ "key": "knight_3",          "name": "THE EMBER BLADE",    "idle": "res://assets/characters/warriors/knight_3/sprites/Idle.png" },
 	{ "key": "samurai",           "name": "SHADOW",             "idle": "res://assets/characters/samurai/samurai/sprites/Idle.png" },
 	{ "key": "samurai_commander", "name": "THE COMMANDER",      "idle": "res://assets/characters/samurai/samurai_commander/sprites/Idle.png" },
-	{ "key": "samurai_archer",    "name": "THE SHARPSHOOTER",   "idle": "res://assets/characters/samurai/samurai_archer/sprites/Idle.png" },
+	{ "key": "samurai_archer",    "name": "CAMERON-SAN",         "idle": "res://assets/characters/samurai/samurai_archer/sprites/Idle.png" },
 	{ "key": "fire_wizard",       "name": "THE FLAME",          "idle": "res://assets/characters/wizards/fire_wizard/sprites/Idle.png" },
 	{ "key": "lightning_mage",    "name": "THE THUNDER",        "idle": "res://assets/characters/wizards/lightning_mage/sprites/Idle.png" },
 	{ "key": "wanderer_magician", "name": "HE WHO WANDERS",     "idle": "res://assets/characters/wizards/wanderer_magician/sprites/Idle.png" },

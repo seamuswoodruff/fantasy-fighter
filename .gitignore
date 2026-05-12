@@ -6,3 +6,5 @@ export_presets.cfg
 *.remap
 screenshots/
 .godot/
+
+.claude/

@@ -22,12 +22,13 @@ var _charge_cooldown_timer: float = 0.0
 var _projectile_scene: PackedScene
 
 func _ready() -> void:
-	max_hp = 100.0
+	max_hp = 120.0
 	move_speed = 215.0
-	jump_force = -600.0
+	jump_force = -500.0
 	attack_damage_light = 8.0
 	attack_damage_heavy = 14.0
 	knockback_multiplier = 1.0
+	jump_count = 3
 	sprite.sprite_frames = _build_sprite_frames()
 	sprite.position = Vector2(0, -26)
 	_projectile_scene = load("res://scenes/characters/Projectile.tscn")
@@ -109,7 +110,6 @@ func _fire_ball() -> void:
 
 	get_parent().add_child(proj)
 	proj.global_position = global_position + Vector2(50.0 * proj.direction, -15.0)
-	VFXManager.play("ko", proj.global_position, 0.5, -1)
 
 	is_attacking = false
 	change_state(State.IDLE)
@@ -136,7 +136,6 @@ func _on_hitbox_heavy_area_entered(area: Area2D) -> void:
 		_spawn_damage_number(area.global_position, actual)
 		hitbox_heavy.set_deferred("monitoring", false)
 		_trigger_screen_freeze(0.1)
-		VFXManager.play_single("hit_sparks", area.global_position, 2.0, 0.12, 618)
 		AudioManager.play_sfx("Sword Impact Hit")
 	else:
 		super._on_hitbox_heavy_area_entered(area)

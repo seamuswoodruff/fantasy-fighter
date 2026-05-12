@@ -93,7 +93,6 @@ func _on_area_entered(area: Area2D) -> void:
 	if extra_hitstun > 0.0 and target.has_method("_apply_extra_hitstun"):
 		target._apply_extra_hitstun(extra_hitstun)
 	target._spawn_damage_number(global_position, actual)
-	VFXManager.play_single("hit_sparks", global_position, 1.5, 0.12, 618)
 	AudioManager.play_sfx("Sword Impact Hit")
 	if not is_piercing:
 		queue_free()

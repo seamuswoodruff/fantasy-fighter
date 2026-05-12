@@ -78,20 +78,6 @@ const CHAR_VICTORY_SEQUENCES := {
 	                      ["res://assets/characters/ninjas/ninja_peasant/sprites/special 2.png", 20.0]],
 }
 
-const CHAR_DISPLAY_NAMES := {
-	"knight_1":          "THE BLUE KNIGHT",
-	"knight_2":          "THE GALLANT",
-	"knight_3":          "THE RED KNIGHT",
-	"samurai":           "SHADOW",
-	"samurai_commander": "THE COMMANDER",
-	"samurai_archer":    "THE SHARPSHOOTER",
-	"fire_wizard":       "THE FLAME",
-	"lightning_mage":    "THE THUNDER",
-	"wanderer_magician": "HE WHO WANDERS",
-	"kunoichi":          "THE HIDDEN LADY",
-	"ninja_monk":        "BROTHER OF KNIVES",
-	"ninja_peasant":     "THE VAGABOND",
-}
 
 const IDLE_FPS    := 8.0
 const VICTORY_FPS := 12.0
@@ -136,7 +122,7 @@ func _build_ui() -> void:
 
 	# "PLAYER X WINS!"
 	var win_lbl := Label.new()
-	win_lbl.text = "%s WINS!" % CHAR_DISPLAY_NAMES.get(char_key, char_key.replace("_", " ").to_upper())
+	win_lbl.text = "%s WINS!" % GameManager.CHAR_DISPLAY_NAMES.get(char_key, char_key.replace("_", " ").to_upper())
 	win_lbl.position = Vector2(0, 60)
 	win_lbl.size = Vector2(1280, 130)
 	win_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

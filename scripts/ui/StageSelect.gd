@@ -62,7 +62,8 @@ func _build_ui() -> void:
 	# Characters chosen banner — supports 2–4 players
 	var banner_parts: Array = []
 	for i in GameManager.active_player_count:
-		banner_parts.append(GameManager.player_characters[i].replace("_", " ").to_upper())
+		var key: String = GameManager.player_characters[i]
+		banner_parts.append(GameManager.CHAR_DISPLAY_NAMES.get(key, key.replace("_", " ").to_upper()))
 	var banner := Label.new()
 	banner.text = "  vs  ".join(banner_parts)
 	banner.position = Vector2(0, 150)

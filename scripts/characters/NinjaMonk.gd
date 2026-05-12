@@ -17,12 +17,13 @@ var _special2_active: bool = false
 var _staff_tex: Texture2D
 
 func _ready() -> void:
-	max_hp               = 105.0
-	move_speed           = 275.0
-	jump_force           = -595.0
+	max_hp               = 110.0
+	move_speed           = 290.0
+	jump_force           = -450.0
 	attack_damage_light  = 10.0
 	attack_damage_heavy  = 18.0
 	character_name       = "Ninja Monk"
+	jump_count           = 4
 	sprite.sprite_frames = _build_sprite_frames()
 	# 96px frames but art fills ~71px (vs 64px art in 128px frames) — scale to match
 	sprite.scale    = Vector2(0.90, 0.90)
@@ -46,6 +47,9 @@ func _build_sprite_frames() -> SpriteFrames:
 	_add_anim(sf, "hurt",         _load_raw_texture(p + "Hurt.png"),         fs, fs, 0, _frames_raw(p + "Hurt.png", fs),         10.0, false)
 	_add_anim(sf, "dead",         _load_raw_texture(p + "Dead.png"),         fs, fs, 0, _frames_raw(p + "Dead.png", fs),         8.0,  false)
 	return sf
+
+func _on_special_interrupted() -> void:
+	_special2_active = false
 
 # Override to play "special2" anim when blade slash is active
 func _play_animation_for_state() -> void:

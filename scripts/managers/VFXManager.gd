@@ -12,7 +12,7 @@ extends Node
 var _vfx_anims: Dictionary = {}
 
 const VFX_BASE := "res://assets/vfx/"
-const VFX_TYPES := ["hit_sparks", "magic", "ko", "dust"]
+const VFX_TYPES := ["hit_sparks"]
 
 func _ready() -> void:
 	_preload_vfx()

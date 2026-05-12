@@ -2,6 +2,21 @@
 # Autoload singleton — global game state, match tracking, scene flow.
 extends Node
 
+const CHAR_DISPLAY_NAMES := {
+	"knight_1":          "THE ICE BLADE",
+	"knight_2":          "THE GALLANT",
+	"knight_3":          "THE EMBER BLADE",
+	"samurai":           "SHADOW",
+	"samurai_commander": "THE COMMANDER",
+	"samurai_archer":    "CAMERON-SAN",
+	"fire_wizard":       "THE FLAME",
+	"lightning_mage":    "THE THUNDER",
+	"wanderer_magician": "HE WHO WANDERS",
+	"kunoichi":          "THE HIDDEN LADY",
+	"ninja_monk":        "BROTHER OF KNIVES",
+	"ninja_peasant":     "THE VAGABOND",
+}
+
 # Per-player arrays (index 0 = P1, 1 = P2, 2 = P3, 3 = P4)
 var player_characters: Array[String] = ["", "", "", ""]
 var player_is_cpu: Array[bool] = [false, false, false, false]

@@ -10,7 +10,7 @@ const SHURIKEN_SPEED  := 600.0
 const SHURIKEN_DAMAGE := 12.0
 const SHURIKEN_RANGE  := 950.0
 const HEAL_AMOUNT     := 5.0
-const HEAL_COOLDOWN   := 4.0
+const HEAL_COOLDOWN   := 2.0
 
 var _healing: bool = false
 var _heal_cooldown_timer: float = 0.0
@@ -18,11 +18,12 @@ var _shuriken_tex: Texture2D
 
 func _ready() -> void:
 	max_hp               = 90.0
-	move_speed           = 300.0
-	jump_force           = -615.0
-	attack_damage_light  = 9.0
-	attack_damage_heavy  = 16.0
+	move_speed           = 350.0
+	jump_force           = -450.0
+	attack_damage_light  = 8.0
+	attack_damage_heavy  = 14.0
 	character_name       = "Kunoichi"
+	jump_count           = 5
 	sprite.sprite_frames = _build_sprite_frames()
 	sprite.position      = Vector2(0, -26)
 	_shuriken_tex        = _load_raw_texture(SPRITES + "special_projectile.png")
@@ -48,6 +49,9 @@ func _physics_process(delta: float) -> void:
 	if _heal_cooldown_timer > 0.0:
 		_heal_cooldown_timer -= delta
 	super._physics_process(delta)
+
+func _on_special_interrupted() -> void:
+	_healing = false
 
 # Override so State.SPECIAL plays "special2" anim during heal
 func _play_animation_for_state() -> void:
