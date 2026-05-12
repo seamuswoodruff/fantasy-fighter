@@ -29,9 +29,7 @@ func _build_ui() -> void:
 	const COLS := 8
 	const BG_FPS := 10.0
 
-	var bg_img := Image.new()
-	bg_img.load(ProjectSettings.globalize_path(SHEET_PATH))
-	var bg_tex := ImageTexture.create_from_image(bg_img)
+	var bg_tex := load(SHEET_PATH) as Texture2D
 
 	var sf := SpriteFrames.new()
 	sf.add_animation("bg")
