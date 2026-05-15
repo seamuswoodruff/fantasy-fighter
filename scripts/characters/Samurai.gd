@@ -30,6 +30,7 @@ func _ready() -> void:
 	attack_damage_heavy = 18.0
 	knockback_multiplier = 1.0
 	jump_count = 3
+	cpu_archetype = "blocker" if sprites_path.contains("samurai_commander") else "dasher"
 	sprite.sprite_frames = _build_sprite_frames()
 	sprite.position = Vector2(0, -26)
 	super._ready()

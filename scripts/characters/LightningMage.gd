@@ -29,6 +29,7 @@ func _ready() -> void:
 	attack_damage_heavy = 14.0
 	knockback_multiplier = 1.0
 	jump_count = 3
+	cpu_archetype = "ranged"
 	sprite.sprite_frames = _build_sprite_frames()
 	sprite.position = Vector2(0, -26)
 	_projectile_scene = load("res://scenes/characters/Projectile.tscn")

@@ -26,6 +26,7 @@ func _ready() -> void:
 		attack_damage_light = 10.0
 		attack_damage_heavy = 18.0
 	knockback_multiplier = 1.0
+	cpu_archetype = "blocker"
 	_is_slash_char = sprites_path.contains("knight_1") or sprites_path.contains("knight_3")
 	sprite.sprite_frames = _build_sprite_frames()
 	sprite.position = Vector2(16, -26)

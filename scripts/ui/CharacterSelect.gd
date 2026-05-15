@@ -2,18 +2,18 @@
 extends Node2D
 
 const CHARACTERS := [
-	{ "key": "knight_1",          "name": "THE ICE BLADE",      "idle": "res://assets/characters/warriors/knight_1/sprites/Idle.png" },
-	{ "key": "knight_2",          "name": "THE GALLANT",        "idle": "res://assets/characters/warriors/knight_2/sprites/Idle.png" },
-	{ "key": "knight_3",          "name": "THE EMBER BLADE",    "idle": "res://assets/characters/warriors/knight_3/sprites/Idle.png" },
-	{ "key": "samurai",           "name": "SHADOW",             "idle": "res://assets/characters/samurai/samurai/sprites/Idle.png" },
-	{ "key": "samurai_commander", "name": "THE COMMANDER",      "idle": "res://assets/characters/samurai/samurai_commander/sprites/Idle.png" },
-	{ "key": "samurai_archer",    "name": "CAMERON-SAN",         "idle": "res://assets/characters/samurai/samurai_archer/sprites/Idle.png" },
-	{ "key": "fire_wizard",       "name": "THE FLAME",          "idle": "res://assets/characters/wizards/fire_wizard/sprites/Idle.png" },
-	{ "key": "lightning_mage",    "name": "THE THUNDER",        "idle": "res://assets/characters/wizards/lightning_mage/sprites/Idle.png" },
-	{ "key": "wanderer_magician", "name": "HE WHO WANDERS",     "idle": "res://assets/characters/wizards/wanderer_magician/sprites/Idle.png" },
-	{ "key": "kunoichi",          "name": "THE HIDDEN LADY",    "idle": "res://assets/characters/ninjas/kunoichi/sprites/Idle.png" },
-	{ "key": "ninja_monk",        "name": "BROTHER OF KNIVES",  "idle": "res://assets/characters/ninjas/ninja_monk/sprites/Idle.png" },
-	{ "key": "ninja_peasant",     "name": "THE VAGABOND",       "idle": "res://assets/characters/ninjas/ninja_peasant/sprites/Idle.png" },
+	{ "key": "knight_1",          "idle": "res://assets/characters/warriors/knight_1/sprites/Idle.png" },
+	{ "key": "knight_2",          "idle": "res://assets/characters/warriors/knight_2/sprites/Idle.png" },
+	{ "key": "knight_3",          "idle": "res://assets/characters/warriors/knight_3/sprites/Idle.png" },
+	{ "key": "samurai",           "idle": "res://assets/characters/samurai/samurai/sprites/Idle.png" },
+	{ "key": "samurai_commander", "idle": "res://assets/characters/samurai/samurai_commander/sprites/Idle.png" },
+	{ "key": "samurai_archer",    "idle": "res://assets/characters/samurai/samurai_archer/sprites/Idle.png" },
+	{ "key": "fire_wizard",       "idle": "res://assets/characters/wizards/fire_wizard/sprites/Idle.png" },
+	{ "key": "lightning_mage",    "idle": "res://assets/characters/wizards/lightning_mage/sprites/Idle.png" },
+	{ "key": "wanderer_magician", "idle": "res://assets/characters/wizards/wanderer_magician/sprites/Idle.png" },
+	{ "key": "kunoichi",          "idle": "res://assets/characters/ninjas/kunoichi/sprites/Idle.png" },
+	{ "key": "ninja_monk",        "idle": "res://assets/characters/ninjas/ninja_monk/sprites/Idle.png" },
+	{ "key": "ninja_peasant",     "idle": "res://assets/characters/ninjas/ninja_peasant/sprites/Idle.png" },
 ]
 
 const CELL_SIZE   := 80
@@ -36,10 +36,7 @@ const PREVIEW_OFFSETS := {
 }
 
 # Per-character preview tint (default white = no tint)
-const PREVIEW_TINTS := {
-	"knight_1": Color(0.75, 0.85, 1.4),
-	"knight_3": Color(0.95, 0.38, 0.38),
-}
+const PREVIEW_TINTS := {}
 
 const PLAYER_COLORS := [
 	Color(0.4, 0.7, 1.0),   # P1 blue
@@ -81,6 +78,7 @@ func _ready() -> void:
 	_build_static_ui()
 	_rebuild_panels()
 	AudioManager.play_music("res://japanese music by hitslab.ogg")
+	AudioManager.play_sfx("menu_open_1")
 	print("[CharacterSelect] Ready — %d players" % _player_count)
 
 # ── Array init ────────────────────────────────────────────────────────────────
@@ -123,9 +121,9 @@ func _build_static_ui() -> void:
 	cs_sf.set_animation_loop("bg", true)
 	cs_sf.set_animation_speed("bg", 7.0)
 	for i in CS_FRAME_COUNT:
-		var tex := load(CS_FRAME_DIR + "frame_%02d.png" % i) as Texture2D
-		if tex:
-			cs_sf.add_frame("bg", tex)
+		var img := Image.new()
+		img.load(ProjectSettings.globalize_path(CS_FRAME_DIR + "frame_%02d.png" % i))
+		cs_sf.add_frame("bg", ImageTexture.create_from_image(img))
 	var cs_bg := AnimatedSprite2D.new()
 	cs_bg.sprite_frames = cs_sf
 	cs_bg.animation = "bg"
@@ -138,7 +136,7 @@ func _build_static_ui() -> void:
 	add_child(cs_bg)
 
 	var overlay := ColorRect.new()
-	overlay.color    = Color(0.0, 0.0, 0.0, 0.02)
+	overlay.color    = Color(0.0, 0.0, 0.0, 0.0)
 	overlay.position = Vector2.ZERO
 	overlay.size     = Vector2(1280, 720)
 	add_child(overlay)
@@ -161,7 +159,9 @@ func _build_static_ui() -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_override("font", font_big)
 	title.add_theme_font_size_override("font_size", 36)
-	title.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
+	title.add_theme_color_override("font_color", Color(0.72, 0.48, 0.88))
+	title.add_theme_color_override("font_outline_color", Color(1.0, 1.0, 1.0))
+	title.add_theme_constant_override("outline_size", 3)
 	add_child(title)
 
 	# ── Player count row ──────────────────────────────────────────────────────
@@ -172,6 +172,8 @@ func _build_static_ui() -> void:
 	pc_lbl.add_theme_font_override("font", font_big)
 	pc_lbl.add_theme_font_size_override("font_size", 19)
 	pc_lbl.add_theme_color_override("font_color", Color(0.8, 0.8, 1.0))
+	pc_lbl.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0))
+	pc_lbl.add_theme_constant_override("outline_size", 2)
 	add_child(pc_lbl)
 
 	var pc_minus := Button.new()
@@ -191,6 +193,8 @@ func _build_static_ui() -> void:
 	_count_lbl.add_theme_font_override("font", font_big)
 	_count_lbl.add_theme_font_size_override("font_size", 22)
 	_count_lbl.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
+	_count_lbl.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0))
+	_count_lbl.add_theme_constant_override("outline_size", 2)
 	add_child(_count_lbl)
 
 	var pc_plus := Button.new()
@@ -219,6 +223,8 @@ func _build_static_ui() -> void:
 	stock_lbl.add_theme_font_override("font", font_big)
 	stock_lbl.add_theme_font_size_override("font_size", 19)
 	stock_lbl.add_theme_color_override("font_color", Color(0.8, 0.8, 1.0))
+	stock_lbl.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0))
+	stock_lbl.add_theme_constant_override("outline_size", 2)
 	add_child(stock_lbl)
 
 	var st_minus := Button.new()
@@ -238,6 +244,8 @@ func _build_static_ui() -> void:
 	_stock_lbl.add_theme_font_override("font", font_big)
 	_stock_lbl.add_theme_font_size_override("font_size", 20)
 	_stock_lbl.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
+	_stock_lbl.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0))
+	_stock_lbl.add_theme_constant_override("outline_size", 2)
 	add_child(_stock_lbl)
 
 	var st_plus := Button.new()
@@ -260,7 +268,7 @@ func _build_static_ui() -> void:
 
 	# Instructions at bottom
 	var instr := Label.new()
-	instr.text = "Move: WASD / Arrows / Stick    Confirm: Space / [/] / A    CPU (P2): Tab    Players: – / +"
+	instr.text = "Move: WASD / Arrows / Stick    Confirm: Space / [/] / A    Toggle CPU: 2 / 3 / 4    Players: – / +"
 	instr.position = Vector2(0, 694)
 	instr.size     = Vector2(1280, 22)
 	instr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -298,39 +306,42 @@ func _build_panel(pid_idx: int) -> void:
 	var color: Color = PLAYER_COLORS[pid_idx]
 	var font_big := load("res://assets/ui/fonts/alagard.ttf") as FontFile
 	var font_sm  := load("res://assets/ui/fonts/Planes_ValMore.ttf") as FontFile
-	var has_ctrl := _player_has_controller(pid_idx)
 
 	var panel_bg := ColorRect.new()
-	panel_bg.color    = Color(0.08, 0.06, 0.15, 0.8)
+	panel_bg.color    = Color(0.08, 0.06, 0.15, 0.0)
 	panel_bg.position = Vector2(panel_x, 128)
 	panel_bg.size     = Vector2(_panel_w, 562)
 	add_child(panel_bg)
 	_panel_node_refs.append(panel_bg)
 
 	var header := Label.new()
-	header.text = "PLAYER %d" % (pid_idx + 1)
+	header.text = ("CPU" if _is_cpu[pid_idx] else "PLAYER %d" % (pid_idx + 1))
 	header.position = Vector2(panel_x, 132)
 	header.size     = Vector2(_panel_w, 28)
 	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	header.add_theme_font_override("font", font_big)
 	header.add_theme_font_size_override("font_size", 20)
 	header.add_theme_color_override("font_color", color)
+	header.add_theme_color_override("font_outline_color", Color(1.0, 1.0, 1.0))
+	header.add_theme_constant_override("outline_size", 2)
 	add_child(header)
 	_panel_node_refs.append(header)
 	_status_lbls[pid_idx] = header
 
-	# "No Controller" warning for P3/P4 without a controller
-	if pid_idx >= 2 and not has_ctrl:
-		var warn := Label.new()
-		warn.text     = "⚠  Connect Controller"
-		warn.position = Vector2(panel_x, 160)
-		warn.size     = Vector2(_panel_w, 22)
-		warn.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		warn.add_theme_font_override("font", font_sm)
-		warn.add_theme_font_size_override("font_size", 13)
-		warn.add_theme_color_override("font_color", Color(1.0, 0.6, 0.2))
-		add_child(warn)
-		_panel_node_refs.append(warn)
+	# CPU hint label (shown for all non-P1 slots)
+	if pid_idx >= 1:
+		var cpu_hint := Label.new()
+		cpu_hint.text = ("CPU  (press %d to toggle)" % (pid_idx + 1)) if _is_cpu[pid_idx] else \
+						("press %d to set as CPU" % (pid_idx + 1))
+		cpu_hint.position = Vector2(panel_x, 160)
+		cpu_hint.size     = Vector2(_panel_w, 20)
+		cpu_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		cpu_hint.add_theme_font_override("font", font_sm)
+		cpu_hint.add_theme_font_size_override("font_size", 11)
+		cpu_hint.add_theme_color_override("font_color",
+			Color(1.0, 0.85, 0.3) if _is_cpu[pid_idx] else Color(0.55, 0.55, 0.65))
+		add_child(cpu_hint)
+		_panel_node_refs.append(cpu_hint)
 
 	# Grid (4×3), centered in panel
 	var grid_offset_x := int((_panel_w - 4 * CELL_SIZE) / float(2))
@@ -349,7 +360,7 @@ func _build_panel(pid_idx: int) -> void:
 			var idx: int = row * 4 + col
 			var cell_pos := Vector2(grid_x + col * CELL_SIZE, GRID_TOP_Y + row * CELL_SIZE)
 			var cell_bg := ColorRect.new()
-			cell_bg.color    = Color(0.04, 0.03, 0.10, 0.40)
+			cell_bg.color    = Color(0.18, 0.08, 0.35, 0.60)
 			cell_bg.position = cell_pos
 			cell_bg.size     = Vector2(CELL_SIZE, CELL_SIZE)
 			cell_bg.z_index  = 0
@@ -375,6 +386,8 @@ func _build_panel(pid_idx: int) -> void:
 	name_lbl.add_theme_font_override("font", font_big)
 	name_lbl.add_theme_font_size_override("font_size", 18)
 	name_lbl.add_theme_color_override("font_color", Color(1, 1, 1))
+	name_lbl.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0))
+	name_lbl.add_theme_constant_override("outline_size", 2)
 	add_child(name_lbl)
 	_panel_node_refs.append(name_lbl)
 	_name_lbls[pid_idx] = name_lbl
@@ -465,11 +478,21 @@ func _change_player_count(delta: int) -> void:
 		GameManager.player_characters[i] = ""
 		GameManager.player_is_cpu[i]     = false
 
+	# Auto-CPU any newly added P3/P4 slots that have no controller
+	for i in range(mini(save_cursors.size(), new_count), new_count):
+		if not _player_has_controller(i) and not _is_cpu[i]:
+			_is_cpu[i] = true
+			GameManager.player_is_cpu[i] = true
+			var random_idx := randi() % CHARACTERS.size()
+			GameManager.player_characters[i] = CHARACTERS[random_idx]["key"]
+			_locked[i] = true
+
 	_rebuild_panels()
 
 	if _count_lbl:
 		_count_lbl.text = str(_player_count)
 
+	AudioManager.play_sfx("select")
 	print("[CharacterSelect] Player count → %d (max:%d)" % [_player_count, max_count])
 
 # ── Input ─────────────────────────────────────────────────────────────────────
@@ -488,6 +511,15 @@ func _input(event: InputEvent) -> void:
 			_change_stocks(-1)
 		KEY_BRACKETRIGHT:
 			_change_stocks(1)
+		KEY_2:
+			if _player_count >= 2 and (not _locked[1] or _is_cpu[1]):
+				_toggle_cpu(1)
+		KEY_3:
+			if _player_count >= 3 and (not _locked[2] or _is_cpu[2]):
+				_toggle_cpu(2)
+		KEY_4:
+			if _player_count >= 4 and (not _locked[3] or _is_cpu[3]):
+				_toggle_cpu(3)
 
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_cancel"):
@@ -495,12 +527,6 @@ func _process(delta: float) -> void:
 		return
 
 	# (player count ± and stock [ ] changes handled in _input())
-
-	# P2 CPU toggle (Tab)
-	if _player_count >= 2:
-		if not _locked[1] or _is_cpu[1]:
-			if Input.is_action_just_pressed("ui_focus_next"):
-				_toggle_cpu(1)
 
 	# Per-player cursor / confirm
 	for i in _player_count:
@@ -539,34 +565,30 @@ func _change_stocks(delta: int) -> void:
 		return
 	GameManager.stock_count = new_val
 	_stock_lbl.text = str(GameManager.stock_count)
+	AudioManager.play_sfx("select")
 
 func _toggle_cpu(pid_idx: int) -> void:
+	# Can't turn off CPU if no controller is available for this slot
+	if _is_cpu[pid_idx] and not _player_has_controller(pid_idx):
+		return
 	_is_cpu[pid_idx]                   = not _is_cpu[pid_idx]
 	GameManager.player_is_cpu[pid_idx] = _is_cpu[pid_idx]
+	# Re-route controllers now that CPU state changed
+	InputManager.reassign_controllers()
 	if _is_cpu[pid_idx]:
 		var random_idx := randi() % CHARACTERS.size()
 		GameManager.player_characters[pid_idx] = CHARACTERS[random_idx]["key"]
-		_status_lbls[pid_idx].text = "CPU"
-		_lock_lbls[pid_idx].text   = "Random character selected"
-		_lock_lbls[pid_idx].add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
-		var tex := _load_portrait_tex(CHARACTERS[random_idx]["idle"])
-		var fpx := tex.get_height() if tex != null else 128
-		_previews[pid_idx].texture  = tex
-		_previews[pid_idx].hframes  = int(tex.get_width() / float(fpx)) if tex != null else 1
-		_previews[pid_idx].frame    = 0
-		_preview_hframes[pid_idx]   = _previews[pid_idx].hframes
 		_locked[pid_idx] = true
-		AudioManager.play_sfx("click")
+		AudioManager.play_sfx("confirm_1")
 	else:
 		GameManager.player_characters[pid_idx] = ""
 		GameManager.player_is_cpu[pid_idx]     = false
-		_status_lbls[pid_idx].text = "PLAYER %d" % (pid_idx + 1)
-		var hint := "Space to confirm" if pid_idx == 0 else (
-			"[/] to confirm" if pid_idx == 1 else "A (controller) to confirm")
-		_lock_lbls[pid_idx].text = hint
-		_lock_lbls[pid_idx].add_theme_color_override("font_color", Color(0.2, 1.0, 0.4))
 		_locked[pid_idx] = false
-	_check_all_locked()
+		AudioManager.play_sfx("back_1")
+	# Rebuild panels so header + hint label both reflect the new state
+	_rebuild_panels()
+	if _is_cpu[pid_idx]:
+		_check_all_locked()
 
 func _move_cursor(pid_idx: int, delta: Vector2i) -> void:
 	_cursors[pid_idx] = Vector2i(
@@ -574,7 +596,7 @@ func _move_cursor(pid_idx: int, delta: Vector2i) -> void:
 		(_cursors[pid_idx].y + delta.y + 3) % 3
 	)
 	_update_cursor(pid_idx)
-	AudioManager.play_sfx("click")
+	AudioManager.play_sfx("select")
 
 func _update_cursor(pid_idx: int) -> void:
 	if _cursor_rects[pid_idx] == null or not is_instance_valid(_cursor_rects[pid_idx]):
@@ -586,7 +608,7 @@ func _update_cursor(pid_idx: int) -> void:
 		grid_x + cur.x * CELL_SIZE, GRID_TOP_Y + cur.y * CELL_SIZE)
 	var idx: int = cur.y * 4 + cur.x
 	if _name_lbls[pid_idx] != null:
-		_name_lbls[pid_idx].text = CHARACTERS[idx]["name"]
+		_name_lbls[pid_idx].text = GameManager.CHAR_DISPLAY_NAMES.get(CHARACTERS[idx]["key"], CHARACTERS[idx]["key"].replace("_", " ").to_upper())
 	if _previews[pid_idx] != null:
 		var tex := _load_portrait_tex(CHARACTERS[idx]["idle"])
 		var fpx := tex.get_height() if tex != null else 128
@@ -607,6 +629,7 @@ func _lock_player(pid_idx: int) -> void:
 	_locked[pid_idx]         = true
 	_lock_lbls[pid_idx].text = "READY!"
 	_lock_lbls[pid_idx].add_theme_color_override("font_color", Color(0.2, 1.0, 0.4))
+	AudioManager.play_sfx("confirm_1")
 	print("[CharacterSelect] P%d locked: %s" % [pid_idx + 1, CHARACTERS[idx]["key"]])
 	_check_all_locked()
 
@@ -618,8 +641,17 @@ func _check_all_locked() -> void:
 	GameManager.go_to_stage_select()
 
 func _on_back_pressed() -> void:
-	AudioManager.play_sfx("click")
+	AudioManager.play_sfx("back_1")
 	GameManager.go_to_main_menu()
 
+# Loads a PNG that may not have a .import sidecar (e.g. ninja sprites).
+# Falls back to raw Image load if load() fails.
 func _load_portrait_tex(res_path: String) -> Texture2D:
-	return load(res_path) as Texture2D
+	# Use ResourceLoader.exists() to avoid engine-level error logs for un-imported PNGs
+	if ResourceLoader.exists(res_path):
+		return load(res_path) as Texture2D
+	var img := Image.new()
+	var err := img.load(ProjectSettings.globalize_path(res_path))
+	if err != OK:
+		return null
+	return ImageTexture.create_from_image(img)

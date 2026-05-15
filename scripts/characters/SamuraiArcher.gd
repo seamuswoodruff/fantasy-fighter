@@ -21,6 +21,7 @@ func _ready() -> void:
 	attack_damage_light = 9.0
 	attack_damage_heavy = 16.0
 	knockback_multiplier = 1.0
+	cpu_archetype = "ranged"
 	sprite.sprite_frames = _build_sprite_frames()
 	sprite.position = Vector2(0, -26)
 	_arrow_texture = load(sprites_path + "Arrow.png")

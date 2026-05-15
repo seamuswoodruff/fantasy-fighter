@@ -12,6 +12,9 @@ extends CharacterBody2D
 @export var attack_damage_light: float = 10.0
 @export var attack_damage_heavy: float = 18.0
 @export var knockback_multiplier: float = 1.0
+@export var cpu_archetype: String = "melee"
+# Set in each character's _ready(). Controls CPU attack behaviour.
+# Values: "melee" | "ranged" | "dasher" | "blocker" | "healer"
 
 # ── Runtime state ─────────────────────────────────────────────────────────────
 var current_hp: float
@@ -706,7 +709,10 @@ func _frames(path: String, frame_size: int) -> int:
 
 # For PNGs without .import sidecars — used by ninja characters
 func _frames_raw(path: String, frame_size: int) -> int:
-	return _frames(path, frame_size)
+	var tex := _load_raw_texture(path)
+	if tex == null:
+		return 1
+	return int(tex.get_width() / float(frame_size))
 
 # Loads a PNG that has no .import file (bypasses Godot's importer).
 # Calculates hframes for a projectile texture.
@@ -719,11 +725,13 @@ func _calc_hframes(tex: Texture2D) -> int:
 		return int(w / float(h))
 	return int(w / float(64))
 
-func _load_raw_texture(res_path: String) -> Texture2D:
-	var tex := load(res_path) as Texture2D
-	if tex == null:
-		push_error("[Character] Failed to load texture: " + res_path)
-	return tex
+func _load_raw_texture(res_path: String) -> ImageTexture:
+	var img := Image.new()
+	var err := img.load(ProjectSettings.globalize_path(res_path))
+	if err != OK:
+		push_error("[Character] _load_raw_texture failed for: " + res_path + " (err %d)" % err)
+		return null
+	return ImageTexture.create_from_image(img)
 
 func _flush_input_buffer() -> void:
 	if _buffered_input == BufferedInput.NONE or _buffer_timer <= 0.0:

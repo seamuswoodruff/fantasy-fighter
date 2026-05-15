@@ -25,13 +25,12 @@ func _ready() -> void:
 	attack_damage_heavy  = 16.0
 	character_name       = "Ninja Peasant"
 	jump_count           = 4
+	cpu_archetype        = "ranged"
 	sprite.sprite_frames = _build_sprite_frames()
 	# 96px frames but art fills ~68px (vs 64px art in 128px frames) — scale to match
 	sprite.scale    = Vector2(0.94, 0.94)
 	sprite.position = Vector2(0, -7)
-	_stone_tex           = load(SPRITES + "special1_projectile.png") as Texture2D
-	if _stone_tex == null:
-		push_error("[NinjaPeasant] Failed to load stone texture")
+	_stone_tex           = _load_raw_texture(SPRITES + "special1_projectile.png")
 	super._ready()
 
 func _build_sprite_frames() -> SpriteFrames:
