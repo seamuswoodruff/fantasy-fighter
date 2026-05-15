@@ -92,6 +92,7 @@ var _btn_nodes: Array = []
 
 func _ready() -> void:
 	_build_ui()
+	AudioManager.play_sfx("confirm_2")
 	AudioManager.play_music("res://assets/music/PerituneMaterial_EpicBattle_loop.ogg")
 
 func _build_ui() -> void:
@@ -240,22 +241,22 @@ func _process(_delta: float) -> void:
 		or Input.is_action_just_pressed("p1_up") or Input.is_action_just_pressed("p2_up"):
 		_cursor = (_cursor - 1 + _btn_nodes.size()) % _btn_nodes.size()
 		_update_win_highlight()
-		AudioManager.play_sfx("click")
+		AudioManager.play_sfx("select")
 	elif Input.is_action_just_pressed("p1_right") or Input.is_action_just_pressed("p2_right") \
 		or Input.is_action_just_pressed("p1_down") or Input.is_action_just_pressed("p2_down"):
 		_cursor = (_cursor + 1) % _btn_nodes.size()
 		_update_win_highlight()
-		AudioManager.play_sfx("click")
+		AudioManager.play_sfx("select")
 	elif Input.is_action_just_pressed("p1_jump") or Input.is_action_just_pressed("p2_jump") \
 		or Input.is_action_just_pressed("p1_light_attack") or Input.is_action_just_pressed("p2_light_attack"):
 		(_btn_nodes[_cursor] as Button).emit_signal("pressed")
 
 func _on_rematch() -> void:
-	AudioManager.play_sfx("click")
+	AudioManager.play_sfx("confirm_1")
 	GameManager.go_to_battle()
 
 func _on_menu() -> void:
-	AudioManager.play_sfx("click")
+	AudioManager.play_sfx("back_1")
 	GameManager.p1_character = ""
 	GameManager.p2_character = ""
 	GameManager.selected_stage = ""
@@ -273,8 +274,11 @@ func _add_fallback_bg() -> void:
 func _load_tex_safe(res_path: String) -> Texture2D:
 	if ResourceLoader.exists(res_path):
 		return load(res_path) as Texture2D
+	# Use FileAccess VFS so this works inside an exported .app PCK
+	var buf := FileAccess.get_file_as_bytes(res_path)
+	if buf.size() == 0:
+		return null
 	var img := Image.new()
-	var err := img.load(ProjectSettings.globalize_path(res_path))
-	if err != OK:
+	if img.load_png_from_buffer(buf) != OK:
 		return null
 	return ImageTexture.create_from_image(img)

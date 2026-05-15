@@ -10,7 +10,7 @@ var _sliders: Array = []
 
 func _ready() -> void:
 	_build_ui()
-	AudioManager.play_music("res://new asets/Homescreen.ogg")
+	AudioManager.play_sfx("menu_open_1")
 	print("[OptionsMenu] Ready")
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -25,7 +25,11 @@ func _build_ui() -> void:
 	const FRAME_W := 770
 	const FRAME_H := 370
 	const FRAME_COUNT := 16
-	var bg_tex := load("res://assets/ui/backgrounds/optionsscreen_sheet.png") as Texture2D
+	var bg_img := Image.new()
+	# Use FileAccess VFS so this works inside an exported .app PCK
+	var _bg_buf := FileAccess.get_file_as_bytes("res://assets/ui/backgrounds/optionsscreen_sheet.png")
+	bg_img.load_png_from_buffer(_bg_buf)
+	var bg_tex := ImageTexture.create_from_image(bg_img)
 	var sf := SpriteFrames.new()
 	sf.add_animation("bg")
 	sf.set_animation_loop("bg", true)
@@ -222,5 +226,5 @@ func _style_button(btn: Button, font: FontFile, size: int) -> void:
 	btn.add_theme_font_size_override("font_size", size)
 
 func _on_back_pressed() -> void:
-	AudioManager.play_sfx("click")
+	AudioManager.play_sfx("back_1")
 	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")

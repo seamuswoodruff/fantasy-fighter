@@ -121,8 +121,15 @@ func _build_static_ui() -> void:
 	cs_sf.set_animation_loop("bg", true)
 	cs_sf.set_animation_speed("bg", 7.0)
 	for i in CS_FRAME_COUNT:
+		var frame_path := CS_FRAME_DIR + "frame_%02d.png" % i
 		var img := Image.new()
-		img.load(ProjectSettings.globalize_path(CS_FRAME_DIR + "frame_%02d.png" % i))
+		# FileAccess reads via Godot's VFS — works in both editor and exported .app PCK.
+		# ProjectSettings.globalize_path() returns a disk path that doesn't exist inside
+		# an exported build, so we use get_file_as_bytes() instead.
+		var buf := FileAccess.get_file_as_bytes(frame_path)
+		if buf.size() == 0:
+			continue
+		img.load_png_from_buffer(buf)
 		cs_sf.add_frame("bg", ImageTexture.create_from_image(img))
 	var cs_bg := AnimatedSprite2D.new()
 	cs_bg.sprite_frames = cs_sf
@@ -645,13 +652,18 @@ func _on_back_pressed() -> void:
 	GameManager.go_to_main_menu()
 
 # Loads a PNG that may not have a .import sidecar (e.g. ninja sprites).
-# Falls back to raw Image load if load() fails.
+# Falls back to VFS byte-read so it works inside an exported .app PCK.
 func _load_portrait_tex(res_path: String) -> Texture2D:
-	# Use ResourceLoader.exists() to avoid engine-level error logs for un-imported PNGs
+	# Properly imported assets — fast path works in editor and export
 	if ResourceLoader.exists(res_path):
 		return load(res_path) as Texture2D
+	# Un-imported PNGs: read via FileAccess VFS (export-safe).
+	# ProjectSettings.globalize_path() resolves to a disk path that doesn't
+	# exist inside an exported build's PCK — use get_file_as_bytes() instead.
+	var buf := FileAccess.get_file_as_bytes(res_path)
+	if buf.size() == 0:
+		return null
 	var img := Image.new()
-	var err := img.load(ProjectSettings.globalize_path(res_path))
-	if err != OK:
+	if img.load_png_from_buffer(buf) != OK:
 		return null
 	return ImageTexture.create_from_image(img)
