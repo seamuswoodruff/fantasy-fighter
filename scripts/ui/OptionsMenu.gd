@@ -25,11 +25,8 @@ func _build_ui() -> void:
 	const FRAME_W := 770
 	const FRAME_H := 370
 	const FRAME_COUNT := 16
-	var bg_img := Image.new()
-	# Use FileAccess VFS so this works inside an exported .app PCK
-	var _bg_buf := FileAccess.get_file_as_bytes("res://assets/ui/backgrounds/optionsscreen_sheet.png")
-	bg_img.load_png_from_buffer(_bg_buf)
-	var bg_tex := ImageTexture.create_from_image(bg_img)
+	# Sheet is imported (.ctex sidecar exists) — load() works in all export targets.
+	var bg_tex := load("res://assets/ui/backgrounds/optionsscreen_sheet.png") as Texture2D
 	var sf := SpriteFrames.new()
 	sf.add_animation("bg")
 	sf.set_animation_loop("bg", true)

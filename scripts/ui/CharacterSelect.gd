@@ -121,16 +121,9 @@ func _build_static_ui() -> void:
 	cs_sf.set_animation_loop("bg", true)
 	cs_sf.set_animation_speed("bg", 7.0)
 	for i in CS_FRAME_COUNT:
-		var frame_path := CS_FRAME_DIR + "frame_%02d.png" % i
-		var img := Image.new()
-		# FileAccess reads via Godot's VFS — works in both editor and exported .app PCK.
-		# ProjectSettings.globalize_path() returns a disk path that doesn't exist inside
-		# an exported build, so we use get_file_as_bytes() instead.
-		var buf := FileAccess.get_file_as_bytes(frame_path)
-		if buf.size() == 0:
-			continue
-		img.load_png_from_buffer(buf)
-		cs_sf.add_frame("bg", ImageTexture.create_from_image(img))
+		# These PNGs are imported (.ctex sidecars exist) so load() works in all
+		# export targets including web — no FileAccess needed.
+		cs_sf.add_frame("bg", load(CS_FRAME_DIR + "frame_%02d.png" % i) as Texture2D)
 	var cs_bg := AnimatedSprite2D.new()
 	cs_bg.sprite_frames = cs_sf
 	cs_bg.animation = "bg"

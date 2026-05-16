@@ -26,11 +26,8 @@ func _build_ui() -> void:
 	const COLS := 8
 	const BG_FPS := 10.0
 
-	var bg_img := Image.new()
-	# Use FileAccess VFS so this works inside an exported .app PCK
-	var _bg_buf := FileAccess.get_file_as_bytes(SHEET_PATH)
-	bg_img.load_png_from_buffer(_bg_buf)
-	var bg_tex := ImageTexture.create_from_image(bg_img)
+	# Sheet is imported (.ctex sidecar exists) — load() works in all export targets.
+	var bg_tex := load(SHEET_PATH) as Texture2D
 
 	var sf := SpriteFrames.new()
 	sf.add_animation("bg")
