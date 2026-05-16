@@ -119,18 +119,18 @@ func _credits_text() -> String:
 [center]A 2D Local Multiplayer Platform Fighter[/center]
 [center][Course name / Year][/center]
 
-[center]────────────────────────────[/center]
+[center]----------------------------[/center]
 
 [center][color=#ffd966][b]DEVELOPMENT[/b][/color][/center]
 [center][Name(s)][/center]
 
-[center]────────────────────────────[/center]
+[center]----------------------------[/center]
 
 [center][color=#ffd966][b]ENGINE[/b][/color][/center]
 [center]Godot 4.6.2[/center]
 [center]godotengine.org[/center]
 
-[center]────────────────────────────[/center]
+[center]----------------------------[/center]
 
 [center][color=#ffd966][b]MUSIC[/b][/color][/center]
 [center][b]Battle Music[/b][/center]
@@ -138,7 +138,7 @@ func _credits_text() -> String:
 [center][b]Menu & Ambient Music[/b][/center]
 [center]alkakrab — alkakrab.itch.io[/center]
 
-[center]────────────────────────────[/center]
+[center]----------------------------[/center]
 
 [center][color=#ffd966][b]SOUND EFFECTS[/b][/color][/center]
 [center][b]UI Sounds[/b][/center]
@@ -146,7 +146,7 @@ func _credits_text() -> String:
 [center][b]Fantasy SFX Pack[/b][/center]
 [center]TomMusic — tommusic.itch.io[/center]
 
-[center]────────────────────────────[/center]
+[center]----------------------------[/center]
 
 [center][color=#ffd966][b]VISUAL ASSETS[/b][/color][/center]
 [center][b]Character Sprites[/b][/center]
@@ -158,13 +158,13 @@ func _credits_text() -> String:
 [center][b]UI Backgrounds[/b][/center]
 [center][Source][/center]
 
-[center]────────────────────────────[/center]
+[center]----------------------------[/center]
 
 [center][color=#ffd966][b]FONTS[/b][/color][/center]
 [center]Alagard — Hewett Tsoi[/center]
 [center]Planes ValMore — [Source][/center]
 
-[center]────────────────────────────[/center]
+[center]----------------------------[/center]
 
 [center][color=#888888]Built with ❤ for [Course name][/color][/center]
 [center] [/center]

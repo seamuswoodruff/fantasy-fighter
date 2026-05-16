@@ -726,10 +726,25 @@ func _calc_hframes(tex: Texture2D) -> int:
 	return int(w / float(64))
 
 func _load_raw_texture(res_path: String) -> ImageTexture:
+	# Try imported asset first (fast path — works in editor and all export targets)
+	if ResourceLoader.exists(res_path):
+		var tex := load(res_path)
+		if tex is ImageTexture:
+			return tex as ImageTexture
+		if tex is Texture2D:
+			var img2 := (tex as Texture2D).get_image()
+			if img2:
+				return ImageTexture.create_from_image(img2)
+	# Fallback: read via Godot VFS (works in exported builds incl. web).
+	# ProjectSettings.globalize_path() resolves to a disk path that doesn't
+	# exist in exported builds — use FileAccess + load_png_from_buffer instead.
+	var buf := FileAccess.get_file_as_bytes(res_path)
+	if buf.size() == 0:
+		push_error("[Character] _load_raw_texture: file not found or empty: " + res_path)
+		return null
 	var img := Image.new()
-	var err := img.load(ProjectSettings.globalize_path(res_path))
-	if err != OK:
-		push_error("[Character] _load_raw_texture failed for: " + res_path + " (err %d)" % err)
+	if img.load_png_from_buffer(buf) != OK:
+		push_error("[Character] _load_raw_texture: failed to decode PNG: " + res_path)
 		return null
 	return ImageTexture.create_from_image(img)
 
