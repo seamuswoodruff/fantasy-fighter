@@ -28,6 +28,12 @@ While I had originally gone in the direction of a platform fighter because my ro
 |:---:|:---:|
 | ![Main Menu](screenshots/mainmenu.png) | ![Character Select](screenshots/charselect.png) |
 | *Main Menu* | *Character Select (4-player)* |
+| ![Stage Select](screenshots/stageselect.png) | ![Options](screenshots/options.png) |
+| *Stage Select* | *Options & Controls Reference* |
+| ![Ruins gameplay](screenshots/gameplay_ruins.png) | ![Desert Temple gameplay](screenshots/gameplay_desert.png) |
+| *Ruins — 3-player match* | *Desert Temple — 4-player match* |
+| ![Win Screen](screenshots/winscreen.png) | ![Credits](screenshots/credits.png) |
+| *Win Screen* | *Credits* |
 
 </div>
 
@@ -76,13 +82,18 @@ All four attacks are bound to the right analog stick. Move with left stick/DPad,
 
 ## Stages
 
-<!-- Add stage screenshots here -->
+Three stages with hand-placed platform collision bodies, stage-specific music playlists, and ambient audio.
 
-Three stages with hand-placed platform collision bodies, stage-specific music playlists, and ambient audio:
+<div align="center">
 
-- **Windrise** — Lush meadow, open sky
-- **Ruins** — Overgrown castle ruins with floating architecture  
-- **Desert Temple** — Ancient sandstone ruins
+| | |
+|:---:|:---:|
+| ![Windrise](screenshots/gameplay_windrise.png) | ![Ruins](screenshots/gameplay_ruins.png) |
+| *Windrise — Lush meadow, open sky* | *Ruins — Overgrown castle with floating architecture* |
+| ![Desert Temple](screenshots/gameplay_desert.png) | |
+| *Desert Temple — Ancient sandstone ruins* | |
+
+</div>
 
 Two stages use Gemini-generated backgrounds; one uses a free pixel art asset pack inspired by Genshin Impact's Mondstadt region.
 
